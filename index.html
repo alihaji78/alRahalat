@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>معرض قروب الرحلات الذكي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #000000; --bg: #f2f2f2; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; direction: rtl; }
+        
+        .nav { 
+            background: var(--primary); color: white; height: 65px; 
+            display: flex; align-items: center; padding: 0 15px; 
+            position: sticky; top: 0; z-index: 1001; box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .nav-side { width: 45px; display: flex; align-items: center; justify-content: center; }
+        .nav-title { flex: 1; text-align: center; font-weight: bold; font-size: 17px; }
+        
+        .sub-nav {
+            background: #ffffff; color: #555; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 10px; border-bottom: 1px solid #ddd; 
+            position: sticky; top: 65px; z-index: 1000;
+        }
+        .folder-path-text { white-space: nowrap; overflow: hidden; display: inline-block; transition: font-size 0.2s ease; }
+
+        .btn-nav { 
+            background: rgba(255,255,255,0.12); color: white; border: none; 
+            width: 42px; height: 42px; border-radius: 12px; cursor: pointer;
+            display: none; align-items: center; justify-content: center;
+        }
+        .btn-nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+        .container { padding: 12px; max-width: 900px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 12px; }
+        
+        .folder-card { 
+            background: white; padding: 15px 8px; border-radius: 18px; 
+            text-align: center; border: 1px solid #e0e0e0; box-shadow: 0 3px 6px rgba(0,0,0,0.04);
+            cursor: pointer; transition: 0.2s; overflow: hidden;
+        }
+        .folder-icon { font-size: 38px; display: block; margin-bottom: 5px; }
+        .folder-name { font-size: 14px; font-weight: bold; color: #222; display: block; margin-bottom: 4px; white-space: nowrap; overflow: hidden; }
+        .folder-count { font-size: 11px; color: #888; background: #f5f5f5; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+
+        .image-card { background: white; margin-bottom: 18px; border-radius: 20px; overflow: hidden; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .img-container { width: 100%; background: #000; display: flex; align-items: center; justify-content: center; min-height: 250px; }
+        .img-container img { width: 100%; height: auto; max-height: 85vh; display: block; object-fit: contain; }
+        .img-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-download { background: #000; color: white; text-decoration: none; padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: bold; }
+
+        .loader { text-align: center; padding: 80px 20px; color: #999; grid-column: 1/-1; }
+    </style>
+</head>
+<body>
+
+<div class="nav">
+    <div class="nav-side">
+        <button class="btn-nav" id="backBtn" onclick="window.history.back()">
+            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+    </div>
+    <div class="nav-title">معرض قروب الرحلات</div>
+    <div class="nav-side">
+        <button class="btn-nav" id="homeBtn" onclick="goHome()">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </button>
+    </div>
+</div>
+
+<div class="sub-nav" id="subNav" style="display: none;">
+    <div class="folder-path-text" id="folderNameDisplay"></div>
+</div>
+
+<div class="container">
+    <div id="displayArea" class="grid">
+        <div class="loader">جاري جلب الملفات...</div>
+    </div>
+</div>
+
+<script>
+    const API_KEY = 'AIzaSyCv3v7LHte7hTY82NmUmj9OJLxR0zFY0bU'; 
+    const ROOT_FOLDER_ID = '1r0VfqjSzznFHhqMYFhB5bPzCeW92YFHa';
+    
+    // مصفوفة لتخزين الأسماء فقط لربطها مع التاريخ
+    let folderNamesMap = {};
+
+    function adjustFontSize(element, maxFontSize) {
+        if(!element) return;
+        let size = maxFontSize;
+        element.style.fontSize = size + "px";
+        while (element.scrollWidth > element.clientWidth && size > 9) {
+            size--;
+            element.style.fontSize = size + "px";
+        }
+    }
+
+    // الاستماع لزر الرجوع في الهاتف
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.folderId) {
+            const fName = folderNamesMap[event.state.folderId] || "";
+            fetchContent(event.state.folderId, fName, false);
+        } else {
+            fetchContent(ROOT_FOLDER_ID, "", false);
+        }
+    });
+
+    async function fetchContent(folderId, folderName = "", pushState = true) {
+        const displayArea = document.getElementById('displayArea');
+        const subNav = document.getElementById('subNav');
+        const folderDisplayName = document.getElementById('folderNameDisplay');
+        
+        displayArea.innerHTML = '<div class="loader">جاري التحميل...</div>';
+        
+        const isRoot = folderId === ROOT_FOLDER_ID;
+        
+        if (isRoot) {
+            subNav.style.display = "none";
+        } else {
+            subNav.style.display = "flex";
+            folderDisplayName.innerText = "📍 " + folderName;
+            setTimeout(() => adjustFontSize(folderDisplayName, 14), 10);
+        }
+
+        document.getElementById('backBtn').style.display = isRoot ? "none" : "flex";
+        document.getElementById('homeBtn').style.display = isRoot ? "none" : "flex";
+
+        // تخزين الاسم وتحديث التاريخ
+        if (pushState && !isRoot) {
+            folderNamesMap[folderId] = folderName;
+            history.pushState({folderId: folderId}, "");
+        }
+
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType)&key=${API_KEY}`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            renderData(data.files, folderId);
+        } catch (e) { displayArea.innerHTML = '<div class="loader">حدث خطأ في الشبكة</div>'; }
+    }
+
+    async function updateFolderCount(folderId, elementId) {
+        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id)&key=${API_KEY}`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            const el = document.getElementById(elementId);
+            if(el) el.innerText = `${data.files ? data.files.length : 0} عنصر`;
+        } catch (e) { }
+    }
+
+    function renderData(files, currentId) {
+        const displayArea = document.getElementById('displayArea');
+        displayArea.innerHTML = "";
+        const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+        const photos = files.filter(f => f.mimeType.startsWith('image/'));
+
+        if (folders.length > 0) {
+            displayArea.classList.add('grid');
+            folders.forEach((f, i) => {
+                const countId = `c-${i}`;
+                const nameId = `n-${i}`;
+                const div = document.createElement('div');
+                div.className = 'folder-card';
+                div.onclick = () => fetchContent(f.id, f.name);
+                
+                div.innerHTML = `
+                    <span class="folder-icon">📁</span>
+                    <span class="folder-name" id="${nameId}">${f.name}</span>
+                    <span class="folder-count" id="${countId}">...</span>
+                `;
+                displayArea.appendChild(div);
+                
+                setTimeout(() => adjustFontSize(document.getElementById(nameId), 14), 10);
+                updateFolderCount(f.id, countId);
+            });
+        }
+
+        if (photos.length > 0) {
+            if (folders.length === 0) displayArea.classList.remove('grid');
+            photos.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.innerHTML = `
+                    <div class="img-container"><img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w1200" loading="lazy"></div>
+                    <div class="img-info">
+                        <span style="font-size:12px; color:#666; font-weight:bold;">${p.name}</span>
+                        <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download">حفظ</a>
+                    </div>
+                `;
+                displayArea.appendChild(card);
+            });
+        }
+        window.scrollTo(0,0);
+    }
+
+    function goHome() { 
+        if (window.history.state) {
+            history.pushState(null, "");
+            fetchContent(ROOT_FOLDER_ID);
+        }
+    }
+    
+    // التشغيل الأول
+    fetchContent(ROOT_FOLDER_ID);
+</script>
+</body>
+</html>
