@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض قروب الرحلات</title>
+    <title>معرض قروب الرحلات الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -1221,7 +1221,7 @@
             <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
     </div>
-    <div class="nav-title">معرض قروب الرحلات</div>
+    <div class="nav-title">✨ معرض قروب الرحلات</div>
     <div class="nav-side">
         <button class="btn-nav" id="themeToggle" onclick="toggleTheme()" aria-label="تبديل الوضع">
             <svg id="themeIcon" viewBox="0 0 24 24"></svg>
@@ -1455,15 +1455,12 @@
     }
     
     async function updateFolderItemCount(folderId) {
-        // نجلب كل المحتوى (صور + مجلدات)
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,mimeType)&key=${API_KEY}`;
         try {
-            const res = await fetch(url);
-            const data = await res.json();
+            const files = await fetchAllFilesInFolder(folderId, 'files(id,mimeType)');
             const el = document.getElementById(`count-${folderId}`);
-            if (el && data.files) {
-                const images = data.files.filter(f => f.mimeType && f.mimeType.startsWith('image/')).length;
-                const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
+            if (el) {
+                const images = files.filter(f => f.mimeType && f.mimeType.startsWith('image/')).length;
+                const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
                 
                 let text = '';
                 if (folders > 0 && images > 0) {
@@ -1493,6 +1490,26 @@
         const query = document.getElementById('imageFilter').value.toLowerCase().trim();
         filteredImages = currentImages.filter(img => img.name.toLowerCase().includes(query));
         renderImagesGrid();
+    }
+    
+    // ====== دالة مساعدة: جلب كل الملفات مع pagination ======
+    async function fetchAllFilesInFolder(folderId, fields, orderBy = '') {
+        let allFiles = [];
+        let pageToken = null;
+        
+        do {
+            let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=nextPageToken,${fields}&key=${API_KEY}&pageSize=1000`;
+            if (orderBy) url += `&orderBy=${orderBy}`;
+            if (pageToken) url += `&pageToken=${encodeURIComponent(pageToken)}`;
+            
+            const res = await fetch(url);
+            const data = await res.json();
+            
+            if (data.files) allFiles = allFiles.concat(data.files);
+            pageToken = data.nextPageToken || null;
+        } while (pageToken);
+        
+        return allFiles;
     }
     
     // ====== فتح مجلد (رئيسي أو فرعي) ======
@@ -1555,13 +1572,9 @@
         
         showSkeletonLoader();
         
-        // جلب كل المحتوى (مجلدات وصور)
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType)&key=${API_KEY}&orderBy=folder,name`;
-        
+        // جلب كل المحتوى (مجلدات وصور) مع pagination
         try {
-            const res = await fetch(url);
-            const data = await res.json();
-            const files = data.files || [];
+            const files = await fetchAllFilesInFolder(folderId, 'files(id,name,mimeType)', 'folder,name');
             
             // فصل المجلدات والصور
             currentSubFolders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
@@ -1783,14 +1796,12 @@
     }
     
     async function updateSubFolderCount(folderId) {
-        const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,mimeType)&key=${API_KEY}`;
         try {
-            const res = await fetch(url);
-            const data = await res.json();
+            const files = await fetchAllFilesInFolder(folderId, 'files(id,mimeType)');
             const el = document.getElementById(`subcount-${folderId}`);
-            if (el && data.files) {
-                const images = data.files.filter(f => f.mimeType && f.mimeType.startsWith('image/')).length;
-                const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
+            if (el) {
+                const images = files.filter(f => f.mimeType && f.mimeType.startsWith('image/')).length;
+                const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
                 
                 let text = '';
                 if (folders > 0 && images > 0) text = `${folders} مجلد، ${images} صورة`;
@@ -2166,14 +2177,13 @@
         let allImages = [];
         
         try {
-            const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType,createdTime,modifiedTime,imageMediaMetadata)&key=${API_KEY}&pageSize=1000`;
-            const res = await fetch(url);
-            const data = await res.json();
+            const files = await fetchAllFilesInFolder(
+                folderId,
+                'files(id,name,mimeType,createdTime,modifiedTime,imageMediaMetadata)'
+            );
             
-            if (!data.files) return allImages;
-            
-            const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
-            const images = data.files.filter(f => f.mimeType && f.mimeType.startsWith('image/'));
+            const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+            const images = files.filter(f => f.mimeType && f.mimeType.startsWith('image/'));
             
             // إضافة الصور مع معلومات المجلد الأصل
             images.forEach(img => {
