@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
+ 
         :root {
             --bg-primary: #f0f2f5;
             --bg-secondary: #ffffff;
@@ -30,7 +30,7 @@
             --success: #34c759;
             --sidebar-width: 300px;
         }
-
+ 
         [data-theme="dark"] {
             --bg-primary: #0a0a0f;
             --bg-secondary: #16161d;
@@ -48,9 +48,9 @@
             --gradient-bg: linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);
             --hover-bg: rgba(255,255,255,0.06);
         }
-
+ 
         html, body { height: 100%; overflow-x: hidden; }
-
+ 
         body {
             font-family: 'Cairo', sans-serif;
             background: var(--gradient-bg);
@@ -60,7 +60,7 @@
             transition: background 0.3s ease, color 0.3s ease;
             min-height: 100vh;
         }
-
+ 
         body::before {
             content: '';
             position: fixed; top:0; left:0; right:0; bottom:0;
@@ -76,7 +76,7 @@
                 radial-gradient(circle at 80% 80%, rgba(118,75,162,0.12) 0%, transparent 50%),
                 radial-gradient(circle at 40% 20%, rgba(240,147,251,0.08) 0%, transparent 50%);
         }
-
+ 
         /* ====== Nav ====== */
         .nav {
             background: var(--bg-glass-strong);
@@ -102,10 +102,10 @@
         }
         .btn-nav:hover, .btn-nav:active { background: var(--hover-bg); transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-nav svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
         /* ====== Layout ====== */
         .layout { display: flex; flex-direction: row; min-height: calc(100vh - 70px); position: relative; }
-
+ 
         /* ====== Sidebar ====== */
         .sidebar {
             width: var(--sidebar-width);
@@ -123,7 +123,7 @@
         }
         .sidebar-header h3 { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
         .sidebar-header p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-
+ 
         .search-box { position: relative; margin-top: 12px; }
         .search-input {
             width: 100%; padding: 10px 38px 10px 14px; border: 1px solid var(--border);
@@ -137,7 +137,7 @@
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
             width: 16px; height: 16px; color: var(--text-muted); pointer-events: none;
         }
-
+ 
         .sidebar-list { padding: 10px; }
         .folder-item {
             display: flex; align-items: center; gap: 12px; padding: 12px 14px;
@@ -154,10 +154,10 @@
         .folder-item-content { flex: 1; min-width: 0; }
         .folder-item-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
         .folder-item-count { font-size: 11px; color: var(--text-muted); background: var(--bg-primary); padding: 2px 8px; border-radius: 8px; display: inline-block; font-weight: 700; }
-
+ 
         /* ====== Main Content ====== */
         .main-content { flex: 1; padding: 22px; min-width: 0; max-width: 100%; }
-
+ 
         /* ====== Breadcrumb ====== */
         .breadcrumb {
             display: flex; align-items: center; gap: 6px; padding: 10px 16px;
@@ -173,7 +173,7 @@
         .breadcrumb-item.current { color: var(--text-primary); background: var(--hover-bg); cursor: default; }
         .breadcrumb-item svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
         .breadcrumb-separator { color: var(--text-muted); font-size: 14px; user-select: none; }
-
+ 
         /* ====== Content Header ====== */
         .content-header {
             background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -186,7 +186,7 @@
         .content-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
         .content-header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 600; }
         .content-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
+ 
         .btn-action {
             display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px;
             border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
@@ -197,7 +197,7 @@
         .btn-action.primary { background: var(--gradient-primary); color: white; border-color: transparent; }
         .btn-action.primary:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
         .btn-action svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
         /* ====== Filter Bar ====== */
         .filter-bar {
             background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -208,7 +208,7 @@
         .filter-search { flex: 1; position: relative; min-width: 160px; }
         .filter-search .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
         .filter-search .search-icon { width: 14px; height: 14px; right: 10px; }
-
+ 
         /* ====== Sort Buttons ====== */
         .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
         .btn-sort-opt {
@@ -221,7 +221,7 @@
         .btn-sort-opt.active { background: var(--gradient-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
         .btn-sort-opt svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
         .sort-text { display: inline; }
-
+ 
         /* ====== View Toggle ====== */
         .view-toggle { display: flex; gap: 3px; flex-shrink: 0; }
         .btn-view {
@@ -232,14 +232,14 @@
         .btn-view:hover { color: var(--text-primary); background: var(--hover-bg); }
         .btn-view.active { background: var(--accent); color: var(--accent-text); border-color: transparent; }
         .btn-view svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
         /* ====== Section titles ====== */
         .section-title {
             font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 12px; margin-top: 8px;
             display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;
         }
         .section-title:first-child { margin-top: 0; }
-
+ 
         /* ====== Folders Grid ====== */
         .folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
         .folder-card {
@@ -254,10 +254,10 @@
         .folder-card-icon { font-size: 44px; display: block; margin-bottom: 8px; position: relative; z-index: 1; }
         .folder-card-name { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; position: relative; z-index: 1; }
         .folder-card-count { font-size: 11px; color: var(--text-muted); background: var(--bg-primary); padding: 3px 10px; border-radius: 10px; display: inline-block; font-weight: 700; position: relative; z-index: 1; }
-
+ 
         /* ====== Images Grid ====== */
         .images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; }
-
+ 
         /* List view */
         .images-grid.list-view { grid-template-columns: 1fr; gap: 10px; }
         .images-grid.list-view .image-card { display: flex; flex-direction: row; align-items: center; border-radius: 14px; }
@@ -268,19 +268,19 @@
         .images-grid.list-view .img-info { flex: 1; padding: 8px 12px 8px 10px; }
         .images-grid.list-view .img-name { white-space: normal; -webkit-line-clamp: 2; }
         .images-grid.list-view .img-checkbox { top: 50%; transform: translateY(-50%); }
-
+ 
         /* ====== Skeleton ====== */
         .skeleton-card { background: var(--bg-secondary); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
         .skeleton-img { width: 100%; height: 220px; background: linear-gradient(90deg, var(--bg-primary) 0%, var(--hover-bg) 50%, var(--bg-primary) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
         .skeleton-info { padding: 14px; }
         .skeleton-line { height: 12px; background: linear-gradient(90deg, var(--bg-primary) 0%, var(--hover-bg) 50%, var(--bg-primary) 100%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; margin-bottom: 8px; }
         .skeleton-line:last-child { width: 60%; margin-bottom: 0; }
-
+ 
         @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
         /* ====== Image Card ====== */
         .image-card {
             background: var(--bg-secondary); border-radius: 20px; overflow: hidden;
@@ -289,7 +289,7 @@
         }
         .image-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(102,126,234,0.3); }
         .image-card.selected { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.3), var(--shadow-md); }
-
+ 
         .img-checkbox {
             position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 8px;
             background: var(--bg-glass-strong); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -300,7 +300,7 @@
         .img-checkbox svg { width: 16px; height: 16px; fill: none; stroke: white; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.2s; }
         .img-checkbox.active svg { opacity: 1; }
         .selection-mode .img-checkbox { display: flex; }
-
+ 
         .img-container {
             width: 100%; background: #111; display: flex; align-items: center; justify-content: center;
             min-height: 220px; cursor: pointer; overflow: hidden; position: relative;
@@ -311,7 +311,7 @@
         }
         .img-container img.loaded { opacity: 1; }
         .img-container:hover img.loaded { transform: scale(1.03); }
-
+ 
         .img-overlay {
             position: absolute; inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
@@ -325,13 +325,13 @@
             padding: 6px 14px; border-radius: 20px; display: inline-flex; align-items: center; gap: 6px;
         }
         .img-overlay svg { width: 14px; height: 14px; fill: none; stroke: white; stroke-width: 2.5; }
-
+ 
         .img-info { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
         .img-meta { flex: 1; min-width: 0; }
         .img-name { font-size: 12px; color: var(--text-secondary); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         .img-date { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
         .img-date svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-
+ 
         .btn-download {
             background: var(--accent); color: var(--accent-text); text-decoration: none; padding: 7px 13px;
             border-radius: 10px; font-size: 12px; font-weight: 700; flex-shrink: 0;
@@ -340,19 +340,29 @@
         }
         .btn-download:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-download svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
+        .btn-share {
+            background: var(--bg-primary); color: var(--text-primary); padding: 7px 11px;
+            border-radius: 10px; font-size: 12px; font-weight: 700; flex-shrink: 0;
+            transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
+            cursor: pointer; border: 1px solid var(--border); font-family: 'Cairo', sans-serif;
+        }
+        .btn-share:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); background: var(--hover-bg); }
+        .btn-share svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .img-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+ 
         /* ====== Empty State ====== */
         .empty-state { text-align: center; padding: 70px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 14px; animation: fadeIn 0.5s ease; }
         .empty-state-icon { font-size: 70px; margin-bottom: 18px; opacity: 0.4; }
         .empty-state-title { font-size: 19px; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px; }
-
+ 
         /* ====== Sidebar helpers ====== */
         .sidebar-loader, .sidebar-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; font-weight: 600; }
-
+ 
         /* ====== Lightbox ====== */
         .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
         .lightbox.active { display: flex; }
-
+ 
         .lightbox-header {
             display: flex; justify-content: space-between; align-items: center; padding: 14px 18px;
             background: rgba(0,0,0,0.5); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -368,10 +378,10 @@
         }
         .lightbox-btn:hover { background: rgba(255,255,255,0.2); }
         .lightbox-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-
+ 
         .lightbox-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; }
         .lightbox-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; user-select: none; -webkit-user-drag: none; transition: opacity 0.2s ease; }
-
+ 
         .lightbox-nav {
             position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px;
             border-radius: 50%; background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -383,7 +393,7 @@
         .lightbox-nav.next { left: 20px; }
         .lightbox-nav svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .lightbox-nav:disabled { opacity: 0.25; cursor: not-allowed; }
-
+ 
         /* Lightbox info bar */
         .lightbox-info {
             background: rgba(0,0,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -392,7 +402,7 @@
         }
         .lightbox-info-item { display: flex; align-items: center; gap: 5px; }
         .lightbox-info-item svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
-
+ 
         /* ====== Toast ====== */
         .toast {
             position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
@@ -406,7 +416,7 @@
         .toast-icon { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .toast.success .toast-icon { stroke: var(--success); }
         .toast.error .toast-icon { stroke: var(--danger); }
-
+ 
         /* ====== Progress Overlay ====== */
         .progress-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2500; display: none; align-items: center; justify-content: center; }
         .progress-overlay.active { display: flex; }
@@ -415,32 +425,32 @@
         .progress-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-weight: 600; }
         .progress-bar { width: 100%; height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--gradient-primary); width: 0%; transition: width 0.3s ease; border-radius: 4px; }
-
+ 
         /* ====== Back to Top ====== */
         .btn-back-top {
-            position: fixed; bottom: 26px; left: 26px; width: 46px; height: 46px; border-radius: 50%;
+            position: fixed; bottom: 26px; left: 26px; width: 50px; height: 50px; border-radius: 50%;
             background: var(--gradient-primary); color: white; border: none; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 16px rgba(102,126,234,0.45); z-index: 500;
+            box-shadow: 0 4px 20px rgba(102,126,234,0.55); z-index: 1500;
             opacity: 0; transform: translateY(20px) scale(0.8); pointer-events: none;
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         }
         .btn-back-top.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-        .btn-back-top:hover { transform: translateY(-3px) scale(1.06); }
-        .btn-back-top svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-
+        .btn-back-top:hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 28px rgba(102,126,234,0.7); }
+        .btn-back-top svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+ 
         /* ====== Sidebar overlay / toggle ====== */
         .sidebar-toggle { display: none; }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 998; opacity: 0; transition: opacity 0.3s ease; }
         .sidebar-overlay.active { display: block; opacity: 1; }
-
+ 
         .sidebar::-webkit-scrollbar { width: 6px; }
         .sidebar::-webkit-scrollbar-track { background: transparent; }
         .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
         .sidebar::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
+ 
         .hidden-el { display: none !important; }
-
+ 
         /* ====== Memories ====== */
         .memories-hero {
             position: relative; background: var(--gradient-primary); border-radius: 24px;
@@ -456,28 +466,28 @@
         .memories-hero-title { font-size: 26px; font-weight: 900; margin-bottom: 6px; letter-spacing: -0.5px; }
         .memories-hero-subtitle { font-size: 14px; font-weight: 600; opacity: 0.9; }
         .memories-hero-icon { font-size: 36px; margin-bottom: 8px; display: block; }
-
+ 
         .memory-year-group { margin-bottom: 28px; animation: fadeIn 0.5s ease backwards; }
         .memory-year-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 16px; background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-sm); }
         .memory-year-number { font-size: 22px; font-weight: 900; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -0.5px; }
         .memory-year-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); background: var(--bg-primary); padding: 4px 10px; border-radius: 8px; }
         .memory-year-count { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-right: auto; }
-
+ 
         .memory-card { position: relative; overflow: hidden; }
         .memory-card-badge { position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: white; padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; z-index: 3; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.3px; }
         .memory-card-badge svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .memory-card-folder { font-size: 10px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 3px; }
-
+ 
         .memories-loading { text-align: center; padding: 50px 20px; color: var(--text-muted); }
         .memories-loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
         .memories-loading-text { font-size: 14px; font-weight: 600; }
         .memories-loading-progress { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-
+ 
         .memories-empty { text-align: center; padding: 50px 20px; background: var(--bg-glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; }
         .memories-empty-icon { font-size: 60px; margin-bottom: 14px; opacity: 0.5; }
         .memories-empty-title { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
         .memories-empty-text { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-
+ 
         /* ====== Responsive ====== */
         @media (max-width: 900px) {
             :root { --sidebar-width: 270px; }
@@ -504,7 +514,7 @@
             .lightbox-nav { width: 42px; height: 42px; }
             .breadcrumb { padding: 8px 12px; }
             .breadcrumb-item { font-size: 11px; padding: 4px 8px; }
-            .btn-back-top { bottom: 18px; left: 18px; width: 40px; height: 40px; }
+            .btn-back-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }
         }
         @media (max-width: 500px) {
             .sort-text { display: none; }
@@ -528,7 +538,7 @@
     </style>
 </head>
 <body>
-
+ 
 <div class="nav">
     <div class="nav-side">
         <button class="btn-nav sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" aria-label="فتح القائمة">
@@ -542,9 +552,9 @@
         </button>
     </div>
 </div>
-
+ 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
+ 
 <div class="layout">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -561,10 +571,10 @@
             <div class="sidebar-loader">⏳ جاري تحميل المجلدات...</div>
         </div>
     </aside>
-
+ 
     <main class="main-content">
         <nav class="breadcrumb hidden-el" id="breadcrumb"></nav>
-
+ 
         <div id="contentHeader" class="content-header hidden-el">
             <div class="content-header-info">
                 <span class="content-header-icon">📁</span>
@@ -584,10 +594,10 @@
                 </button>
             </div>
         </div>
-
+ 
         <div id="filterBar" class="filter-bar hidden-el">
             <div class="filter-search">
-                <input type="text" class="search-input" id="imageFilter" placeholder="ابحث عن صورة بالاسم..." oninput="filterImages()">
+                <input type="text" class="search-input" id="imageFilter" placeholder="ابحث عن صورة أو مجلد..." oninput="filterImages()">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -619,17 +629,17 @@
                 </button>
             </div>
         </div>
-
+ 
         <div id="subFoldersSection" class="hidden-el">
             <div class="section-title">📁 المجلدات الفرعية</div>
             <div class="folders-grid" id="subFoldersGrid"></div>
         </div>
-
+ 
         <div id="imagesSection" class="hidden-el">
             <div class="section-title" id="imagesSectionTitle">🖼️ الصور</div>
             <div id="displayArea" class="images-grid"></div>
         </div>
-
+ 
         <div id="defaultEmptyState">
             <div class="memories-hero">
                 <div class="memories-hero-content">
@@ -654,12 +664,12 @@
         </div>
     </main>
 </div>
-
+ 
 <!-- Back to top -->
 <button class="btn-back-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="العودة للأعلى">
     <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
-
+ 
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
     <div class="lightbox-header">
@@ -669,6 +679,9 @@
         <div class="lightbox-title" id="lightboxTitle"></div>
         <div class="lightbox-counter" id="lightboxCounter"></div>
         <div class="lightbox-actions">
+            <button class="lightbox-btn" id="lightboxShare" onclick="shareLightboxImage()" aria-label="مشاركة">
+                <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </button>
             <a class="lightbox-btn" id="lightboxDownload" target="_blank" aria-label="تحميل">
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             </a>
@@ -685,7 +698,7 @@
     </div>
     <div class="lightbox-info" id="lightboxInfo" style="display:none"></div>
 </div>
-
+ 
 <!-- Progress -->
 <div class="progress-overlay" id="progressOverlay">
     <div class="progress-box">
@@ -694,17 +707,17 @@
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     </div>
 </div>
-
+ 
 <!-- Toast -->
 <div class="toast" id="toast">
     <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24"></svg>
     <span id="toastMessage"></span>
 </div>
-
+ 
 <script>
     const API_KEY        = 'AIzaSyCv3v7LHte7hTY82NmUmj9OJLxR0zFY0bU';
     const ROOT_FOLDER_ID = '1r0VfqjSzznFHhqMYFhB5bPzCeW92YFHa';
-
+ 
     // ====== State ======
     let allFolders     = [];
     let currentFolderId   = null;
@@ -719,23 +732,23 @@
     let navigationPath    = [];
     let currentSort       = 'newest';
     let currentView       = 'grid';
-
+ 
     const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const ARABIC_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-
+ 
     function formatDate(dateStr) {
         if (!dateStr) return '';
         const d = new Date(dateStr);
         if (isNaN(d)) return '';
         return `${d.getDate()} ${ARABIC_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
     }
-
+ 
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.innerText = String(text || '');
         return div.innerHTML;
     }
-
+ 
     // ====== Theme ======
     function initTheme() {
         const saved = localStorage.getItem('theme') || 'light';
@@ -757,7 +770,7 @@
             ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
             : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
     }
-
+ 
     // ====== Pagination helper: جلب كل الملفات ======
     async function fetchAllFilesInFolder(folderId, fields, orderBy = '') {
         let allFiles = [], pageToken = null;
@@ -772,7 +785,7 @@
         } while (pageToken);
         return allFiles;
     }
-
+ 
     // ====== Sort ======
     function applySortToFiltered() {
         filteredImages.sort((a, b) => {
@@ -791,7 +804,7 @@
         applySortToFiltered();
         renderImagesGrid();
     }
-
+ 
     // ====== View Toggle ======
     function setView(view) {
         currentView = view;
@@ -800,12 +813,12 @@
         const grid = document.getElementById('displayArea');
         grid.classList.toggle('list-view', view === 'list');
     }
-
+ 
     // ====== Back to Top ======
     window.addEventListener('scroll', () => {
-        document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 400);
+        document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 200);
     }, { passive: true });
-
+ 
     // ====== Sidebar Folders ======
     async function loadSidebarFolders() {
         const sidebarList = document.getElementById('sidebarList');
@@ -826,7 +839,7 @@
             sidebarList.innerHTML = '<div class="sidebar-empty">⚠️ حدث خطأ في التحميل</div>';
         }
     }
-
+ 
     function renderSidebar() {
         const sidebarList = document.getElementById('sidebarList');
         sidebarList.innerHTML = '';
@@ -846,7 +859,7 @@
             sidebarList.appendChild(item);
         });
     }
-
+ 
     async function updateFolderItemCount(folderId) {
         try {
             const files   = await fetchAllFilesInFolder(folderId, 'files(id,mimeType)');
@@ -860,30 +873,48 @@
                          : 'فارغ';
         } catch (e) {}
     }
-
+ 
     function filterFolders() {
         const q = document.getElementById('folderSearch').value.toLowerCase().trim();
         document.querySelectorAll('.folder-item').forEach(item => {
             item.classList.toggle('hidden-el', !item.dataset.name?.includes(q));
         });
     }
-
+ 
     function filterImages() {
         const q = document.getElementById('imageFilter').value.toLowerCase().trim();
-        filteredImages = currentImages.filter(img => img.name.toLowerCase().includes(q));
+        if (!q) {
+            filteredImages = [...currentImages];
+        } else {
+            // بحث شامل: اسم الصورة + مسار المجلد + اسم المجلد الحالي
+            filteredImages = currentImages.filter(img => {
+                const nameMatch = img.name.toLowerCase().includes(q);
+                const folderMatch = currentFolderName.toLowerCase().includes(q);
+                const pathMatch = (img.folderPath || '').toLowerCase().includes(q);
+                return nameMatch || folderMatch || pathMatch;
+            });
+        }
         applySortToFiltered();
         renderImagesGrid();
     }
-
+ 
+    // بحث شامل عبر الـ sidebar يفتح المجلد المطابق
+    function filterFoldersGlobal() {
+        const q = document.getElementById('folderSearch').value.toLowerCase().trim();
+        document.querySelectorAll('.folder-item').forEach(item => {
+            item.classList.toggle('hidden-el', !item.dataset.name?.includes(q));
+        });
+    }
+ 
     // ====== Open Folder ======
     async function openFolder(folderId, folderName, isRootLevel = false, skipHistory = false) {
         // أغلق الـ lightbox لو مفتوح
         const lb = document.getElementById('lightbox');
         if (lb.classList.contains('active')) { lb.classList.remove('active'); document.body.style.overflow = ''; }
-
+ 
         currentFolderId   = folderId;
         currentFolderName = folderName;
-
+ 
         if (isRootLevel) {
             navigationPath = [{ id: folderId, name: folderName }];
             document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
@@ -891,16 +922,16 @@
         } else {
             navigationPath.push({ id: folderId, name: folderName });
         }
-
+ 
         if (!skipHistory) history.pushState({ type: 'folder', path: [...navigationPath] }, folderName, `#${encodeURIComponent(folderName)}`);
-
+ 
         selectionMode = false; selectedImages.clear(); updateSelectionUI();
         if (window.innerWidth <= 768) closeSidebar();
-
+ 
         // إعادة تعيين الفرز والعرض
         currentSort = 'newest';
         document.querySelectorAll('.btn-sort-opt').forEach(el => el.classList.toggle('active', el.dataset.sort === 'newest'));
-
+ 
         document.getElementById('defaultEmptyState').classList.add('hidden-el');
         renderBreadcrumb();
         document.getElementById('breadcrumb').classList.remove('hidden-el');
@@ -911,9 +942,9 @@
         document.getElementById('subFoldersSection').classList.add('hidden-el');
         document.getElementById('imagesSection').classList.remove('hidden-el');
         document.getElementById('filterBar').classList.add('hidden-el');
-
+ 
         showSkeletonLoader();
-
+ 
         try {
             const files = await fetchAllFilesInFolder(folderId, 'files(id,name,mimeType,createdTime)', 'folder,name');
             currentSubFolders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
@@ -925,7 +956,7 @@
             document.getElementById('currentFolderCount').innerText = 'خطأ في التحميل';
         }
     }
-
+ 
     // ====== Breadcrumb ======
     function renderBreadcrumb() {
         const bc = document.getElementById('breadcrumb');
@@ -943,13 +974,13 @@
             bc.appendChild(item);
         });
     }
-
+ 
     function navigateToPath(index, skipHistory = false) {
         const target = navigationPath[index];
         navigationPath = navigationPath.slice(0, index);
         openFolder(target.id, target.name, index === 0, skipHistory);
     }
-
+ 
     function goHome(skipHistory = false) {
         const lb = document.getElementById('lightbox');
         if (lb.classList.contains('active')) { lb.classList.remove('active'); document.body.style.overflow = ''; }
@@ -962,7 +993,7 @@
         const cached = getCachedMemories(); if (cached) renderMemories(cached);
         if (!skipHistory) history.pushState({ type: 'home' }, '', window.location.pathname);
     }
-
+ 
     // ====== Browser history ======
     window.addEventListener('popstate', (event) => {
         const state = event.state;
@@ -981,7 +1012,7 @@
             openFolder(last.id, last.name, path.length === 1, true);
         }
     });
-
+ 
     // ====== Skeleton ======
     function showSkeletonLoader() {
         const area = document.getElementById('displayArea');
@@ -992,7 +1023,7 @@
             area.appendChild(s);
         }
     }
-
+ 
     // ====== Render Content ======
     function renderContent() {
         const hasSub = currentSubFolders.length > 0;
@@ -1002,10 +1033,10 @@
                       : hasImg ? `${currentImages.length} صورة`
                       : 'مجلد فارغ';
         document.getElementById('currentFolderCount').innerText = countText;
-
+ 
         document.getElementById('subFoldersSection').classList.toggle('hidden-el', !hasSub);
         if (hasSub) renderSubFolders();
-
+ 
         if (hasImg) {
             document.getElementById('imagesSection').classList.remove('hidden-el');
             document.getElementById('filterBar').classList.remove('hidden-el');
@@ -1021,11 +1052,11 @@
                 document.getElementById('imagesSection').classList.add('hidden-el');
             }
         }
-
+ 
         currentSubFolders.forEach(f => updateSubFolderCount(f.id));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+ 
     // ====== SubFolders ======
     function renderSubFolders() {
         const grid = document.getElementById('subFoldersGrid');
@@ -1039,7 +1070,7 @@
             grid.appendChild(card);
         });
     }
-
+ 
     async function updateSubFolderCount(folderId) {
         try {
             const files   = await fetchAllFilesInFolder(folderId, 'files(id,mimeType)');
@@ -1053,31 +1084,31 @@
                          : 'فارغ';
         } catch (e) {}
     }
-
+ 
     // ====== Images Grid ======
     function renderImagesGrid() {
         const area = document.getElementById('displayArea');
         area.innerHTML = '';
         area.classList.toggle('list-view', currentView === 'list');
-
+ 
         const title = document.getElementById('imagesSectionTitle');
         title.innerText = filteredImages.length !== currentImages.length
             ? `🖼️ الصور (${filteredImages.length} من ${currentImages.length})`
             : `🖼️ الصور (${currentImages.length})`;
-
+ 
         if (filteredImages.length === 0) {
             if (currentImages.length > 0)
                 area.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-title">لا توجد نتائج</div><div>لم نعثر على صور تطابق بحثك</div></div>';
             return;
         }
-
+ 
         filteredImages.forEach((p, i) => {
             const card = document.createElement('div');
             card.className = 'image-card';
             card.dataset.id = p.id;
             card.style.animationDelay = `${Math.min(i * 40, 400)}ms`;
             if (selectedImages.has(p.id)) card.classList.add('selected');
-
+ 
             const dateStr = formatDate(p.createdTime);
             card.innerHTML = `
                 <div class="img-checkbox ${selectedImages.has(p.id) ? 'active' : ''}" onclick="event.stopPropagation();toggleSelection('${p.id}')">
@@ -1101,30 +1132,34 @@
                         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                         حفظ
                     </a>
+                    <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${escapeHtml(p.name).replace(/'/g,"\\'")}')">
+                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        مشاركة
+                    </button>
                 </div>`;
             area.appendChild(card);
         });
-
+ 
         if (selectionMode) area.classList.add('selection-mode');
     }
-
+ 
     // ====== Selection ======
     function handleImageClick(id, index) {
         if (selectionMode) toggleSelection(id);
         else openLightbox(index);
     }
-
+ 
     function toggleSelectionMode() {
         selectionMode = !selectionMode;
         updateSelectionUI();
     }
-
+ 
     function updateSelectionUI() {
         const area = document.getElementById('displayArea');
         const selectBtnText = document.getElementById('selectBtnText');
         const downloadBtn   = document.getElementById('downloadZipBtn');
         const downloadText  = document.getElementById('downloadZipText');
-
+ 
         if (selectionMode) {
             area.classList.add('selection-mode');
             selectBtnText.innerText = 'إلغاء';
@@ -1135,7 +1170,7 @@
             document.querySelectorAll('.image-card').forEach(c => c.classList.remove('selected'));
             document.querySelectorAll('.img-checkbox').forEach(c => c.classList.remove('active'));
         }
-
+ 
         if (selectedImages.size > 0) {
             downloadBtn.classList.remove('hidden-el');
             downloadText.innerText = `تنزيل (${selectedImages.size})`;
@@ -1143,7 +1178,7 @@
             downloadBtn.classList.add('hidden-el');
         }
     }
-
+ 
     function toggleSelection(id) {
         if (!selectionMode) {
             selectionMode = true;
@@ -1157,7 +1192,7 @@
         else { selectedImages.add(id); card.classList.add('selected'); cb.classList.add('active'); }
         updateSelectionUI();
     }
-
+ 
     // ====== Download ZIP ======
     async function downloadSelectedAsZip() {
         if (selectedImages.size === 0) { showToast('لم تحدد أي صور', 'error'); return; }
@@ -1169,12 +1204,12 @@
         ptitle.innerText = '📦 جاري تجهيز الصور...';
         psub.innerText   = `0 من ${selectedImages.size}`;
         fill.style.width = '0%';
-
+ 
         const zip    = new JSZip();
         const folder = zip.folder(currentFolderName || 'images');
         const imgs   = currentImages.filter(img => selectedImages.has(img.id));
         let completed = 0, failed = 0;
-
+ 
         for (const img of imgs) {
             try {
                 const r = await fetch(`https://drive.google.com/thumbnail?id=${img.id}&sz=w2000`);
@@ -1184,7 +1219,7 @@
             fill.style.width = `${((completed + failed) / imgs.length) * 100}%`;
             psub.innerText   = `${completed + failed} من ${imgs.length}`;
         }
-
+ 
         ptitle.innerText = '🗜️ جاري ضغط الملفات...';
         try {
             const content = await zip.generateAsync({ type: 'blob' }, m => { fill.style.width = `${m.percent.toFixed(0)}%`; });
@@ -1201,7 +1236,7 @@
             showToast('حدث خطأ أثناء الضغط', 'error');
         }
     }
-
+ 
     // ====== Lightbox ======
     function openLightbox(index) {
         lightboxImages = [...filteredImages]; // نسخة مستقلة
@@ -1211,18 +1246,18 @@
         updateLightbox();
         history.pushState({ type: 'lightbox', path: [...navigationPath] }, '', window.location.href);
     }
-
+ 
     function navigateLightbox(dir) {
         const next = lightboxIndex + dir;
         if (next < 0 || next >= lightboxImages.length) return;
         lightboxIndex = next;
         updateLightbox();
     }
-
+ 
     function updateLightbox() {
         const img = lightboxImages[lightboxIndex];
         if (!img) return;
-
+ 
         const imgEl = document.getElementById('lightboxImg');
         imgEl.style.opacity = '0';
         setTimeout(() => {
@@ -1230,13 +1265,13 @@
             imgEl.alt = img.name;
             imgEl.onload = () => { imgEl.style.opacity = '1'; };
         }, 150);
-
+ 
         document.getElementById('lightboxTitle').innerText   = img.name;
         document.getElementById('lightboxCounter').innerText = `${lightboxIndex + 1} / ${lightboxImages.length}`;
         document.getElementById('lightboxDownload').href     = `https://drive.google.com/uc?export=download&id=${img.id}`;
         document.getElementById('lightboxPrev').disabled     = lightboxIndex === 0;
         document.getElementById('lightboxNext').disabled     = lightboxIndex === lightboxImages.length - 1;
-
+ 
         // Info bar
         const infoEl = document.getElementById('lightboxInfo');
         let html = '';
@@ -1245,7 +1280,7 @@
         infoEl.innerHTML = html;
         infoEl.style.display = html ? 'flex' : 'none';
     }
-
+ 
     // Keyboard
     document.addEventListener('keydown', (e) => {
         if (!document.getElementById('lightbox').classList.contains('active')) return;
@@ -1253,7 +1288,7 @@
         else if (e.key === 'ArrowLeft')  navigateLightbox(-1);
         else if (e.key === 'ArrowRight') navigateLightbox(1);
     });
-
+ 
     // Touch swipe
     let touchStartX = 0;
     const lbEl = document.getElementById('lightbox');
@@ -1262,7 +1297,30 @@
         const diff = e.changedTouches[0].screenX - touchStartX;
         if (Math.abs(diff) > 50) navigateLightbox(diff > 0 ? 1 : -1);
     }, { passive: true });
-
+ 
+    // ====== Share ======
+    async function shareImage(imageId, imageName) {
+        const imageUrl = `https://drive.google.com/file/d/${imageId}/view`;
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: imageName, text: imageName, url: imageUrl });
+                return;
+            } catch (e) { if (e.name === 'AbortError') return; }
+        }
+        // fallback: نسخ الرابط
+        try {
+            await navigator.clipboard.writeText(imageUrl);
+            showToast('تم نسخ رابط الصورة 📋', 'success');
+        } catch {
+            showToast('تعذّر المشاركة', 'error');
+        }
+    }
+ 
+    function shareLightboxImage() {
+        const img = lightboxImages[lightboxIndex];
+        if (img) shareImage(img.id, img.name);
+    }
+ 
     // ====== Toast ======
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
@@ -1275,7 +1333,7 @@
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
-
+ 
     // ====== Sidebar toggle ======
     function toggleSidebar() {
         const sb = document.getElementById('sidebar');
@@ -1288,12 +1346,12 @@
         document.body.style.overflow = '';
     }
     window.addEventListener('resize', () => { if (window.innerWidth > 768) closeSidebar(); });
-
+ 
     // ====== Memories System ======
     const MEMORIES_CACHE_KEY      = 'memories_cache_v2';
     const MEMORIES_CACHE_DURATION = 6 * 60 * 60 * 1000;
     const DAYS_WINDOW             = 14;
-
+ 
     async function loadMemories() {
         updateMemoriesHeader();
         const cached = getCachedMemories();
@@ -1312,14 +1370,14 @@
             showNoMemories('حدث خطأ أثناء تحميل الذكريات');
         }
     }
-
+ 
     function updateMemoriesHeader() {
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
         document.getElementById('memoriesTitle').innerText    = 'في مثل هذا اليوم';
         document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]}`;
     }
-
+ 
     async function fetchAllImagesRecursive(folderId, parentPath, progressEl) {
         let allImages = [];
         try {
@@ -1339,13 +1397,13 @@
         } catch (e) { console.error('Error fetching folder:', folderId, e); }
         return allImages;
     }
-
+ 
     function filterMemories(images) {
         const today          = new Date();
         const currentYear    = today.getFullYear();
         const todayDayOfYear = getDayOfYear(today);
         const memories       = {};
-
+ 
         images.forEach(img => {
             let imgDate = null;
             if (img.imageMediaMetadata?.time) {
@@ -1362,7 +1420,7 @@
                 memories[yearsAgo].push({ ...img, imgDate: imgDate.toISOString(), yearsAgo });
             }
         });
-
+ 
         Object.keys(memories).forEach(year => {
             memories[year].sort((a, b) => {
                 const todayDOY = getDayOfYear(new Date());
@@ -1371,22 +1429,22 @@
         });
         return memories;
     }
-
+ 
     function getDayOfYear(date) {
         return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
     }
-
+ 
     function renderMemories(memories) {
         const content = document.getElementById('memoriesContent');
         const years   = Object.keys(memories).map(Number).sort((a, b) => a - b);
         if (years.length === 0) { showNoMemories('لا توجد ذكريات من مثل هذا اليوم في السنوات السابقة'); return; }
-
+ 
         const total   = years.reduce((s, y) => s + memories[y].length, 0);
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
         document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • ${total} ذكرى`;
         content.innerHTML = '';
-
+ 
         years.forEach((yearsAgo, groupIdx) => {
             const images    = memories[yearsAgo];
             const year      = new Date().getFullYear() - yearsAgo;
@@ -1402,10 +1460,10 @@
                 </div>
                 <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
             content.appendChild(group);
-
+ 
             const grid = group.querySelector(`#memory-grid-${yearsAgo}`);
             const memImgs = images.map(img => ({ id: img.id, name: img.name }));
-
+ 
             images.forEach((p, i) => {
                 const imgDate = new Date(p.imgDate);
                 const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
@@ -1435,12 +1493,16 @@
                             <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             حفظ
                         </a>
+                        <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+                            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                            مشاركة
+                        </button>
                     </div>`;
                 grid.appendChild(card);
             });
         });
     }
-
+ 
     function openMemoryLightbox(images, index) {
         lightboxImages = images;
         lightboxIndex  = index;
@@ -1449,7 +1511,7 @@
         updateLightbox();
         history.pushState({ type: 'lightbox', path: [] }, '', window.location.href);
     }
-
+ 
     function showNoMemories(message) {
         document.getElementById('memoriesContent').innerHTML = `
             <div class="memories-empty">
@@ -1458,7 +1520,7 @@
                 <div class="memories-empty-text">اختر مجلد من القائمة الجانبية لتصفح الصور</div>
             </div>`;
     }
-
+ 
     // ====== Cache ======
     function cacheMemories(memories) {
         try { localStorage.setItem(MEMORIES_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), date: new Date().toDateString(), memories })); } catch {}
@@ -1473,7 +1535,7 @@
             return c.memories;
         } catch { return null; }
     }
-
+ 
     // ====== Init ======
     initTheme();
     loadSidebarFolders();
