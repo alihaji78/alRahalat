@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض قروب الرحلات الذكي</title>
+    <title>معرض قروب الرحلات </title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -154,6 +154,20 @@
         .folder-item-content { flex: 1; min-width: 0; }
         .folder-item-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
         .folder-item-count { font-size: 11px; color: var(--text-muted); background: var(--bg-primary); padding: 2px 8px; border-radius: 8px; display: inline-block; font-weight: 700; }
+
+        /* مجلدات فرعية داخل الـ sidebar */
+        .sidebar-sub-list { padding: 0 0 0 16px; }
+        .sidebar-sub-item {
+            display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+            border-radius: 10px; cursor: pointer;
+            transition: all 0.2s ease; margin-bottom: 3px;
+            border: 1px solid transparent; font-size: 13px; font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .sidebar-sub-item:hover { background: var(--hover-bg); color: var(--text-primary); }
+        .sidebar-sub-item.active { background: rgba(102,126,234,0.15); color: #667eea; }
+        .sidebar-sub-item-icon { font-size: 15px; flex-shrink: 0; }
+        .sidebar-sub-item-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
  
         /* ====== Main Content ====== */
         .main-content { flex: 1; padding: 22px; min-width: 0; max-width: 100%; }
@@ -426,18 +440,13 @@
         .progress-bar { width: 100%; height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--gradient-primary); width: 0%; transition: width 0.3s ease; border-radius: 4px; }
  
-        /* ====== Back to Top ====== */
-        .btn-back-top {
-            position: fixed; bottom: 26px; left: 26px; width: 50px; height: 50px; border-radius: 50%;
-            background: var(--gradient-primary); color: white; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 20px rgba(102,126,234,0.55); z-index: 1500;
-            opacity: 0; transform: translateY(20px) scale(0.8); pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        /* ====== Scroll to top in nav ====== */
+        #navScrollTop {
+            display: none;
         }
-        .btn-back-top.visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
-        .btn-back-top:hover { transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 28px rgba(102,126,234,0.7); }
-        .btn-back-top svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        #navScrollTop.visible {
+            display: flex;
+        }
  
         /* ====== Sidebar overlay / toggle ====== */
         .sidebar-toggle { display: none; }
@@ -545,10 +554,13 @@
             <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
     </div>
-    <div class="nav-title">✨ معرض قروب الرحلات</div>
+    <div class="nav-title">✨ معرض قروب الرحلات ✨</div>
     <div class="nav-side">
         <button class="btn-nav" id="themeToggle" onclick="toggleTheme()" aria-label="تبديل الوضع">
             <svg id="themeIcon" viewBox="0 0 24 24"></svg>
+        </button>
+        <button class="btn-nav" id="navScrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="الصعود للأعلى" title="الصعود للأعلى">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
     </div>
 </div>
@@ -664,11 +676,6 @@
         </div>
     </main>
 </div>
- 
-<!-- Back to top -->
-<button class="btn-back-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="العودة للأعلى">
-    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
  
 <!-- Lightbox -->
 <div class="lightbox" id="lightbox">
@@ -814,9 +821,12 @@
         grid.classList.toggle('list-view', view === 'list');
     }
  
-    // ====== Back to Top ======
+    // ====== Scroll to Top in Nav ======
     window.addEventListener('scroll', () => {
-        document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 200);
+        document.getElementById('navScrollTop').classList.toggle('visible', window.scrollY > 300);
+    }, { passive: true });
+    document.addEventListener('scroll', () => {
+        document.getElementById('navScrollTop').classList.toggle('visible', document.documentElement.scrollTop > 300);
     }, { passive: true });
  
     // ====== Sidebar Folders ======
@@ -832,7 +842,7 @@
                 return;
             }
             allFolders = data.files;
-            document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلد رئيسي`;
+            document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلدات رئيسية`;
             renderSidebar();
             allFolders.forEach(f => updateFolderItemCount(f.id));
         } catch (e) {
@@ -857,7 +867,52 @@
                     <span class="folder-item-count" id="count-${folder.id}">...</span>
                 </div>`;
             sidebarList.appendChild(item);
+            // حاوية المجلدات الفرعية (فارغة في البداية)
+            const subContainer = document.createElement('div');
+            subContainer.className = 'sidebar-sub-list';
+            subContainer.id = `sub-list-${folder.id}`;
+            sidebarList.appendChild(subContainer);
         });
+    }
+
+    // عرض المجلدات الفرعية في الـ sidebar تحت المجلد المفتوح
+    async function loadSubFoldersInSidebar(parentId) {
+        document.querySelectorAll('.sidebar-sub-list').forEach(el => { el.innerHTML = ''; });
+        const container = document.getElementById(`sub-list-${parentId}`);
+        if (!container) return;
+        try {
+            const url = `https://www.googleapis.com/drive/v3/files?q='${parentId}'+in+parents+and+trashed=false+and+mimeType='application/vnd.google-apps.folder'&fields=files(id,name)&key=${API_KEY}&orderBy=name&pageSize=200`;
+            const res  = await fetch(url);
+            const data = await res.json();
+            if (!data.files || data.files.length === 0) return;
+            data.files.forEach(sub => {
+                const el = document.createElement('div');
+                el.className = 'sidebar-sub-item';
+                el.id = `subfolder-sidebar-${sub.id}`;
+                el.dataset.name = sub.name.toLowerCase();
+                el.onclick = () => openFolder(sub.id, sub.name, false);
+                el.innerHTML = `<span class="sidebar-sub-item-icon">📂</span><span class="sidebar-sub-item-name">${escapeHtml(sub.name)}</span><span class="folder-item-count" id="subcount-sidebar-${sub.id}">...</span>`;
+                container.appendChild(el);
+                // جلب العداد بشكل غير متزامن
+                updateSidebarSubCount(sub.id);
+            });
+        } catch (e) {}
+    }
+
+    async function updateSidebarSubCount(folderId) {
+        try {
+            const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,mimeType)&key=${API_KEY}&pageSize=1000`;
+            const res  = await fetch(url);
+            const data = await res.json();
+            const el   = document.getElementById(`subcount-sidebar-${folderId}`);
+            if (!el || !data.files) return;
+            const images  = data.files.filter(f => f.mimeType?.startsWith('image/')).length;
+            const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
+            el.innerText = folders > 0 && images > 0 ? `${folders}📁 ${images}🖼`
+                         : folders > 0 ? `${folders} مجلد`
+                         : images  > 0 ? `${images} صورة`
+                         : 'فارغ';
+        } catch (e) {}
     }
  
     async function updateFolderItemCount(folderId) {
@@ -876,35 +931,26 @@
  
     function filterFolders() {
         const q = document.getElementById('folderSearch').value.toLowerCase().trim();
-        document.querySelectorAll('.folder-item').forEach(item => {
-            item.classList.toggle('hidden-el', !item.dataset.name?.includes(q));
+        // نبحث في المجلدات الرئيسية والفرعية معاً
+        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(item => {
+            const name = (item.dataset.name || '');
+            if (q === '') {
+                item.classList.remove('hidden-el');
+            } else {
+                item.classList.toggle('hidden-el', !name.includes(q));
+            }
         });
     }
  
     function filterImages() {
         const q = document.getElementById('imageFilter').value.toLowerCase().trim();
-        if (!q) {
-            filteredImages = [...currentImages];
-        } else {
-            // بحث شامل: اسم الصورة + مسار المجلد + اسم المجلد الحالي
-            filteredImages = currentImages.filter(img => {
-                const nameMatch = img.name.toLowerCase().includes(q);
-                const folderMatch = currentFolderName.toLowerCase().includes(q);
-                const pathMatch = (img.folderPath || '').toLowerCase().includes(q);
-                return nameMatch || folderMatch || pathMatch;
-            });
-        }
+        filteredImages = q === '' ? [...currentImages] : currentImages.filter(img => img.name.toLowerCase().includes(q));
         applySortToFiltered();
         renderImagesGrid();
     }
  
-    // بحث شامل عبر الـ sidebar يفتح المجلد المطابق
-    function filterFoldersGlobal() {
-        const q = document.getElementById('folderSearch').value.toLowerCase().trim();
-        document.querySelectorAll('.folder-item').forEach(item => {
-            item.classList.toggle('hidden-el', !item.dataset.name?.includes(q));
-        });
-    }
+    // دالة قديمة غير مستخدمة — نبقيها فارغة لتفادي أي خطأ
+    function filterFoldersGlobal() { filterFolders(); }
  
     // ====== Open Folder ======
     async function openFolder(folderId, folderName, isRootLevel = false, skipHistory = false) {
@@ -918,9 +964,15 @@
         if (isRootLevel) {
             navigationPath = [{ id: folderId, name: folderName }];
             document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar-sub-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`folder-${folderId}`)?.classList.add('active');
+            // عرض المجلدات الفرعية في الـ sidebar
+            loadSubFoldersInSidebar(folderId);
         } else {
             navigationPath.push({ id: folderId, name: folderName });
+            // تحديث active state في الـ sidebar للمجلد الفرعي
+            document.querySelectorAll('.sidebar-sub-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`subfolder-sidebar-${folderId}`)?.classList.add('active');
         }
  
         if (!skipHistory) history.pushState({ type: 'folder', path: [...navigationPath] }, folderName, `#${encodeURIComponent(folderName)}`);
@@ -988,6 +1040,7 @@
         currentImages = []; currentSubFolders = []; filteredImages = [];
         selectionMode = false; selectedImages.clear();
         document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.sidebar-sub-list').forEach(el => { el.innerHTML = ''; });
         ['breadcrumb','contentHeader','filterBar','subFoldersSection','imagesSection'].forEach(id => document.getElementById(id).classList.add('hidden-el'));
         document.getElementById('defaultEmptyState').classList.remove('hidden-el');
         const cached = getCachedMemories(); if (cached) renderMemories(cached);
@@ -1300,22 +1353,73 @@
  
     // ====== Share ======
     async function shareImage(imageId, imageName) {
-        const imageUrl = `https://drive.google.com/file/d/${imageId}/view`;
-        if (navigator.share) {
+        const fetchUrl = `https://drive.google.com/thumbnail?id=${imageId}&sz=w2000`;
+
+        // --- المحاولة الأولى: مشاركة الملف مباشرة (iOS Safari / Android Chrome) ---
+        if (typeof navigator.share === 'function') {
             try {
-                await navigator.share({ title: imageName, text: imageName, url: imageUrl });
-                return;
-            } catch (e) { if (e.name === 'AbortError') return; }
+                showToast('جاري تجهيز الصورة للمشاركة...', 'success');
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error('fetch_failed');
+                const blob = await response.blob();
+                const ext  = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
+                const safeExt = ['jpeg','jpg','png','gif','webp','heic'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg';
+                const fileName = imageName.replace(/\.[^.]*$/, '') + '.' + safeExt;
+                const file = new File([blob], fileName, { type: blob.type || 'image/jpeg', lastModified: Date.now() });
+
+                // تحقق من دعم مشاركة الملفات
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: imageName });
+                    return;
+                }
+
+                // إذا لم يدعم الملفات — جرب مشاركة الـ blob URL
+                const blobUrl = URL.createObjectURL(blob);
+                try {
+                    if (navigator.canShare && navigator.canShare({ url: blobUrl })) {
+                        await navigator.share({ title: imageName, url: blobUrl });
+                        URL.revokeObjectURL(blobUrl);
+                        return;
+                    }
+                } catch(e2) { /* تجاوز */ }
+                URL.revokeObjectURL(blobUrl);
+
+            } catch (e) {
+                if (e.name === 'AbortError') return; // المستخدم ألغى
+                // استمر للـ fallback
+            }
         }
-        // fallback: نسخ الرابط
+
+        // --- المحاولة الثانية: فتح رابط تحميل مباشر يُشغّل قائمة الحفظ/المشاركة ---
         try {
-            await navigator.clipboard.writeText(imageUrl);
+            const response = await fetch(fetchUrl);
+            if (response.ok) {
+                const blob    = await response.blob();
+                const ext     = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
+                const safeExt = ext === 'jpeg' ? 'jpg' : ext;
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = imageName.replace(/\.[^.]*$/, '') + '.' + safeExt;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+                showToast('يمكنك مشاركة الصورة من معرض الصور 🖼️', 'success');
+                return;
+            }
+        } catch(e) { /* استمر */ }
+
+        // --- fallback أخير: نسخ الرابط ---
+        const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
+        try {
+            await navigator.clipboard.writeText(driveUrl);
             showToast('تم نسخ رابط الصورة 📋', 'success');
         } catch {
-            showToast('تعذّر المشاركة', 'error');
+            showToast('تعذّرت المشاركة', 'error');
         }
     }
- 
+
     function shareLightboxImage() {
         const img = lightboxImages[lightboxIndex];
         if (img) shareImage(img.id, img.name);
