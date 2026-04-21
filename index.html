@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض قروب الرحلات </title>
+    <title>معرض قروب الرحلات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -393,8 +393,22 @@
         .lightbox-btn:hover { background: rgba(255,255,255,0.2); }
         .lightbox-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
  
-        .lightbox-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; }
-        .lightbox-img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; user-select: none; -webkit-user-drag: none; transition: opacity 0.2s ease; }
+        .lightbox-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; cursor: grab; }
+        .lightbox-body.dragging { cursor: grabbing; }
+        .lightbox-img {
+            max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
+            user-select: none; -webkit-user-drag: none; transition: opacity 0.2s ease;
+            transform-origin: center center;
+            touch-action: none;
+        }
+        .lightbox-img.zoomed { cursor: move; transition: opacity 0.2s ease; }
+        .lightbox-zoom-hint {
+            position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.7);
+            padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 600;
+            pointer-events: none; opacity: 1; transition: opacity 1s ease;
+        }
+        .lightbox-zoom-hint.fade { opacity: 0; }
  
         .lightbox-nav {
             position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px;
@@ -686,6 +700,13 @@
         <div class="lightbox-title" id="lightboxTitle"></div>
         <div class="lightbox-counter" id="lightboxCounter"></div>
         <div class="lightbox-actions">
+            <button class="lightbox-btn" onclick="lbZoomOut()" aria-label="تصغير" title="تصغير">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
+            <button class="lightbox-btn" id="lightboxZoomReset" onclick="lbResetZoom(true)" aria-label="الحجم الأصلي" title="الحجم الأصلي" style="font-size:11px;font-weight:800;font-family:'Cairo',sans-serif;">1×</button>
+            <button class="lightbox-btn" onclick="lbZoomIn()" aria-label="تكبير" title="تكبير">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
             <button class="lightbox-btn" id="lightboxShare" onclick="shareLightboxImage()" aria-label="مشاركة">
                 <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
             </button>
@@ -842,7 +863,7 @@
                 return;
             }
             allFolders = data.files;
-            document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلدات رئيسية`;
+            document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلد رئيسي`;
             renderSidebar();
             allFolders.forEach(f => updateFolderItemCount(f.id));
         } catch (e) {
@@ -1292,8 +1313,9 @@
  
     // ====== Lightbox ======
     function openLightbox(index) {
-        lightboxImages = [...filteredImages]; // نسخة مستقلة
+        lightboxImages = [...filteredImages];
         lightboxIndex  = index;
+        lbResetZoom(false);
         document.getElementById('lightbox').classList.add('active');
         document.body.style.overflow = 'hidden';
         updateLightbox();
@@ -1304,6 +1326,7 @@
         const next = lightboxIndex + dir;
         if (next < 0 || next >= lightboxImages.length) return;
         lightboxIndex = next;
+        lbResetZoom(false);
         updateLightbox();
     }
  
@@ -1342,14 +1365,119 @@
         else if (e.key === 'ArrowRight') navigateLightbox(1);
     });
  
-    // Touch swipe
-    let touchStartX = 0;
+    // Touch swipe + zoom
+    let touchStartX = 0, touchStartY = 0;
+    let lbScale = 1, lbTransX = 0, lbTransY = 0;
+    let lbLastTap = 0;
+    let pinchStartDist = 0, pinchStartScale = 1;
+    let isDragging = false, dragStartX = 0, dragStartY = 0, dragStartTX = 0, dragStartTY = 0;
+
+    function lbApplyTransform(animated = false) {
+        const img = document.getElementById('lightboxImg');
+        img.style.transition = animated ? 'transform 0.3s ease, opacity 0.2s ease' : 'opacity 0.2s ease';
+        img.style.transform = `scale(${lbScale}) translate(${lbTransX}px, ${lbTransY}px)`;
+        img.classList.toggle('zoomed', lbScale > 1);
+        // تحديث زر الـ reset بنسبة التكبير
+        const resetBtn = document.getElementById('lightboxZoomReset');
+        if (resetBtn) resetBtn.textContent = lbScale === 1 ? '1×' : `${lbScale.toFixed(1)}×`;
+    }
+
+    function lbResetZoom(animated = true) {
+        lbScale = 1; lbTransX = 0; lbTransY = 0;
+        lbApplyTransform(animated);
+    }
+
+    function lbZoomIn() {
+        lbScale = Math.min(5, parseFloat((lbScale * 1.4).toFixed(2)));
+        lbApplyTransform(true);
+    }
+
+    function lbZoomOut() {
+        lbScale = Math.max(1, parseFloat((lbScale / 1.4).toFixed(2)));
+        if (lbScale <= 1.05) { lbScale = 1; lbTransX = 0; lbTransY = 0; }
+        lbApplyTransform(true);
+    }
+
     const lbEl = document.getElementById('lightbox');
-    lbEl.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    lbEl.addEventListener('touchend',   e => {
-        const diff = e.changedTouches[0].screenX - touchStartX;
-        if (Math.abs(diff) > 50) navigateLightbox(diff > 0 ? 1 : -1);
+    const lbBody = document.getElementById('lightbox').querySelector('.lightbox-body');
+
+    // Double-tap / double-click to zoom
+    lbEl.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.lightbox-nav') || e.target.closest('.lightbox-btn')) return;
+        if (lbScale > 1) { lbResetZoom(); } else { lbScale = 2.5; lbApplyTransform(true); }
+    });
+
+    lbEl.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+            // double-tap detection
+            const now = Date.now();
+            if (now - lbLastTap < 300) {
+                if (lbScale > 1) lbResetZoom(); else { lbScale = 2.5; lbApplyTransform(true); }
+                lbLastTap = 0;
+            } else { lbLastTap = now; }
+        } else if (e.touches.length === 2) {
+            // pinch start
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            pinchStartDist  = Math.hypot(dx, dy);
+            pinchStartScale = lbScale;
+        }
     }, { passive: true });
+
+    lbEl.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const dx   = e.touches[0].clientX - e.touches[1].clientX;
+            const dy   = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.hypot(dx, dy);
+            lbScale = Math.min(5, Math.max(1, pinchStartScale * (dist / pinchStartDist)));
+            lbApplyTransform();
+        } else if (e.touches.length === 1 && lbScale > 1) {
+            e.preventDefault();
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            lbTransX += dx / lbScale; lbTransY += dy / lbScale;
+            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY;
+            lbApplyTransform();
+        }
+    }, { passive: false });
+
+    lbEl.addEventListener('touchend', e => {
+        if (e.touches.length === 0 && lbScale === 1) {
+            // swipe navigation only when not zoomed
+            const diff = e.changedTouches[0].screenX - touchStartX;
+            const diffY = Math.abs(e.changedTouches[0].screenY - touchStartY);
+            if (Math.abs(diff) > 50 && diffY < 80) navigateLightbox(diff > 0 ? 1 : -1);
+        }
+        if (lbScale < 1.05) lbResetZoom(true);
+    }, { passive: true });
+
+    // Mouse wheel zoom
+    lbEl.addEventListener('wheel', e => {
+        if (!document.getElementById('lightbox').classList.contains('active')) return;
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? 0.85 : 1.15;
+        lbScale = Math.min(5, Math.max(1, lbScale * delta));
+        if (lbScale <= 1) { lbScale = 1; lbTransX = 0; lbTransY = 0; }
+        lbApplyTransform();
+    }, { passive: false });
+
+    // Mouse drag when zoomed
+    lbEl.addEventListener('mousedown', e => {
+        if (lbScale <= 1 || e.target.closest('.lightbox-nav') || e.target.closest('.lightbox-btn')) return;
+        isDragging = true; dragStartX = e.clientX; dragStartY = e.clientY;
+        dragStartTX = lbTransX; dragStartTY = lbTransY;
+        lbBody.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        lbTransX = dragStartTX + (e.clientX - dragStartX) / lbScale;
+        lbTransY = dragStartTY + (e.clientY - dragStartY) / lbScale;
+        lbApplyTransform();
+    });
+    window.addEventListener('mouseup', () => { isDragging = false; lbBody?.classList.remove('dragging'); });
  
     // ====== Share ======
     async function shareImage(imageId, imageName) {
@@ -1459,7 +1587,7 @@
     async function loadMemories() {
         updateMemoriesHeader();
         const cached = getCachedMemories();
-        if (cached) { renderMemories(cached); return; }
+        if (cached) { renderMemories(cached.memories, cached.allImages); return; }
         const progressEl = document.getElementById('memoriesProgress');
         try {
             progressEl.innerText = 'جاري فحص المجلدات الرئيسية...';
@@ -1467,8 +1595,8 @@
             if (allImages.length === 0) { showNoMemories('لا توجد صور حتى الآن'); return; }
             progressEl.innerText = `تم العثور على ${allImages.length} صورة، جاري تحليل التواريخ...`;
             const memories = filterMemories(allImages);
-            cacheMemories(memories);
-            renderMemories(memories);
+            cacheMemories(memories, allImages);
+            renderMemories(memories, allImages);
         } catch (e) {
             console.error(e);
             showNoMemories('حدث خطأ أثناء تحميل الذكريات');
@@ -1503,11 +1631,12 @@
     }
  
     function filterMemories(images) {
-        const today          = new Date();
-        const currentYear    = today.getFullYear();
-        const todayDayOfYear = getDayOfYear(today);
-        const memories       = {};
- 
+        const today       = new Date();
+        const currentYear = today.getFullYear();
+        const todayMonth  = today.getMonth();   // 0-11
+        const todayDay    = today.getDate();    // 1-31
+        const memories    = {};
+
         images.forEach(img => {
             let imgDate = null;
             if (img.imageMediaMetadata?.time) {
@@ -1515,40 +1644,52 @@
             }
             if (!imgDate || isNaN(imgDate)) imgDate = new Date(img.createdTime);
             if (isNaN(imgDate)) return;
+
             const imgYear = imgDate.getFullYear();
-            if (imgYear >= currentYear) return;
-            const circularDiff = (() => { const d = Math.abs(getDayOfYear(imgDate) - todayDayOfYear); return Math.min(d, 365 - d); })();
-            if (circularDiff <= DAYS_WINDOW) {
+            if (imgYear >= currentYear) return; // نستبعد هذا العام
+
+            // نفس اليوم ونفس الشهر بالضبط
+            if (imgDate.getMonth() === todayMonth && imgDate.getDate() === todayDay) {
                 const yearsAgo = currentYear - imgYear;
                 if (!memories[yearsAgo]) memories[yearsAgo] = [];
                 memories[yearsAgo].push({ ...img, imgDate: imgDate.toISOString(), yearsAgo });
             }
         });
- 
+
+        // ترتيب الصور داخل كل سنة من الأحدث للأقدم
         Object.keys(memories).forEach(year => {
-            memories[year].sort((a, b) => {
-                const todayDOY = getDayOfYear(new Date());
-                return Math.abs(getDayOfYear(new Date(a.imgDate)) - todayDOY) - Math.abs(getDayOfYear(new Date(b.imgDate)) - todayDOY);
-            });
+            memories[year].sort((a, b) => new Date(b.imgDate) - new Date(a.imgDate));
         });
+
         return memories;
     }
- 
-    function getDayOfYear(date) {
-        return Math.floor((date - new Date(date.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+
+    // اختيار 20 صورة عشوائية من كل الصور
+    function pickRandomImages(images, count = 20) {
+        const shuffled = [...images].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
     }
  
-    function renderMemories(memories) {
+    function renderMemories(memories, allImages) {
         const content = document.getElementById('memoriesContent');
         const years   = Object.keys(memories).map(Number).sort((a, b) => a - b);
-        if (years.length === 0) { showNoMemories('لا توجد ذكريات من مثل هذا اليوم في السنوات السابقة'); return; }
- 
+
+        // إذا لا توجد ذكريات من هذا اليوم → عرض 20 عشوائية
+        if (years.length === 0) {
+            if (allImages && allImages.length > 0) {
+                renderRandomImages(allImages);
+            } else {
+                showNoMemories('لا توجد ذكريات من مثل هذا اليوم');
+            }
+            return;
+        }
+
         const total   = years.reduce((s, y) => s + memories[y].length, 0);
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
         document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • ${total} ذكرى`;
         content.innerHTML = '';
- 
+
         years.forEach((yearsAgo, groupIdx) => {
             const images    = memories[yearsAgo];
             const year      = new Date().getFullYear() - yearsAgo;
@@ -1564,10 +1705,10 @@
                 </div>
                 <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
             content.appendChild(group);
- 
-            const grid = group.querySelector(`#memory-grid-${yearsAgo}`);
+
+            const grid    = group.querySelector(`#memory-grid-${yearsAgo}`);
             const memImgs = images.map(img => ({ id: img.id, name: img.name }));
- 
+
             images.forEach((p, i) => {
                 const imgDate = new Date(p.imgDate);
                 const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
@@ -1606,6 +1747,62 @@
             });
         });
     }
+
+    function renderRandomImages(allImages) {
+        const content  = document.getElementById('memoriesContent');
+        const today    = new Date();
+        const dayName  = ARABIC_DAYS[today.getDay()];
+        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • لقطات عشوائية`;
+        document.getElementById('memoriesTitle').innerText = '✨ لقطات من الذاكرة';
+
+        const picked  = pickRandomImages(allImages, 20);
+        const memImgs = picked.map(img => ({ id: img.id, name: img.name, createdTime: img.createdTime }));
+
+        content.innerHTML = '';
+        const group = document.createElement('div');
+        group.className = 'memory-year-group';
+        group.innerHTML = `
+            <div class="memory-year-header">
+                <span class="memory-year-number">🎲</span>
+                <span class="memory-year-label">لا توجد ذكريات من هذا اليوم</span>
+                <span class="memory-year-count">${picked.length} صورة عشوائية</span>
+            </div>
+            <div class="images-grid" id="random-grid"></div>`;
+        content.appendChild(group);
+
+        const grid = group.querySelector('#random-grid');
+        picked.forEach((p, i) => {
+            const dateStr = formatDate(p.createdTime);
+            const card    = document.createElement('div');
+            card.className = 'image-card memory-card';
+            card.style.animationDelay = `${Math.min(i * 40, 400)}ms`;
+            card.innerHTML = `
+                <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(memImgs)},${i})'>
+                    <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
+                    <div class="img-overlay">
+                        <span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10l6.1-6.1M9 21H3v-6M10 14l-6.1 6.1"/></svg>
+                            عرض بالحجم الكامل
+                        </span>
+                    </div>
+                </div>
+                <div class="img-info">
+                    <div class="img-meta">
+                        <div class="img-name">${escapeHtml(p.name)}</div>
+                        ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                    </div>
+                    <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
+                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        حفظ
+                    </a>
+                    <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        مشاركة
+                    </button>
+                </div>`;
+            grid.appendChild(card);
+        });
+    }
  
     function openMemoryLightbox(images, index) {
         lightboxImages = images;
@@ -1626,8 +1823,21 @@
     }
  
     // ====== Cache ======
-    function cacheMemories(memories) {
-        try { localStorage.setItem(MEMORIES_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), date: new Date().toDateString(), memories })); } catch {}
+    function cacheMemories(memories, allImages) {
+        try {
+            // نخزّن الذكريات + مراجع مختصرة للصور الكاملة (id, name, createdTime, folderPath فقط)
+            const compactAll = allImages.map(img => ({
+                id: img.id, name: img.name,
+                createdTime: img.createdTime,
+                folderPath: img.folderPath || ''
+            }));
+            localStorage.setItem(MEMORIES_CACHE_KEY, JSON.stringify({
+                timestamp: Date.now(),
+                date: new Date().toDateString(),
+                memories,
+                allImages: compactAll
+            }));
+        } catch {}
     }
     function getCachedMemories() {
         try {
@@ -1636,7 +1846,7 @@
             const c = JSON.parse(raw);
             if (c.date !== new Date().toDateString()) return null;
             if (Date.now() - c.timestamp > MEMORIES_CACHE_DURATION) return null;
-            return c.memories;
+            return { memories: c.memories, allImages: c.allImages || [] };
         } catch { return null; }
     }
  
