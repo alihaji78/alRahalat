@@ -50,6 +50,7 @@
         }
  
         html, body { height: 100%; overflow-x: hidden; }
+        html { text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
  
         body {
             font-family: 'Cairo', sans-serif;
@@ -93,6 +94,9 @@
             background: var(--gradient-primary);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text; letter-spacing: -0.3px;
+            line-height: 1.35;
+            min-width: 0;
+            overflow-wrap: anywhere;
         }
         .btn-nav {
             background: var(--bg-glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
@@ -228,7 +232,9 @@
             border-radius: 12px; font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
             cursor: pointer; border: 1px solid var(--border); background: var(--bg-primary);
             color: var(--text-primary); transition: all 0.2s ease; white-space: nowrap;
+            min-width: 0;
         }
+        .btn-action span { overflow: hidden; text-overflow: ellipsis; }
         .btn-action:hover { background: var(--hover-bg); transform: translateY(-1px); }
         .btn-action.primary { background: var(--gradient-primary); color: white; border-color: transparent; }
         .btn-action.primary:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
@@ -275,6 +281,32 @@
             display: flex; align-items: center; gap: 8px; letter-spacing: 0.5px;
         }
         .section-title:first-child { margin-top: 0; }
+        .load-more-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 14px 0 4px;
+        }
+        .load-more-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .btn-load-more {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-load-more:hover { background: var(--hover-bg); transform: translateY(-1px); }
  
         /* ====== Folders Grid ====== */
         .folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
@@ -305,7 +337,7 @@
         .images-grid.list-view .img-container img { max-height: 66px; object-fit: cover; }
         .images-grid.list-view .img-overlay { display: none; }
         .images-grid.list-view .img-info { flex: 1; padding: 8px 12px 8px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .images-grid.list-view .img-name { white-space: normal; -webkit-line-clamp: 2; }
+        .images-grid.list-view .img-name { white-space: normal; -webkit-line-clamp: 2; line-clamp: 2; }
         .images-grid.list-view .img-checkbox { top: 50%; transform: translateY(-50%); }
         .images-grid.list-view .img-meta { flex: 1; min-width: 120px; }
         .images-grid.list-view .btn-download,
@@ -388,6 +420,7 @@
             border-radius: 10px; font-size: 12px; font-weight: 700; flex-shrink: 0;
             transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
             cursor: pointer; border: 1px solid var(--border); font-family: 'Cairo', sans-serif;
+            min-width: 0;
         }
         .btn-share:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); background: var(--hover-bg); }
         .btn-share svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
@@ -604,6 +637,8 @@
             .folders-grid { grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
         }
         @media (max-width: 768px) {
+            .nav { height: auto; min-height: 70px; padding: 8px 12px; gap: 8px; }
+            .nav-title { font-size: clamp(14px, 4vw, 18px); text-wrap: balance; }
             .sidebar { position: fixed; top: 0; right: 0; height: 100vh; width: 85%; max-width: 320px; transform: translateX(100%); box-shadow: -5px 0 30px rgba(0,0,0,0.2); z-index: 1002; }
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle { display: flex; }
@@ -628,6 +663,10 @@
             .sort-text { display: none; }
             .btn-sort-opt { padding: 6px 8px; }
             .btn-sort-opt svg { width: 13px; height: 13px; }
+            .content-actions { width: 100%; }
+            .btn-action { max-width: 100%; }
+            .images-grid.list-view .btn-download,
+            .images-grid.list-view .btn-share { white-space: normal; }
         }
         @media (max-width: 400px) {
             .nav-title { font-size: 15px; }
@@ -777,6 +816,10 @@
         <div id="imagesSection" class="hidden-el">
             <div class="section-title" id="imagesSectionTitle">🖼️ الصور</div>
             <div id="displayArea" class="images-grid"></div>
+            <div class="load-more-wrap hidden-el" id="loadMoreWrap">
+                <span class="load-more-status" id="loadMoreStatus"></span>
+                <button class="btn-load-more" id="loadMoreBtn" onclick="loadMoreImages()">تحميل المزيد</button>
+            </div>
         </div>
  
         <div id="defaultEmptyState">
@@ -875,6 +918,8 @@
     let navigationPath    = [];
     let currentSort       = 'newest';
     let currentView       = 'grid';
+    let visibleImagesCount = 120;
+    const IMAGES_PAGE_SIZE = 120;
  
     const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const ARABIC_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
@@ -936,6 +981,21 @@
         do {
             let url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=nextPageToken,${fields}&key=${API_KEY}&pageSize=1000`;
             if (orderBy)   url += `&orderBy=${orderBy}`;
+            if (pageToken) url += `&pageToken=${encodeURIComponent(pageToken)}`;
+            const res  = await fetch(url);
+            const data = await res.json();
+            if (data.files) allFiles = allFiles.concat(data.files);
+            pageToken = data.nextPageToken || null;
+        } while (pageToken);
+        return allFiles;
+    }
+
+    // ====== Pagination helper: جلب كل النتائج من أي استعلام Drive ======
+    async function fetchAllFilesByQuery(query, fields, orderBy = '') {
+        let allFiles = [], pageToken = null;
+        do {
+            let url = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=nextPageToken,${fields}&key=${API_KEY}&pageSize=1000`;
+            if (orderBy)   url += `&orderBy=${encodeURIComponent(orderBy)}`;
             if (pageToken) url += `&pageToken=${encodeURIComponent(pageToken)}`;
             const res  = await fetch(url);
             const data = await res.json();
@@ -1040,15 +1100,14 @@
         const sidebarList = document.getElementById('sidebarList');
         sidebarList.innerHTML = '<div class="sidebar-loader">⏳ جاري تحميل المجلدات...</div>';
         try {
-            const url = `https://www.googleapis.com/drive/v3/files?q='${ROOT_FOLDER_ID}'+in+parents+and+trashed=false+and+mimeType='application/vnd.google-apps.folder'&fields=files(id,name)&key=${API_KEY}&orderBy=name`;
-            const res  = await fetch(url);
-            const data = await res.json();
-            if (!data.files || data.files.length === 0) {
+            const query = `'${ROOT_FOLDER_ID}' in parents and trashed=false and mimeType='application/vnd.google-apps.folder'`;
+            const rootFolders = await fetchAllFilesByQuery(query, 'files(id,name)', 'name');
+            if (!rootFolders || rootFolders.length === 0) {
                 sidebarList.innerHTML = '<div class="sidebar-empty">لا توجد مجلدات</div>';
                 document.getElementById('sidebarSubtitle').innerText = '0 مجلد';
                 return;
             }
-            allFolders = data.files;
+            allFolders = rootFolders;
             document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلد رئيسي`;
             sidebarTree = allFolders.map(f => ({ id: f.id, name: f.name, depth: 1, children: [], imageCount: null }));
             renderSidebarTree();
@@ -1061,12 +1120,10 @@
 
     async function loadTreeChildren(node, maxDepth) {
         try {
-            const url = `https://www.googleapis.com/drive/v3/files?q='${node.id}'+in+parents+and+trashed=false&fields=files(id,name,mimeType)&key=${API_KEY}&orderBy=name&pageSize=500`;
-            const res  = await fetch(url);
-            const data = await res.json();
-            if (!data.files) return;
-            const subFolders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
-            const imgCount   = data.files.filter(f => f.mimeType?.startsWith('image/')).length;
+            const files = await fetchAllFilesInFolder(node.id, 'files(id,name,mimeType)', 'name');
+            if (!files) return;
+            const subFolders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+            const imgCount   = files.filter(f => f.mimeType?.startsWith('image/')).length;
             node.imageCount  = imgCount;
             node.children    = subFolders.map(f => ({ id: f.id, name: f.name, depth: node.depth + 1, children: [], imageCount: null }));
             updateNodeDisplay(node);
@@ -1168,6 +1225,7 @@
         const q = document.getElementById('imageFilter').value.toLowerCase().trim();
         filteredImages = q === '' ? [...currentImages] : currentImages.filter(img => img.name.toLowerCase().includes(q));
         applySortToFiltered();
+        visibleImagesCount = Math.min(IMAGES_PAGE_SIZE, filteredImages.length);
         renderImagesGrid();
     }
     function filterSubFolders() {
@@ -1262,6 +1320,7 @@
             filteredSubFolders = [...currentSubFolders];
             currentImages     = files.filter(f => f.mimeType?.startsWith('image/')).sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime));
             filteredImages    = [...currentImages];
+            visibleImagesCount = Math.min(IMAGES_PAGE_SIZE, filteredImages.length);
             renderContent();
         } catch (e) {
             document.getElementById('displayArea').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">حدث خطأ</div><div>تعذر تحميل المحتوى. حاول مرة أخرى.</div></div>';
@@ -1407,10 +1466,31 @@
     }
  
     // ====== Images Grid ======
+    function getVisibleImages() {
+        return filteredImages.slice(0, visibleImagesCount);
+    }
+    function updateLoadMoreUI() {
+        const wrap = document.getElementById('loadMoreWrap');
+        const status = document.getElementById('loadMoreStatus');
+        const btn = document.getElementById('loadMoreBtn');
+        if (!wrap || !status || !btn) return;
+        const shown = Math.min(visibleImagesCount, filteredImages.length);
+        const total = filteredImages.length;
+        status.innerText = `المعروض ${shown} من ${total}`;
+        const hasMore = shown < total;
+        wrap.classList.toggle('hidden-el', total === 0);
+        btn.classList.toggle('hidden-el', !hasMore);
+    }
+    function loadMoreImages() {
+        if (visibleImagesCount >= filteredImages.length) return;
+        visibleImagesCount = Math.min(visibleImagesCount + IMAGES_PAGE_SIZE, filteredImages.length);
+        renderImagesGrid();
+    }
     function renderImagesGrid() {
         const area = document.getElementById('displayArea');
         area.innerHTML = '';
         area.classList.toggle('list-view', currentView === 'list');
+        const visibleImages = getVisibleImages();
  
         const title = document.getElementById('imagesSectionTitle');
         title.innerText = filteredImages.length !== currentImages.length
@@ -1423,7 +1503,7 @@
             return;
         }
  
-        filteredImages.forEach((p, i) => {
+        visibleImages.forEach((p, i) => {
             const card = document.createElement('div');
             card.className = 'image-card';
             card.dataset.id = p.id;
@@ -1460,6 +1540,7 @@
                 </div>`;
             area.appendChild(card);
         });
+        updateLoadMoreUI();
  
         if (selectionMode) area.classList.add('selection-mode');
     }
@@ -1514,12 +1595,13 @@
         updateSelectionUI();
     }
     function selectAllVisible() {
-        if (filteredImages.length === 0) return;
+        const visible = getVisibleImages();
+        if (visible.length === 0) return;
         selectionMode = true;
-        filteredImages.forEach(img => selectedImages.add(img.id));
+        visible.forEach(img => selectedImages.add(img.id));
         updateSelectionUI();
         renderImagesGrid();
-        showToast(`تم تحديد ${filteredImages.length} صورة ظاهرة`, 'success');
+        showToast(`تم تحديد ${visible.length} صورة ظاهرة`, 'success');
     }
     function clearSelectionFast() {
         if (selectedImages.size === 0 && !selectionMode) return;
@@ -1789,12 +1871,21 @@
     // ====== Share ======
     async function shareImage(imageId, imageName) {
         const fetchUrl = `https://drive.google.com/thumbnail?id=${imageId}&sz=w2000`;
+        const fetchWithTimeout = async (url, timeoutMs = 12000) => {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                return await fetch(url, { signal: controller.signal });
+            } finally {
+                clearTimeout(timer);
+            }
+        };
 
         // --- المحاولة الأولى: مشاركة الملف الفعلي عبر Web Share ---
         if (typeof navigator.share === 'function') {
             try {
                 showToast('جاري تجهيز الصورة للمشاركة...', 'success');
-                const response = await fetch(fetchUrl);
+                const response = await fetchWithTimeout(fetchUrl);
                 if (!response.ok) throw new Error('fetch_failed');
                 const blob = await response.blob();
                 const ext  = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
@@ -1813,7 +1904,7 @@
 
         // --- fallback: تنزيل الملف محليًا ليمكن مشاركته من أي تطبيق ---
         try {
-            const response = await fetch(fetchUrl);
+            const response = await fetchWithTimeout(fetchUrl);
             if (response.ok) {
                 const blob    = await response.blob();
                 const ext     = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
@@ -1847,16 +1938,25 @@
     }
  
     // ====== Toast ======
+    let toastTimer = null;
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         const icon  = document.getElementById('toastIcon');
+        if (toastTimer) {
+            clearTimeout(toastTimer);
+            toastTimer = null;
+        }
+        toast.classList.remove('show');
         toast.className = `toast ${type}`;
         document.getElementById('toastMessage').innerText = message;
         icon.innerHTML = type === 'success'
             ? '<polyline points="20 6 9 17 4 12"/>'
             : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
+        requestAnimationFrame(() => toast.classList.add('show'));
+        toastTimer = setTimeout(() => {
+            toast.classList.remove('show');
+            toastTimer = null;
+        }, 3000);
     }
  
     // ====== Sidebar toggle ======
