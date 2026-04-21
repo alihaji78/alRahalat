@@ -150,24 +150,31 @@
         .folder-item.active .folder-item-count { background: rgba(255,255,255,0.2); color: var(--accent-text); }
         [data-theme="dark"] .folder-item.active .folder-item-count { background: rgba(0,0,0,0.2); }
         .folder-item.hidden-el { display: none; }
-        .folder-item-icon { font-size: 24px; flex-shrink: 0; width: 32px; text-align: center; }
+        .folder-item-icon { font-size: 20px; flex-shrink: 0; width: 26px; text-align: center; }
         .folder-item-content { flex: 1; min-width: 0; }
-        .folder-item-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-        .folder-item-count { font-size: 11px; color: var(--text-muted); background: var(--bg-primary); padding: 2px 8px; border-radius: 8px; display: inline-block; font-weight: 700; }
+        .folder-item-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .folder-item-count { font-size: 10px; color: var(--text-muted); background: var(--bg-primary); padding: 2px 7px; border-radius: 8px; display: inline-block; font-weight: 700; }
 
-        /* مجلدات فرعية داخل الـ sidebar */
-        .sidebar-sub-list { padding: 0 0 0 16px; }
+        /* شجرة المجلدات الفرعية */
+        .sidebar-sub-list { padding: 0; margin: 0; }
         .sidebar-sub-item {
-            display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 10px 6px 24px;
             border-radius: 10px; cursor: pointer;
-            transition: all 0.2s ease; margin-bottom: 3px;
-            border: 1px solid transparent; font-size: 13px; font-weight: 600;
+            transition: all 0.18s ease; margin-bottom: 2px;
+            border: 1px solid transparent; font-size: 12px; font-weight: 600;
             color: var(--text-secondary);
         }
         .sidebar-sub-item:hover { background: var(--hover-bg); color: var(--text-primary); }
-        .sidebar-sub-item.active { background: rgba(102,126,234,0.15); color: #667eea; }
-        .sidebar-sub-item-icon { font-size: 15px; flex-shrink: 0; }
+        .sidebar-sub-item.active { background: rgba(102,126,234,0.13); color: #667eea; }
+        .sidebar-sub-item.hidden-el { display: none; }
+        .sidebar-sub-item-icon { font-size: 13px; flex-shrink: 0; opacity: 0.7; }
         .sidebar-sub-item-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* المستوى الثاني والثالث */
+        .sidebar-sub-item[data-depth="2"] { padding-right: 36px; font-size: 11px; }
+        .sidebar-sub-item[data-depth="3"] { padding-right: 50px; font-size: 11px; }
+        /* مؤشر التحميل */
+        .sidebar-tree-loading { padding: 6px 20px; font-size: 11px; color: var(--text-muted); }
  
         /* ====== Main Content ====== */
         .main-content { flex: 1; padding: 22px; min-width: 0; max-width: 100%; }
@@ -850,11 +857,14 @@
         document.getElementById('navScrollTop').classList.toggle('visible', document.documentElement.scrollTop > 300);
     }, { passive: true });
  
-    // ====== Sidebar Folders ======
+    // ====== Sidebar — شجرة المجلدات الكاملة ======
+    let sidebarTree = [];
+
     async function loadSidebarFolders() {
         const sidebarList = document.getElementById('sidebarList');
-        const url = `https://www.googleapis.com/drive/v3/files?q='${ROOT_FOLDER_ID}'+in+parents+and+trashed=false+and+mimeType='application/vnd.google-apps.folder'&fields=files(id,name)&key=${API_KEY}&orderBy=name`;
+        sidebarList.innerHTML = '<div class="sidebar-loader">⏳ جاري تحميل المجلدات...</div>';
         try {
+            const url = `https://www.googleapis.com/drive/v3/files?q='${ROOT_FOLDER_ID}'+in+parents+and+trashed=false+and+mimeType='application/vnd.google-apps.folder'&fields=files(id,name)&key=${API_KEY}&orderBy=name`;
             const res  = await fetch(url);
             const data = await res.json();
             if (!data.files || data.files.length === 0) {
@@ -864,114 +874,131 @@
             }
             allFolders = data.files;
             document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلد رئيسي`;
-            renderSidebar();
-            allFolders.forEach(f => updateFolderItemCount(f.id));
+            sidebarTree = allFolders.map(f => ({ id: f.id, name: f.name, depth: 1, children: [], imageCount: null }));
+            renderSidebarTree();
+            // جلب الأبناء والعدادات في الخلفية
+            await Promise.all(sidebarTree.map(node => loadTreeChildren(node, 3)));
         } catch (e) {
             sidebarList.innerHTML = '<div class="sidebar-empty">⚠️ حدث خطأ في التحميل</div>';
         }
     }
- 
-    function renderSidebar() {
+
+    async function loadTreeChildren(node, maxDepth) {
+        try {
+            const url = `https://www.googleapis.com/drive/v3/files?q='${node.id}'+in+parents+and+trashed=false&fields=files(id,name,mimeType)&key=${API_KEY}&orderBy=name&pageSize=500`;
+            const res  = await fetch(url);
+            const data = await res.json();
+            if (!data.files) return;
+            const subFolders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+            const imgCount   = data.files.filter(f => f.mimeType?.startsWith('image/')).length;
+            node.imageCount  = imgCount;
+            node.children    = subFolders.map(f => ({ id: f.id, name: f.name, depth: node.depth + 1, children: [], imageCount: null }));
+            updateNodeDisplay(node);
+            if (node.depth < maxDepth) {
+                await Promise.all(node.children.map(child => loadTreeChildren(child, maxDepth)));
+            } else {
+                // أعمق مستوى: فقط عدادات بدون أبناء
+                for (const child of node.children) {
+                    const container = document.getElementById(`sub-list-${node.id}`);
+                    if (container) appendNodeToDOM(child, container);
+                }
+            }
+        } catch (e) {}
+    }
+
+    function updateNodeDisplay(node) {
+        // تحديث العداد
+        const countEl = document.getElementById(`tree-count-${node.id}`);
+        if (countEl) {
+            const s = node.children.length, img = node.imageCount || 0;
+            countEl.innerText = s > 0 && img > 0 ? `${s}📁 ${img}🖼`
+                              : s > 0 ? `${s} مجلد`
+                              : img > 0 ? `${img} صورة`
+                              : 'فارغ';
+        }
+        // إضافة الأبناء إلى الـ DOM
+        const subContainer = document.getElementById(`sub-list-${node.id}`);
+        if (subContainer && node.children.length > 0 && subContainer.children.length === 0) {
+            node.children.forEach(child => appendNodeToDOM(child, subContainer));
+        }
+    }
+
+    function appendNodeToDOM(node, container) {
+        const el = document.createElement('div');
+        el.className = 'sidebar-sub-item';
+        el.id = `tree-node-${node.id}`;
+        el.dataset.name = node.name.toLowerCase();
+        el.dataset.depth = node.depth;
+        el.onclick = () => openFolder(node.id, node.name, false);
+        el.innerHTML = `<span class="sidebar-sub-item-icon">📂</span><span class="sidebar-sub-item-name">${escapeHtml(node.name)}</span><span class="folder-item-count" id="tree-count-${node.id}">...</span>`;
+        container.appendChild(el);
+        const subSub = document.createElement('div');
+        subSub.className = 'sidebar-sub-list';
+        subSub.id = `sub-list-${node.id}`;
+        container.appendChild(subSub);
+    }
+
+    function renderSidebarTree() {
         const sidebarList = document.getElementById('sidebarList');
         sidebarList.innerHTML = '';
-        allFolders.forEach((folder, i) => {
+        sidebarTree.forEach((node, i) => {
             const item = document.createElement('div');
             item.className = 'folder-item';
-            item.id = `folder-${folder.id}`;
-            item.dataset.name = folder.name.toLowerCase();
+            item.id = `folder-${node.id}`;
+            item.dataset.name = node.name.toLowerCase();
             item.style.cssText = `animation-delay:${i*30}ms;animation:fadeIn 0.4s ease backwards`;
-            item.onclick = () => openFolder(folder.id, folder.name, true);
+            item.onclick = () => openFolder(node.id, node.name, true);
             item.innerHTML = `
                 <span class="folder-item-icon">📁</span>
                 <div class="folder-item-content">
-                    <div class="folder-item-name">${escapeHtml(folder.name)}</div>
-                    <span class="folder-item-count" id="count-${folder.id}">...</span>
+                    <div class="folder-item-name">${escapeHtml(node.name)}</div>
+                    <span class="folder-item-count" id="tree-count-${node.id}">...</span>
                 </div>`;
             sidebarList.appendChild(item);
-            // حاوية المجلدات الفرعية (فارغة في البداية)
             const subContainer = document.createElement('div');
             subContainer.className = 'sidebar-sub-list';
-            subContainer.id = `sub-list-${folder.id}`;
+            subContainer.id = `sub-list-${node.id}`;
             sidebarList.appendChild(subContainer);
         });
     }
 
-    // عرض المجلدات الفرعية في الـ sidebar تحت المجلد المفتوح
-    async function loadSubFoldersInSidebar(parentId) {
-        document.querySelectorAll('.sidebar-sub-list').forEach(el => { el.innerHTML = ''; });
-        const container = document.getElementById(`sub-list-${parentId}`);
-        if (!container) return;
-        try {
-            const url = `https://www.googleapis.com/drive/v3/files?q='${parentId}'+in+parents+and+trashed=false+and+mimeType='application/vnd.google-apps.folder'&fields=files(id,name)&key=${API_KEY}&orderBy=name&pageSize=200`;
-            const res  = await fetch(url);
-            const data = await res.json();
-            if (!data.files || data.files.length === 0) return;
-            data.files.forEach(sub => {
-                const el = document.createElement('div');
-                el.className = 'sidebar-sub-item';
-                el.id = `subfolder-sidebar-${sub.id}`;
-                el.dataset.name = sub.name.toLowerCase();
-                el.onclick = () => openFolder(sub.id, sub.name, false);
-                el.innerHTML = `<span class="sidebar-sub-item-icon">📂</span><span class="sidebar-sub-item-name">${escapeHtml(sub.name)}</span><span class="folder-item-count" id="subcount-sidebar-${sub.id}">...</span>`;
-                container.appendChild(el);
-                // جلب العداد بشكل غير متزامن
-                updateSidebarSubCount(sub.id);
-            });
-        } catch (e) {}
-    }
-
-    async function updateSidebarSubCount(folderId) {
-        try {
-            const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,mimeType)&key=${API_KEY}&pageSize=1000`;
-            const res  = await fetch(url);
-            const data = await res.json();
-            const el   = document.getElementById(`subcount-sidebar-${folderId}`);
-            if (!el || !data.files) return;
-            const images  = data.files.filter(f => f.mimeType?.startsWith('image/')).length;
-            const folders = data.files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
-            el.innerText = folders > 0 && images > 0 ? `${folders}📁 ${images}🖼`
-                         : folders > 0 ? `${folders} مجلد`
-                         : images  > 0 ? `${images} صورة`
-                         : 'فارغ';
-        } catch (e) {}
-    }
- 
-    async function updateFolderItemCount(folderId) {
-        try {
-            const files   = await fetchAllFilesInFolder(folderId, 'files(id,mimeType)');
-            const el      = document.getElementById(`count-${folderId}`);
-            if (!el) return;
-            const images  = files.filter(f => f.mimeType?.startsWith('image/')).length;
-            const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
-            el.innerText = folders > 0 && images > 0 ? `${folders} مجلد، ${images} صورة`
-                         : folders > 0 ? `${folders} مجلد فرعي`
-                         : images  > 0 ? `${images} صورة`
-                         : 'فارغ';
-        } catch (e) {}
-    }
- 
+    // البحث LIKE في كل الشجرة مع إظهار الأجداد
     function filterFolders() {
         const q = document.getElementById('folderSearch').value.toLowerCase().trim();
-        // نبحث في المجلدات الرئيسية والفرعية معاً
-        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(item => {
-            const name = (item.dataset.name || '');
-            if (q === '') {
-                item.classList.remove('hidden-el');
-            } else {
-                item.classList.toggle('hidden-el', !name.includes(q));
+        if (q === '') {
+            document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('hidden-el'));
+            return;
+        }
+        // أخفِ الكل أولاً
+        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.add('hidden-el'));
+        // أظهر المطابق وأجداده
+        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => {
+            if ((el.dataset.name || '').includes(q)) {
+                el.classList.remove('hidden-el');
+                // أظهر كل الأجداد
+                let parent = el.parentElement;
+                while (parent && parent.id !== 'sidebarList') {
+                    if (parent.classList.contains('sidebar-sub-list')) {
+                        const prev = parent.previousElementSibling;
+                        if (prev) prev.classList.remove('hidden-el');
+                    }
+                    parent = parent.parentElement;
+                }
             }
         });
     }
- 
+
     function filterImages() {
         const q = document.getElementById('imageFilter').value.toLowerCase().trim();
         filteredImages = q === '' ? [...currentImages] : currentImages.filter(img => img.name.toLowerCase().includes(q));
         applySortToFiltered();
         renderImagesGrid();
     }
- 
-    // دالة قديمة غير مستخدمة — نبقيها فارغة لتفادي أي خطأ
+
     function filterFoldersGlobal() { filterFolders(); }
+    async function updateFolderItemCount(folderId) {}
+    async function loadSubFoldersInSidebar(parentId) {}
+    async function updateSidebarSubCount(folderId) {}
  
     // ====== Open Folder ======
     async function openFolder(folderId, folderName, isRootLevel = false, skipHistory = false) {
@@ -984,16 +1011,12 @@
  
         if (isRootLevel) {
             navigationPath = [{ id: folderId, name: folderName }];
-            document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.sidebar-sub-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('active'));
             document.getElementById(`folder-${folderId}`)?.classList.add('active');
-            // عرض المجلدات الفرعية في الـ sidebar
-            loadSubFoldersInSidebar(folderId);
         } else {
             navigationPath.push({ id: folderId, name: folderName });
-            // تحديث active state في الـ sidebar للمجلد الفرعي
             document.querySelectorAll('.sidebar-sub-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`subfolder-sidebar-${folderId}`)?.classList.add('active');
+            document.getElementById(`tree-node-${folderId}`)?.classList.add('active');
         }
  
         if (!skipHistory) history.pushState({ type: 'folder', path: [...navigationPath] }, folderName, `#${encodeURIComponent(folderName)}`);
@@ -1060,8 +1083,7 @@
         navigationPath = []; currentFolderId = null; currentFolderName = '';
         currentImages = []; currentSubFolders = []; filteredImages = [];
         selectionMode = false; selectedImages.clear();
-        document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.sidebar-sub-list').forEach(el => { el.innerHTML = ''; });
+        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('active'));
         ['breadcrumb','contentHeader','filterBar','subFoldersSection','imagesSection'].forEach(id => document.getElementById(id).classList.add('hidden-el'));
         document.getElementById('defaultEmptyState').classList.remove('hidden-el');
         const cached = getCachedMemories(); if (cached) renderMemories(cached);
