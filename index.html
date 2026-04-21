@@ -122,6 +122,8 @@
             position: sticky; top: 0; z-index: 10;
         }
         .sidebar-header h3 { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .sidebar-header h3.clickable { cursor: pointer; user-select: none; }
+        .sidebar-header h3.clickable:hover { color: #667eea; }
         .sidebar-header p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
  
         .search-box { position: relative; margin-top: 12px; }
@@ -146,9 +148,22 @@
             border: 1px solid transparent; user-select: none; position: relative; overflow: hidden;
         }
         .folder-item:hover { background: var(--hover-bg); transform: translateX(-3px); }
-        .folder-item.active { background: var(--accent); color: var(--accent-text); box-shadow: var(--shadow-md); transform: translateX(-3px); }
-        .folder-item.active .folder-item-count { background: rgba(255,255,255,0.2); color: var(--accent-text); }
-        [data-theme="dark"] .folder-item.active .folder-item-count { background: rgba(0,0,0,0.2); }
+        .folder-item.active {
+            background: var(--gradient-primary);
+            color: #ffffff;
+            border-color: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 22px rgba(102,126,234,0.35);
+            transform: translateX(-3px);
+        }
+        .folder-item.active .folder-item-count {
+            background: rgba(255,255,255,0.22);
+            color: #ffffff;
+        }
+        [data-theme="dark"] .folder-item.active {
+            border-color: rgba(255,255,255,0.14);
+            box-shadow: 0 10px 26px rgba(0,0,0,0.45);
+        }
+        [data-theme="dark"] .folder-item.active .folder-item-count { background: rgba(255,255,255,0.18); }
         .folder-item.hidden-el { display: none; }
         .folder-item-icon { font-size: 20px; flex-shrink: 0; width: 26px; text-align: center; }
         .folder-item-content { flex: 1; min-width: 0; }
@@ -263,6 +278,9 @@
  
         /* ====== Folders Grid ====== */
         .folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
+        .subfolders-toolbar { margin-bottom: 10px; }
+        .subfolders-toolbar .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
+        .subfolders-toolbar .search-icon { width: 14px; height: 14px; right: 10px; }
         .folder-card {
             background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px;
             padding: 18px 12px; text-align: center; cursor: pointer;
@@ -286,9 +304,12 @@
         .images-grid.list-view .img-container { width: 88px; min-height: 66px; height: 66px; flex-shrink: 0; border-radius: 10px; margin: 8px; overflow: hidden; }
         .images-grid.list-view .img-container img { max-height: 66px; object-fit: cover; }
         .images-grid.list-view .img-overlay { display: none; }
-        .images-grid.list-view .img-info { flex: 1; padding: 8px 12px 8px 10px; }
+        .images-grid.list-view .img-info { flex: 1; padding: 8px 12px 8px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .images-grid.list-view .img-name { white-space: normal; -webkit-line-clamp: 2; }
         .images-grid.list-view .img-checkbox { top: 50%; transform: translateY(-50%); }
+        .images-grid.list-view .img-meta { flex: 1; min-width: 120px; }
+        .images-grid.list-view .btn-download,
+        .images-grid.list-view .btn-share { padding: 7px 10px; font-size: 11px; white-space: nowrap; }
  
         /* ====== Skeleton ====== */
         .skeleton-card { background: var(--bg-secondary); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
@@ -461,12 +482,49 @@
         .progress-bar { width: 100%; height: 8px; background: var(--bg-primary); border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--gradient-primary); width: 0%; transition: width 0.3s ease; border-radius: 4px; }
  
-        /* ====== Scroll to top in nav ====== */
+        /* ====== Scroll to top buttons ====== */
         #navScrollTop {
             display: none;
         }
         #navScrollTop.visible {
             display: flex;
+        }
+        .btn-back-top {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(16px) saturate(160%);
+            -webkit-backdrop-filter: blur(16px) saturate(160%);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(14px);
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+            z-index: 1600;
+        }
+        .btn-back-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .btn-back-top svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
  
         /* ====== Sidebar overlay / toggle ====== */
@@ -512,6 +570,26 @@
         .memories-loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
         .memories-loading-text { font-size: 14px; font-weight: 600; }
         .memories-loading-progress { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .memories-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .memories-tab {
+            border: 1px solid var(--border);
+            background: var(--bg-glass-strong);
+            color: var(--text-secondary);
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .memories-tab.active {
+            background: var(--gradient-primary);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: var(--shadow-sm);
+        }
+        .memories-tab-panel.hidden-el { display: none !important; }
  
         .memories-empty { text-align: center; padding: 50px 20px; background: var(--bg-glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; }
         .memories-empty-icon { font-size: 60px; margin-bottom: 14px; opacity: 0.5; }
@@ -580,18 +658,24 @@
         <button class="btn-nav" id="themeToggle" onclick="toggleTheme()" aria-label="تبديل الوضع">
             <svg id="themeIcon" viewBox="0 0 24 24"></svg>
         </button>
-        <button class="btn-nav" id="navScrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="الصعود للأعلى" title="الصعود للأعلى">
+        <button class="btn-nav" id="exitAppBtn" onclick="exitApp()" aria-label="خروج" title="خروج">
+            <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+        <button class="btn-nav" id="navScrollTop" onclick="scrollToTopSafe()" aria-label="الصعود للأعلى" title="الصعود للأعلى">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
     </div>
 </div>
  
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<button class="btn-back-top" id="floatingScrollTop" onclick="scrollToTopSafe()" aria-label="الصعود للأعلى" title="الصعود للأعلى">
+    <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
  
 <div class="layout">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3>📂 المجلدات الرئيسية</h3>
+            <h3 class="clickable" onclick="showRootFoldersPreview()">📂 المجلدات الرئيسية</h3>
             <p id="sidebarSubtitle">اختر مجلد لعرض محتواه</p>
             <div class="search-box">
                 <input type="text" class="search-input" id="folderSearch" placeholder="ابحث في المجلدات..." oninput="filterFolders()">
@@ -620,6 +704,22 @@
                 <button class="btn-action" id="selectBtn" onclick="toggleSelectionMode()">
                     <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     <span id="selectBtnText">تحديد</span>
+                </button>
+                <button class="btn-action" id="selectVisibleBtn" onclick="selectAllVisible()">
+                    <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/></svg>
+                    <span>تحديد الظاهر</span>
+                </button>
+                <button class="btn-action" id="clearSelectionBtn" onclick="clearSelectionFast()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>إلغاء التحديد</span>
+                </button>
+                <button class="btn-action" id="copyFolderLinkBtn" onclick="copyCurrentFolderLink()">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                    <span>نسخ الرابط</span>
+                </button>
+                <button class="btn-action" id="refreshFolderBtn" onclick="refreshCurrentFolder()">
+                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.1-3.36L23 10M1 14l5.4 4.36A9 9 0 0 0 20.5 15"/></svg>
+                    <span>تحديث</span>
                 </button>
                 <button class="btn-action primary hidden-el" id="downloadZipBtn" onclick="downloadSelectedAsZip()">
                     <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -665,6 +765,15 @@
  
         <div id="subFoldersSection" class="hidden-el">
             <div class="section-title">📁 المجلدات الفرعية</div>
+            <div class="subfolders-toolbar">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="subFolderFilter" placeholder="ابحث في المجلدات الفرعية..." oninput="filterSubFolders()">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </div>
+            </div>
             <div class="folders-grid" id="subFoldersGrid"></div>
         </div>
  
@@ -759,6 +868,8 @@
     let currentFolderName = '';
     let currentImages     = [];
     let currentSubFolders = [];
+    let filteredSubFolders = [];
+    let subFolderCounts = {};
     let filteredImages    = [];
     let selectionMode     = false;
     let selectedImages    = new Set();
@@ -805,6 +916,22 @@
             ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
             : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
     }
+    function exitApp() {
+        const confirmed = window.confirm('هل أنت متأكد أنك تريد الخروج من التطبيق؟');
+        if (!confirmed) return;
+        try {
+            if (window.Android && typeof window.Android.exitApp === 'function') {
+                window.Android.exitApp();
+                return;
+            }
+            if (window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === 'function') {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'EXIT_APP' }));
+                return;
+            }
+            if (typeof window.close === 'function') window.close();
+        } catch (_) {}
+        showToast('ميزة الخروج تعمل داخل التطبيق فقط', 'error');
+    }
  
     // ====== Pagination helper: جلب كل الملفات ======
     async function fetchAllFilesInFolder(folderId, fields, orderBy = '') {
@@ -849,13 +976,65 @@
         grid.classList.toggle('list-view', view === 'list');
     }
  
-    // ====== Scroll to Top in Nav ======
-    window.addEventListener('scroll', () => {
-        document.getElementById('navScrollTop').classList.toggle('visible', window.scrollY > 300);
-    }, { passive: true });
-    document.addEventListener('scroll', () => {
-        document.getElementById('navScrollTop').classList.toggle('visible', document.documentElement.scrollTop > 300);
-    }, { passive: true });
+    // ====== Scroll to Top (Browser + Android WebView safe) ======
+    function getScrollableTargets() {
+        const targets = [
+            document.scrollingElement,
+            document.documentElement,
+            document.body,
+            document.querySelector('.main-content'),
+            document.querySelector('.layout'),
+            document.querySelector('.sidebar')
+        ].filter(Boolean);
+        return [...new Set(targets)];
+    }
+    function getScrollTopValue() {
+        const tops = getScrollableTargets().map(el => el.scrollTop || 0);
+        tops.push(window.pageYOffset || 0);
+        return Math.max(...tops);
+    }
+    const isAndroidWebView = /Android/i.test(navigator.userAgent || '');
+    const scrollTopShowThreshold = isAndroidWebView ? 140 : 300;
+    function toggleScrollTopButtons() {
+        const isVisible = getScrollTopValue() > scrollTopShowThreshold;
+        const navBtn = document.getElementById('navScrollTop');
+        const floatingBtn = document.getElementById('floatingScrollTop');
+        if (navBtn) navBtn.classList.toggle('visible', isVisible);
+        if (floatingBtn) floatingBtn.classList.toggle('visible', isVisible);
+    }
+    function scrollToTopSafe() {
+        const targets = getScrollableTargets();
+        try {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (_) {
+            window.scrollTo(0, 0);
+        }
+        targets.forEach(el => {
+            el.scrollTop = 0;
+            if (typeof el.scrollTo === 'function') {
+                try {
+                    el.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch (_) {
+                    el.scrollTop = 0;
+                }
+            }
+        });
+        requestAnimationFrame(() => {
+            targets.forEach(el => { el.scrollTop = 0; });
+            window.scrollTo(0, 0);
+            toggleScrollTopButtons();
+        });
+    }
+    window.addEventListener('scroll', toggleScrollTopButtons, { passive: true });
+    document.addEventListener('scroll', toggleScrollTopButtons, { passive: true });
+    window.addEventListener('touchmove', toggleScrollTopButtons, { passive: true });
+    window.addEventListener('touchstart', toggleScrollTopButtons, { passive: true });
+    getScrollableTargets().forEach(el => {
+        el.addEventListener('scroll', toggleScrollTopButtons, { passive: true });
+        el.addEventListener('touchmove', toggleScrollTopButtons, { passive: true });
+        el.addEventListener('touchstart', toggleScrollTopButtons, { passive: true });
+    });
+    document.addEventListener('DOMContentLoaded', toggleScrollTopButtons);
  
     // ====== Sidebar — شجرة المجلدات الكاملة ======
     let sidebarTree = [];
@@ -994,11 +1173,47 @@
         applySortToFiltered();
         renderImagesGrid();
     }
+    function filterSubFolders() {
+        const input = document.getElementById('subFolderFilter');
+        const q = (input?.value || '').toLowerCase().trim();
+        filteredSubFolders = q === ''
+            ? [...currentSubFolders]
+            : currentSubFolders.filter(folder => (folder.name || '').toLowerCase().includes(q));
+        renderSubFolders();
+    }
 
     function filterFoldersGlobal() { filterFolders(); }
     async function updateFolderItemCount(folderId) {}
     async function loadSubFoldersInSidebar(parentId) {}
     async function updateSidebarSubCount(folderId) {}
+    function showRootFoldersPreview() {
+        selectionMode = false;
+        selectedImages.clear();
+        updateSelectionUI();
+        navigationPath = [];
+        currentFolderId = null;
+        currentFolderName = 'المجلدات الرئيسية';
+        currentImages = [];
+        filteredImages = [];
+        currentSubFolders = (allFolders || []).map(f => ({ id: f.id, name: f.name, mimeType: 'application/vnd.google-apps.folder' }));
+        filteredSubFolders = [...currentSubFolders];
+        document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('active'));
+        document.getElementById('defaultEmptyState').classList.add('hidden-el');
+        document.getElementById('breadcrumb').classList.remove('hidden-el');
+        document.getElementById('contentHeader').classList.remove('hidden-el');
+        document.getElementById('filterBar').classList.add('hidden-el');
+        document.getElementById('imagesSection').classList.add('hidden-el');
+        document.getElementById('subFoldersSection').classList.remove('hidden-el');
+        document.getElementById('contentActions').style.display = 'none';
+        document.getElementById('currentFolderName').innerText = 'المجلدات الرئيسية';
+        document.getElementById('currentFolderCount').innerText = `${currentSubFolders.length} مجلد`;
+        const bc = document.getElementById('breadcrumb');
+        bc.innerHTML = '<button class="breadcrumb-item current">📂 المجلدات الرئيسية</button>';
+        const subFolderFilter = document.getElementById('subFolderFilter');
+        if (subFolderFilter) subFolderFilter.value = '';
+        renderSubFolders();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
  
     // ====== Open Folder ======
     async function openFolder(folderId, folderName, isRootLevel = false, skipHistory = false) {
@@ -1035,6 +1250,8 @@
         document.getElementById('currentFolderName').innerText = folderName;
         document.getElementById('currentFolderCount').innerText = 'جاري التحميل...';
         document.getElementById('imageFilter').value = '';
+        const subFolderFilter = document.getElementById('subFolderFilter');
+        if (subFolderFilter) subFolderFilter.value = '';
         document.getElementById('subFoldersSection').classList.add('hidden-el');
         document.getElementById('imagesSection').classList.remove('hidden-el');
         document.getElementById('filterBar').classList.add('hidden-el');
@@ -1044,6 +1261,8 @@
         try {
             const files = await fetchAllFilesInFolder(folderId, 'files(id,name,mimeType,createdTime)', 'folder,name');
             currentSubFolders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
+            subFolderCounts = {};
+            filteredSubFolders = [...currentSubFolders];
             currentImages     = files.filter(f => f.mimeType?.startsWith('image/')).sort((a, b) => new Date(b.createdTime) - new Date(a.createdTime));
             filteredImages    = [...currentImages];
             renderContent();
@@ -1149,7 +1368,6 @@
             }
         }
  
-        currentSubFolders.forEach(f => updateSubFolderCount(f.id));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
  
@@ -1157,13 +1375,21 @@
     function renderSubFolders() {
         const grid = document.getElementById('subFoldersGrid');
         grid.innerHTML = '';
-        currentSubFolders.forEach((folder, i) => {
+        const query = document.getElementById('subFolderFilter')?.value.trim() || '';
+        const source = query ? filteredSubFolders : currentSubFolders;
+        if (source.length === 0) {
+            grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔎</div><div class="empty-state-title">لا توجد مجلدات مطابقة</div><div>جرّب كلمة بحث مختلفة</div></div>';
+            return;
+        }
+        source.forEach((folder, i) => {
             const card = document.createElement('div');
             card.className = 'folder-card';
             card.style.animationDelay = `${Math.min(i * 40, 400)}ms`;
             card.onclick = () => openFolder(folder.id, folder.name, false);
-            card.innerHTML = `<span class="folder-card-icon">📁</span><div class="folder-card-name">${escapeHtml(folder.name)}</div><span class="folder-card-count" id="subcount-${folder.id}">...</span>`;
+            const cachedCount = subFolderCounts[folder.id] || '...';
+            card.innerHTML = `<span class="folder-card-icon">📁</span><div class="folder-card-name">${escapeHtml(folder.name)}</div><span class="folder-card-count" id="subcount-${folder.id}">${cachedCount}</span>`;
             grid.appendChild(card);
+            if (!subFolderCounts[folder.id]) updateSubFolderCount(folder.id);
         });
     }
  
@@ -1174,10 +1400,12 @@
             if (!el) return;
             const images  = files.filter(f => f.mimeType?.startsWith('image/')).length;
             const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
-            el.innerText = folders > 0 && images > 0 ? `${folders} مجلد، ${images} صورة`
-                         : folders > 0 ? `${folders} مجلد`
-                         : images  > 0 ? `${images} صورة`
-                         : 'فارغ';
+            const countText = folders > 0 && images > 0 ? `${folders} مجلد، ${images} صورة`
+                            : folders > 0 ? `${folders} مجلد`
+                            : images  > 0 ? `${images} صورة`
+                            : 'فارغ';
+            subFolderCounts[folderId] = countText;
+            el.innerText = countText;
         } catch (e) {}
     }
  
@@ -1288,6 +1516,42 @@
         else { selectedImages.add(id); card.classList.add('selected'); cb.classList.add('active'); }
         updateSelectionUI();
     }
+    function selectAllVisible() {
+        if (filteredImages.length === 0) return;
+        selectionMode = true;
+        filteredImages.forEach(img => selectedImages.add(img.id));
+        updateSelectionUI();
+        renderImagesGrid();
+        showToast(`تم تحديد ${filteredImages.length} صورة ظاهرة`, 'success');
+    }
+    function clearSelectionFast() {
+        if (selectedImages.size === 0 && !selectionMode) return;
+        selectionMode = false;
+        selectedImages.clear();
+        updateSelectionUI();
+        renderImagesGrid();
+        showToast('تم إلغاء تحديد الصور', 'success');
+    }
+    async function copyCurrentFolderLink() {
+        if (!currentFolderName && navigationPath.length === 0) return;
+        const last = navigationPath[navigationPath.length - 1];
+        const label = encodeURIComponent(last?.name || currentFolderName || 'folder');
+        const link = `${window.location.origin}${window.location.pathname}#${label}`;
+        try {
+            await navigator.clipboard.writeText(link);
+            showToast('تم نسخ رابط المجلد 📋', 'success');
+        } catch (_) {
+            showToast('تعذر نسخ الرابط', 'error');
+        }
+    }
+    async function refreshCurrentFolder() {
+        if (!currentFolderId || !currentFolderName) {
+            showToast('لا يوجد مجلد مفتوح للتحديث', 'error');
+            return;
+        }
+        await openFolder(currentFolderId, currentFolderName, navigationPath.length <= 1, true);
+        showToast('تم تحديث المحتوى', 'success');
+    }
  
     // ====== Download ZIP ======
     async function downloadSelectedAsZip() {
@@ -1385,6 +1649,30 @@
         if (e.key === 'Escape')      history.back();
         else if (e.key === 'ArrowLeft')  navigateLightbox(-1);
         else if (e.key === 'ArrowRight') navigateLightbox(1);
+    });
+    // اختصار سريع: / للتركيز على بحث الصور
+    document.addEventListener('keydown', (e) => {
+        const isTyping = ['INPUT', 'TEXTAREA'].includes((e.target?.tagName || '').toUpperCase());
+        if (isTyping || document.getElementById('lightbox').classList.contains('active')) return;
+        if (e.key === '/') {
+            e.preventDefault();
+            const input = document.getElementById('imageFilter');
+            input?.focus();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+            const isImagesShown = !document.getElementById('imagesSection').classList.contains('hidden-el');
+            if (isImagesShown) {
+                e.preventDefault();
+                selectAllVisible();
+            }
+        }
+        if (e.key === 'Escape') {
+            const search = document.getElementById('imageFilter');
+            if (search && search.value.trim()) {
+                search.value = '';
+                filterImages();
+            }
+        }
     });
  
     // Touch swipe + zoom
@@ -1505,7 +1793,7 @@
     async function shareImage(imageId, imageName) {
         const fetchUrl = `https://drive.google.com/thumbnail?id=${imageId}&sz=w2000`;
 
-        // --- المحاولة الأولى: مشاركة الملف مباشرة (iOS Safari / Android Chrome) ---
+        // --- المحاولة الأولى: مشاركة الملف الفعلي عبر Web Share ---
         if (typeof navigator.share === 'function') {
             try {
                 showToast('جاري تجهيز الصورة للمشاركة...', 'success');
@@ -1517,30 +1805,16 @@
                 const fileName = imageName.replace(/\.[^.]*$/, '') + '.' + safeExt;
                 const file = new File([blob], fileName, { type: blob.type || 'image/jpeg', lastModified: Date.now() });
 
-                // تحقق من دعم مشاركة الملفات
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({ files: [file], title: imageName });
+                    await navigator.share({ files: [file], title: imageName, text: 'مشاركة صورة' });
                     return;
                 }
-
-                // إذا لم يدعم الملفات — جرب مشاركة الـ blob URL
-                const blobUrl = URL.createObjectURL(blob);
-                try {
-                    if (navigator.canShare && navigator.canShare({ url: blobUrl })) {
-                        await navigator.share({ title: imageName, url: blobUrl });
-                        URL.revokeObjectURL(blobUrl);
-                        return;
-                    }
-                } catch(e2) { /* تجاوز */ }
-                URL.revokeObjectURL(blobUrl);
-
             } catch (e) {
                 if (e.name === 'AbortError') return; // المستخدم ألغى
-                // استمر للـ fallback
             }
         }
 
-        // --- المحاولة الثانية: فتح رابط تحميل مباشر يُشغّل قائمة الحفظ/المشاركة ---
+        // --- fallback: تنزيل الملف محليًا ليمكن مشاركته من أي تطبيق ---
         try {
             const response = await fetch(fetchUrl);
             if (response.ok) {
@@ -1555,7 +1829,7 @@
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                showToast('يمكنك مشاركة الصورة من معرض الصور 🖼️', 'success');
+                showToast('تم تنزيل الصورة. يمكنك الآن مشاركتها من أي تطبيق 📤', 'success');
                 return;
             }
         } catch(e) { /* استمر */ }
@@ -1564,7 +1838,7 @@
         const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
         try {
             await navigator.clipboard.writeText(driveUrl);
-            showToast('تم نسخ رابط الصورة 📋', 'success');
+            showToast('تعذر مشاركة الملف، تم نسخ الرابط كبديل 📋', 'success');
         } catch {
             showToast('تعذّرت المشاركة', 'error');
         }
@@ -1652,12 +1926,54 @@
         return allImages;
     }
  
+    function isDateInCurrentWeek(month, day) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const start = new Date(now);
+        start.setDate(now.getDate() - now.getDay());
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(start);
+        end.setDate(start.getDate() + 6);
+        end.setHours(23, 59, 59, 999);
+        const normalized = new Date(currentYear, month, day, 12, 0, 0, 0);
+        return normalized >= start && normalized <= end;
+    }
+    function isDateInCurrentMonth(month) {
+        const now = new Date();
+        return month === now.getMonth();
+    }
+    function pickScatteredImages(images) {
+        const byFolder = new Map();
+        images.forEach(img => {
+            const key = img.parentFolderId || img.folderPath || 'root';
+            if (!byFolder.has(key)) byFolder.set(key, []);
+            byFolder.get(key).push(img);
+        });
+        const picked = [];
+        const randomIndex = (max) => {
+            if (max <= 0) return 0;
+            if (window.crypto && window.crypto.getRandomValues) {
+                const arr = new Uint32Array(1);
+                window.crypto.getRandomValues(arr);
+                return arr[0] % max;
+            }
+            return Math.floor(Math.random() * max);
+        };
+        byFolder.forEach(list => {
+            if (!list.length) return;
+            const rand = randomIndex(list.length);
+            picked.push(list[rand]);
+        });
+        return picked.sort((a, b) => new Date(b.createdTime || 0) - new Date(a.createdTime || 0));
+    }
     function filterMemories(images) {
         const today       = new Date();
         const currentYear = today.getFullYear();
         const todayMonth  = today.getMonth();   // 0-11
         const todayDay    = today.getDate();    // 1-31
         const memories    = {};
+        const weekMemories = [];
+        const monthMemories = [];
 
         images.forEach(img => {
             let imgDate = null;
@@ -1675,6 +1991,15 @@
                 const yearsAgo = currentYear - imgYear;
                 if (!memories[yearsAgo]) memories[yearsAgo] = [];
                 memories[yearsAgo].push({ ...img, imgDate: imgDate.toISOString(), yearsAgo });
+                return;
+            }
+            // نفس أسبوع هذا العام (مع استبعاد يوم اليوم نفسه)
+            if (isDateInCurrentWeek(imgDate.getMonth(), imgDate.getDate())) {
+                weekMemories.push({ ...img, imgDate: imgDate.toISOString() });
+                return;
+            }
+            if (isDateInCurrentMonth(imgDate.getMonth())) {
+                monthMemories.push({ ...img, imgDate: imgDate.toISOString() });
             }
         });
 
@@ -1683,7 +2008,9 @@
             memories[year].sort((a, b) => new Date(b.imgDate) - new Date(a.imgDate));
         });
 
-        return memories;
+        weekMemories.sort((a, b) => new Date(b.imgDate) - new Date(a.imgDate));
+        monthMemories.sort((a, b) => new Date(b.imgDate) - new Date(a.imgDate));
+        return { todayMemories: memories, weekMemories, monthMemories };
     }
 
     // اختيار 20 صورة عشوائية من كل الصور
@@ -1694,44 +2021,113 @@
  
     function renderMemories(memories, allImages) {
         const content = document.getElementById('memoriesContent');
-        const years   = Object.keys(memories).map(Number).sort((a, b) => a - b);
+        const todayMemories = memories?.todayMemories || memories || {};
+        const weekMemories = memories?.weekMemories || [];
+        const monthMemories = memories?.monthMemories || [];
+        const periodMemories = weekMemories.length > 0 ? weekMemories : monthMemories;
+        const periodLabel = weekMemories.length > 0 ? 'هذا الأسبوع' : 'هذا الشهر';
+        const hasPeriodMemories = periodMemories.length > 0;
+        const scatteredMemories = pickScatteredImages(allImages || []);
+        const years   = Object.keys(todayMemories).map(Number).sort((a, b) => a - b);
 
-        // إذا لا توجد ذكريات من هذا اليوم → عرض 20 عشوائية
-        if (years.length === 0) {
-            if (allImages && allImages.length > 0) {
-                renderRandomImages(allImages);
-            } else {
-                showNoMemories('لا توجد ذكريات من مثل هذا اليوم');
-            }
-            return;
-        }
-
-        const total   = years.reduce((s, y) => s + memories[y].length, 0);
+        const totalToday   = years.reduce((s, y) => s + todayMemories[y].length, 0);
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • ${total} ذكرى`;
-        content.innerHTML = '';
+        const subtitleBits = [];
+        if (totalToday > 0) subtitleBits.push(`${totalToday} ذكرى اليوم`);
+        if (periodMemories.length > 0) subtitleBits.push(`${periodMemories.length} من ${periodLabel}`);
+        if (scatteredMemories.length > 0) subtitleBits.push(`${scatteredMemories.length} صور متفرقة`);
+        if (subtitleBits.length === 0) subtitleBits.push('لقطات من الذكريات');
+        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
+        content.innerHTML = `
+            <div class="memories-tabs">
+                <button class="memories-tab active" id="memTabToday" type="button">اليوم</button>
+                ${hasPeriodMemories ? `<button class="memories-tab" id="memTabWeek" type="button">${periodLabel}</button>` : ''}
+                <button class="memories-tab" id="memTabScattered" type="button">صور متفرقة</button>
+            </div>
+            <div class="memories-tab-panel" id="memoriesTodayPanel"></div>
+            <div class="memories-tab-panel hidden-el" id="memoriesWeekPanel"></div>
+            <div class="memories-tab-panel hidden-el" id="memoriesScatteredPanel"></div>
+        `;
+        const todayPanel = document.getElementById('memoriesTodayPanel');
+        const weekPanel = document.getElementById('memoriesWeekPanel');
+        const scatteredPanel = document.getElementById('memoriesScatteredPanel');
 
-        years.forEach((yearsAgo, groupIdx) => {
-            const images    = memories[yearsAgo];
-            const year      = new Date().getFullYear() - yearsAgo;
-            const yearLabel = yearsAgo === 1 ? 'قبل سنة' : `قبل ${yearsAgo} سنوات`;
-            const group     = document.createElement('div');
-            group.className = 'memory-year-group';
-            group.style.animationDelay = `${groupIdx * 100}ms`;
-            group.innerHTML = `
+        if (years.length > 0) {
+            years.forEach((yearsAgo, groupIdx) => {
+                const images    = todayMemories[yearsAgo];
+                const year      = new Date().getFullYear() - yearsAgo;
+                const yearLabel = yearsAgo === 1 ? 'قبل سنة' : `قبل ${yearsAgo} سنوات`;
+                const group     = document.createElement('div');
+                group.className = 'memory-year-group';
+                group.style.animationDelay = `${groupIdx * 100}ms`;
+                group.innerHTML = `
+                    <div class="memory-year-header">
+                        <span class="memory-year-number">${year}</span>
+                        <span class="memory-year-label">${yearLabel}</span>
+                        <span class="memory-year-count">${images.length} صورة</span>
+                    </div>
+                    <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
+                todayPanel.appendChild(group);
+
+                const grid    = group.querySelector(`#memory-grid-${yearsAgo}`);
+                const memImgs = images.map(img => ({ id: img.id, name: img.name }));
+
+                images.forEach((p, i) => {
+                    const imgDate = new Date(p.imgDate);
+                    const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
+                    const card = document.createElement('div');
+                    card.className = 'image-card memory-card';
+                    card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
+                    card.innerHTML = `
+                        <div class="memory-card-badge">
+                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            ${dateStr}
+                        </div>
+                        <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(memImgs)},${i})'>
+                            <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
+                            <div class="img-overlay">
+                                <span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10l6.1-6.1M9 21H3v-6M10 14l-6.1 6.1"/></svg>
+                                    عرض بالحجم الكامل
+                                </span>
+                            </div>
+                        </div>
+                        <div class="img-info">
+                            <div class="img-meta">
+                                <div class="img-name">${escapeHtml(p.name)}</div>
+                                <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath)}</div>
+                            </div>
+                            <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
+                                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                حفظ
+                            </a>
+                            <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+                                <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                مشاركة
+                            </button>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+            });
+        } else if (allImages && allImages.length > 0) {
+            renderRandomImages(allImages, todayPanel, true);
+        }
+
+        if (periodMemories.length > 0) {
+            const weekGroup = document.createElement('div');
+            weekGroup.className = 'memory-year-group';
+            weekGroup.innerHTML = `
                 <div class="memory-year-header">
-                    <span class="memory-year-number">${year}</span>
-                    <span class="memory-year-label">${yearLabel}</span>
-                    <span class="memory-year-count">${images.length} صورة</span>
+                    <span class="memory-year-number">📅</span>
+                    <span class="memory-year-label">في ${periodLabel}</span>
+                    <span class="memory-year-count">${periodMemories.length} صورة</span>
                 </div>
-                <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
-            content.appendChild(group);
-
-            const grid    = group.querySelector(`#memory-grid-${yearsAgo}`);
-            const memImgs = images.map(img => ({ id: img.id, name: img.name }));
-
-            images.forEach((p, i) => {
+                <div class="images-grid" id="week-memory-grid"></div>`;
+            weekPanel.appendChild(weekGroup);
+            const weekGrid = weekGroup.querySelector('#week-memory-grid');
+            const weekImgs = periodMemories.map(img => ({ id: img.id, name: img.name }));
+            periodMemories.forEach((p, i) => {
                 const imgDate = new Date(p.imgDate);
                 const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
                 const card = document.createElement('div');
@@ -1742,7 +2138,7 @@
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         ${dateStr}
                     </div>
-                    <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(memImgs)},${i})'>
+                    <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(weekImgs)},${i})'>
                         <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
                         <div class="img-overlay">
                             <span>
@@ -1765,22 +2161,94 @@
                             مشاركة
                         </button>
                     </div>`;
-                grid.appendChild(card);
+                weekGrid.appendChild(card);
             });
-        });
+        }
+
+        if (scatteredMemories.length > 0) {
+            const scatteredGroup = document.createElement('div');
+            scatteredGroup.className = 'memory-year-group';
+            scatteredGroup.innerHTML = `
+                <div class="memory-year-header">
+                    <span class="memory-year-number">🎯</span>
+                    <span class="memory-year-label">صورة من كل مجلد</span>
+                    <span class="memory-year-count">${scatteredMemories.length} صورة</span>
+                </div>
+                <div class="images-grid" id="scattered-grid"></div>`;
+            scatteredPanel.appendChild(scatteredGroup);
+            const scGrid = scatteredGroup.querySelector('#scattered-grid');
+            const scImgs = scatteredMemories.map(img => ({ id: img.id, name: img.name }));
+            scatteredMemories.forEach((p, i) => {
+                const dateStr = formatDate(p.createdTime);
+                const card = document.createElement('div');
+                card.className = 'image-card memory-card';
+                card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
+                card.innerHTML = `
+                    <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(scImgs)},${i})'>
+                        <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
+                        <div class="img-overlay">
+                            <span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10l6.1-6.1M9 21H3v-6M10 14l-6.1 6.1"/></svg>
+                                عرض بالحجم الكامل
+                            </span>
+                        </div>
+                    </div>
+                    <div class="img-info">
+                        <div class="img-meta">
+                            <div class="img-name">${escapeHtml(p.name)}</div>
+                            <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath || 'مجلد')}</div>
+                            ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                        </div>
+                        <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
+                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            حفظ
+                        </a>
+                        <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
+                            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                            مشاركة
+                        </button>
+                    </div>`;
+                scGrid.appendChild(card);
+            });
+        } else {
+            scatteredPanel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-title">لا توجد صور متفرقة</div><div>لا توجد صور كافية لاختيار عينة</div></div>';
+        }
+        if (years.length === 0 && (!allImages || allImages.length === 0)) {
+            todayPanel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📷</div><div class="empty-state-title">لا توجد صور لليوم</div><div>لا توجد لقطات متاحة حاليًا</div></div>';
+        }
+
+        const tabToday = document.getElementById('memTabToday');
+        const tabWeek = document.getElementById('memTabWeek');
+        const tabScattered = document.getElementById('memTabScattered');
+        const activateMemTab = (tab) => {
+            const showToday = tab === 'today';
+            const showWeek = tab === 'week';
+            const showScattered = tab === 'scattered';
+            tabToday.classList.toggle('active', showToday);
+            if (tabWeek) tabWeek.classList.toggle('active', showWeek);
+            tabScattered.classList.toggle('active', showScattered);
+            todayPanel.classList.toggle('hidden-el', !showToday);
+            weekPanel.classList.toggle('hidden-el', !showWeek);
+            scatteredPanel.classList.toggle('hidden-el', !showScattered);
+        };
+        tabToday.onclick = () => activateMemTab('today');
+        if (tabWeek) tabWeek.onclick = () => activateMemTab('week');
+        tabScattered.onclick = () => activateMemTab('scattered');
     }
 
-    function renderRandomImages(allImages) {
-        const content  = document.getElementById('memoriesContent');
+    function renderRandomImages(allImages, targetContent = null, append = false) {
+        const content  = targetContent || document.getElementById('memoriesContent');
         const today    = new Date();
         const dayName  = ARABIC_DAYS[today.getDay()];
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • لقطات عشوائية`;
-        document.getElementById('memoriesTitle').innerText = '✨ لقطات من الذاكرة';
+        if (!append) {
+            document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • لقطات عشوائية`;
+            document.getElementById('memoriesTitle').innerText = '✨ لقطات من الذاكرة';
+        }
 
         const picked  = pickRandomImages(allImages, 20);
         const memImgs = picked.map(img => ({ id: img.id, name: img.name, createdTime: img.createdTime }));
 
-        content.innerHTML = '';
+        if (!append) content.innerHTML = '';
         const group = document.createElement('div');
         group.className = 'memory-year-group';
         group.innerHTML = `
