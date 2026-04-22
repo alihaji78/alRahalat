@@ -2035,9 +2035,9 @@
         const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
         try {
             await navigator.clipboard.writeText(driveUrl);
-            showToast(`تم حفظ رابط "${imageName || 'الصورة'}" 📋`, 'success');
+            showToast(`تم نسخ رابط "${imageName || 'الصورة'}" 📋`, 'success');
         } catch {
-            showToast('تعذر حفظ الرابط', 'error');
+            showToast('تعذر نسخ رابط الصورة', 'error');
         }
     }
 
