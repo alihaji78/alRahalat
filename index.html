@@ -310,7 +310,8 @@
  
         /* ====== Folders Grid ====== */
         .folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
-        .subfolders-toolbar { margin-bottom: 10px; }
+        .subfolders-toolbar { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+        .subfolders-toolbar .search-box { flex: 1; min-width: 220px; }
         .subfolders-toolbar .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
         .subfolders-toolbar .search-icon { width: 14px; height: 14px; right: 10px; }
         .folder-card {
@@ -325,6 +326,21 @@
         .folder-card-icon { font-size: 44px; display: block; margin-bottom: 8px; position: relative; z-index: 1; }
         .folder-card-name { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; position: relative; z-index: 1; }
         .folder-card-count { font-size: 11px; color: var(--text-muted); background: var(--bg-primary); padding: 3px 10px; border-radius: 10px; display: inline-block; font-weight: 700; position: relative; z-index: 1; }
+        .folders-grid.list-view { display: flex; flex-direction: column; gap: 10px; }
+        .folders-grid.list-view .folder-card { display: flex; align-items: center; gap: 12px; text-align: right; padding: 12px 14px; border-radius: 14px; }
+        .folders-grid.list-view .folder-card-icon { font-size: 30px; margin-bottom: 0; flex-shrink: 0; }
+        .folders-grid.list-view .folder-card-name {
+            flex: 1;
+            margin-bottom: 0;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: unset;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .folders-grid.list-view .folder-card-count { flex-shrink: 0; }
  
         /* ====== Images Grid ====== */
         .images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap: 18px; }
@@ -376,7 +392,7 @@
         .selection-mode .img-checkbox { display: flex; }
  
         .img-container {
-            width: 100%; background: #111; display: flex; align-items: center; justify-content: center;
+            width: 100%; background: var(--bg-primary); display: flex; align-items: center; justify-content: center;
             min-height: 220px; cursor: pointer; overflow: hidden; position: relative;
         }
         .img-container img {
@@ -435,7 +451,7 @@
         .sidebar-loader, .sidebar-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 13px; font-weight: 600; }
  
         /* ====== Lightbox ====== */
-        .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 2000; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
+        .lightbox { position: fixed; inset: 0; background: var(--bg-primary); z-index: 2000; display: none; flex-direction: column; animation: fadeIn 0.3s ease; }
         .lightbox.active { display: flex; }
  
         .lightbox-header {
@@ -454,7 +470,7 @@
         .lightbox-btn:hover { background: rgba(255,255,255,0.2); }
         .lightbox-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
  
-        .lightbox-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; cursor: grab; }
+        .lightbox-body { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px; cursor: grab; background: var(--bg-primary); }
         .lightbox-body.dragging { cursor: grabbing; }
         .lightbox-img {
             max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
@@ -491,6 +507,45 @@
         }
         .lightbox-info-item { display: flex; align-items: center; gap: 5px; }
         .lightbox-info-item svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+        .lightbox-related {
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding: 10px 14px 12px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .lightbox-related-title {
+            color: rgba(255,255,255,0.85);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .lightbox-related-strip {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: thin;
+        }
+        .lightbox-related-item {
+            width: 72px;
+            height: 56px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.08);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .lightbox-related-item:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.45); }
+        .lightbox-related-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
  
         /* ====== Toast ====== */
         .toast {
@@ -574,8 +629,8 @@
  
         /* ====== Memories ====== */
         .memories-hero {
-            position: relative; background: var(--gradient-primary); border-radius: 24px;
-            padding: 32px 28px; margin-bottom: 24px; overflow: hidden; box-shadow: var(--shadow-lg); animation: fadeIn 0.6s ease;
+            position: relative; background: var(--gradient-primary); border-radius: 18px;
+            padding: 22px 24px; margin-bottom: 24px; overflow: hidden; box-shadow: var(--shadow-lg); animation: fadeIn 0.6s ease;
         }
         .memories-hero::before {
             content: ''; position: absolute; inset: 0;
@@ -585,8 +640,29 @@
         .memories-hero-content { position: relative; z-index: 1; color: white; }
         .memories-hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.3); }
         .memories-hero-title { font-size: 26px; font-weight: 900; margin-bottom: 6px; letter-spacing: -0.5px; }
-        .memories-hero-subtitle { font-size: 14px; font-weight: 600; opacity: 0.9; }
-        .memories-hero-icon { font-size: 36px; margin-bottom: 8px; display: block; }
+        .memories-hero-subtitle { font-size: 14px; font-weight: 600; opacity: 0.9; margin-bottom: 10px; }
+        .memories-hero-stats {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .memories-total-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
  
         .memory-year-group { margin-bottom: 28px; animation: fadeIn 0.5s ease backwards; }
         .memory-year-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding: 10px 16px; background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-sm); }
@@ -809,6 +885,14 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
+                <div class="view-toggle">
+                    <button class="btn-view active" id="subViewGrid" onclick="setSubFolderView('grid')" title="عرض شبكي للمجلدات">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    </button>
+                    <button class="btn-view" id="subViewList" onclick="setSubFolderView('list')" title="عرض قائمة للمجلدات">
+                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </button>
+                </div>
             </div>
             <div class="folders-grid" id="subFoldersGrid"></div>
         </div>
@@ -825,7 +909,6 @@
         <div id="defaultEmptyState">
             <div class="memories-hero">
                 <div class="memories-hero-content">
-                    <span class="memories-hero-icon">✨</span>
                     <div class="memories-hero-badge">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -834,6 +917,9 @@
                     </div>
                     <div class="memories-hero-title" id="memoriesTitle">في مثل هذه الأيام</div>
                     <div class="memories-hero-subtitle" id="memoriesSubtitle">لحظات جميلة عشتموها سويا</div>
+                    <div class="memories-hero-stats">
+                        <span class="memories-total-pill" id="memoriesTotalCount">🖼️ إجمالي الصور: ...</span>
+                    </div>
                 </div>
             </div>
             <div id="memoriesContent">
@@ -863,8 +949,8 @@
             <button class="lightbox-btn" onclick="lbZoomIn()" aria-label="تكبير" title="تكبير">
                 <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             </button>
-            <button class="lightbox-btn" id="lightboxShare" onclick="shareLightboxImage()" aria-label="مشاركة">
-                <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <button class="lightbox-btn" id="lightboxShare" onclick="shareLightboxImage()" aria-label="حفظ الرابط" title="حفظ الرابط">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
             </button>
             <a class="lightbox-btn" id="lightboxDownload" target="_blank" aria-label="تحميل">
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -881,6 +967,10 @@
         </button>
     </div>
     <div class="lightbox-info" id="lightboxInfo" style="display:none"></div>
+    <div class="lightbox-related" id="lightboxRelated">
+        <div class="lightbox-related-title">🧠 ذكريات مشابهة</div>
+        <div class="lightbox-related-strip" id="lightboxRelatedStrip"></div>
+    </div>
 </div>
  
 <!-- Progress -->
@@ -918,6 +1008,7 @@
     let navigationPath    = [];
     let currentSort       = 'newest';
     let currentView       = 'grid';
+    let currentSubFolderView = 'grid';
     let visibleImagesCount = 120;
     const IMAGES_PAGE_SIZE = 120;
  
@@ -928,13 +1019,18 @@
         if (!dateStr) return '';
         const d = new Date(dateStr);
         if (isNaN(d)) return '';
-        return `${d.getDate()} ${ARABIC_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+        return `${formatCountEn(d.getDate())} ${ARABIC_MONTHS[d.getMonth()]} ${formatCountEn(d.getFullYear())}`;
     }
  
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.innerText = String(text || '');
         return div.innerHTML;
+    }
+    function formatCountEn(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return '0';
+        return n.toLocaleString('en-US');
     }
  
     // ====== Theme ======
@@ -1032,6 +1128,12 @@
         const grid = document.getElementById('displayArea');
         grid.classList.toggle('list-view', view === 'list');
     }
+    function setSubFolderView(view) {
+        currentSubFolderView = view;
+        document.getElementById('subViewGrid')?.classList.toggle('active', view === 'grid');
+        document.getElementById('subViewList')?.classList.toggle('active', view === 'list');
+        document.getElementById('subFoldersGrid')?.classList.toggle('list-view', view === 'list');
+    }
  
     // ====== Scroll to Top (Browser + Android WebView safe) ======
     function getScrollableTargets() {
@@ -1108,7 +1210,7 @@
                 return;
             }
             allFolders = rootFolders;
-            document.getElementById('sidebarSubtitle').innerText = `${allFolders.length} مجلد رئيسي`;
+            document.getElementById('sidebarSubtitle').innerText = `${formatCountEn(allFolders.length)} مجلد رئيسي`;
             sidebarTree = allFolders.map(f => ({ id: f.id, name: f.name, depth: 1, children: [], imageCount: null }));
             renderSidebarTree();
             // جلب الأبناء والعدادات في الخلفية
@@ -1261,7 +1363,7 @@
         document.getElementById('subFoldersSection').classList.remove('hidden-el');
         document.getElementById('contentActions').style.display = 'none';
         document.getElementById('currentFolderName').innerText = 'المجلدات الرئيسية';
-        document.getElementById('currentFolderCount').innerText = `${currentSubFolders.length} مجلد`;
+        document.getElementById('currentFolderCount').innerText = `${formatCountEn(currentSubFolders.length)} مجلد`;
         const bc = document.getElementById('breadcrumb');
         bc.innerHTML = '<button class="breadcrumb-item current">📂 المجلدات الرئيسية</button>';
         const subFolderFilter = document.getElementById('subFolderFilter');
@@ -1399,9 +1501,9 @@
     function renderContent() {
         const hasSub = currentSubFolders.length > 0;
         const hasImg = currentImages.length > 0;
-        let countText = hasSub && hasImg ? `${currentSubFolders.length} مجلد، ${currentImages.length} صورة`
-                      : hasSub ? `${currentSubFolders.length} مجلد فرعي`
-                      : hasImg ? `${currentImages.length} صورة`
+        let countText = hasSub && hasImg ? `${formatCountEn(currentSubFolders.length)} مجلد، ${formatCountEn(currentImages.length)} صورة`
+                      : hasSub ? `${formatCountEn(currentSubFolders.length)} مجلد فرعي`
+                      : hasImg ? `${formatCountEn(currentImages.length)} صورة`
                       : 'مجلد فارغ';
         document.getElementById('currentFolderCount').innerText = countText;
  
@@ -1431,6 +1533,7 @@
     function renderSubFolders() {
         const grid = document.getElementById('subFoldersGrid');
         grid.innerHTML = '';
+        grid.classList.toggle('list-view', currentSubFolderView === 'list');
         const query = document.getElementById('subFolderFilter')?.value.trim() || '';
         const source = query ? filteredSubFolders : currentSubFolders;
         if (source.length === 0) {
@@ -1456,9 +1559,9 @@
             if (!el) return;
             const images  = files.filter(f => f.mimeType?.startsWith('image/')).length;
             const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
-            const countText = folders > 0 && images > 0 ? `${folders} مجلد، ${images} صورة`
-                            : folders > 0 ? `${folders} مجلد`
-                            : images  > 0 ? `${images} صورة`
+            const countText = folders > 0 && images > 0 ? `${formatCountEn(folders)} مجلد، ${formatCountEn(images)} صورة`
+                            : folders > 0 ? `${formatCountEn(folders)} مجلد`
+                            : images  > 0 ? `${formatCountEn(images)} صورة`
                             : 'فارغ';
             subFolderCounts[folderId] = countText;
             el.innerText = countText;
@@ -1476,7 +1579,7 @@
         if (!wrap || !status || !btn) return;
         const shown = Math.min(visibleImagesCount, filteredImages.length);
         const total = filteredImages.length;
-        status.innerText = `المعروض ${shown} من ${total}`;
+        status.innerText = `المعروض ${formatCountEn(shown)} من ${formatCountEn(total)}`;
         const hasMore = shown < total;
         wrap.classList.toggle('hidden-el', total === 0);
         btn.classList.toggle('hidden-el', !hasMore);
@@ -1494,8 +1597,8 @@
  
         const title = document.getElementById('imagesSectionTitle');
         title.innerText = filteredImages.length !== currentImages.length
-            ? `🖼️ الصور (${filteredImages.length} من ${currentImages.length})`
-            : `🖼️ الصور (${currentImages.length})`;
+            ? `🖼️ الصور (${formatCountEn(filteredImages.length)} من ${formatCountEn(currentImages.length)})`
+            : `🖼️ الصور (${formatCountEn(currentImages.length)})`;
  
         if (filteredImages.length === 0) {
             if (currentImages.length > 0)
@@ -1534,8 +1637,8 @@
                         حفظ
                     </a>
                     <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${escapeHtml(p.name).replace(/'/g,"\\'")}')">
-                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                        مشاركة
+                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                        حفظ الرابط
                     </button>
                 </div>`;
             area.appendChild(card);
@@ -1575,7 +1678,7 @@
  
         if (selectedImages.size > 0) {
             downloadBtn.classList.remove('hidden-el');
-            downloadText.innerText = `تنزيل (${selectedImages.size})`;
+            downloadText.innerText = `تنزيل (${formatCountEn(selectedImages.size)})`;
         } else {
             downloadBtn.classList.add('hidden-el');
         }
@@ -1601,7 +1704,7 @@
         visible.forEach(img => selectedImages.add(img.id));
         updateSelectionUI();
         renderImagesGrid();
-        showToast(`تم تحديد ${visible.length} صورة ظاهرة`, 'success');
+        showToast(`تم تحديد ${formatCountEn(visible.length)} صورة ظاهرة`, 'success');
     }
     function clearSelectionFast() {
         if (selectedImages.size === 0 && !selectionMode) return;
@@ -1641,7 +1744,7 @@
         const psub      = document.getElementById('progressSubtitle');
         overlay.classList.add('active');
         ptitle.innerText = '📦 جاري تجهيز الصور...';
-        psub.innerText   = `0 من ${selectedImages.size}`;
+        psub.innerText   = `0 من ${formatCountEn(selectedImages.size)}`;
         fill.style.width = '0%';
  
         const zip    = new JSZip();
@@ -1656,7 +1759,7 @@
                 else failed++;
             } catch { failed++; }
             fill.style.width = `${((completed + failed) / imgs.length) * 100}%`;
-            psub.innerText   = `${completed + failed} من ${imgs.length}`;
+            psub.innerText   = `${formatCountEn(completed + failed)} من ${formatCountEn(imgs.length)}`;
         }
  
         ptitle.innerText = '🗜️ جاري ضغط الملفات...';
@@ -1668,7 +1771,7 @@
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
             URL.revokeObjectURL(link.href);
             overlay.classList.remove('active');
-            showToast(failed > 0 ? `تم تنزيل ${completed} صورة (فشل ${failed})` : `تم تنزيل ${completed} صورة بنجاح ✨`, 'success');
+            showToast(failed > 0 ? `تم تنزيل ${formatCountEn(completed)} صورة (فشل ${formatCountEn(failed)})` : `تم تنزيل ${formatCountEn(completed)} صورة بنجاح ✨`, 'success');
             selectionMode = false; selectedImages.clear(); updateSelectionUI(); renderImagesGrid();
         } catch {
             overlay.classList.remove('active');
@@ -1708,7 +1811,7 @@
         }, 150);
  
         document.getElementById('lightboxTitle').innerText   = img.name;
-        document.getElementById('lightboxCounter').innerText = `${lightboxIndex + 1} / ${lightboxImages.length}`;
+        document.getElementById('lightboxCounter').innerText = `${formatCountEn(lightboxIndex + 1)} / ${formatCountEn(lightboxImages.length)}`;
         document.getElementById('lightboxDownload').href     = `https://drive.google.com/uc?export=download&id=${img.id}`;
         document.getElementById('lightboxPrev').disabled     = lightboxIndex === 0;
         document.getElementById('lightboxNext').disabled     = lightboxIndex === lightboxImages.length - 1;
@@ -1720,6 +1823,59 @@
         if (img.folderPath) html += `<div class="lightbox-info-item"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>${escapeHtml(img.folderPath)}</div>`;
         infoEl.innerHTML = html;
         infoEl.style.display = html ? 'flex' : 'none';
+        renderLightboxRelated();
+    }
+    function openRelatedLightboxImage(index) {
+        if (index < 0 || index >= lightboxImages.length) return;
+        lightboxIndex = index;
+        lbResetZoom(false);
+        updateLightbox();
+    }
+    function renderLightboxRelated() {
+        const wrap = document.getElementById('lightboxRelated');
+        const strip = document.getElementById('lightboxRelatedStrip');
+        if (!wrap || !strip) return;
+        if (!Array.isArray(lightboxImages) || lightboxImages.length <= 1) {
+            wrap.style.display = 'none';
+            strip.innerHTML = '';
+            return;
+        }
+
+        const current = lightboxImages[lightboxIndex] || {};
+        const getMonthDay = (dateStr) => {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            if (isNaN(d)) return '';
+            return `${d.getMonth()}-${d.getDate()}`;
+        };
+        const currentMD = getMonthDay(current.createdTime || current.imgDate);
+
+        const scored = lightboxImages
+            .map((it, idx) => {
+                if (idx === lightboxIndex) return null;
+                const md = getMonthDay(it.createdTime || it.imgDate);
+                const sameMonthDay = currentMD && md && currentMD === md ? 1 : 0;
+                const sameFolder = current.folderPath && it.folderPath && current.folderPath === it.folderPath ? 1 : 0;
+                const distance = Math.abs(idx - lightboxIndex);
+                const score = (sameMonthDay * 200) + (sameFolder * 80) - distance;
+                return { idx, it, score };
+            })
+            .filter(Boolean)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 8);
+
+        if (scored.length === 0) {
+            wrap.style.display = 'none';
+            strip.innerHTML = '';
+            return;
+        }
+
+        strip.innerHTML = scored.map(({ idx, it }) => `
+            <button class="lightbox-related-item" onclick="openRelatedLightboxImage(${idx})" title="${escapeHtml(it.name || 'صورة')}">
+                <img src="https://drive.google.com/thumbnail?id=${it.id}&sz=w240" loading="lazy" alt="${escapeHtml(it.name || 'صورة')}">
+            </button>
+        `).join('');
+        wrap.style.display = 'flex';
     }
  
     // Keyboard
@@ -1868,67 +2024,14 @@
     });
     window.addEventListener('mouseup', () => { isDragging = false; lbBody?.classList.remove('dragging'); });
  
-    // ====== Share ======
+    // ====== Save Link ======
     async function shareImage(imageId, imageName) {
-        const fetchUrl = `https://drive.google.com/thumbnail?id=${imageId}&sz=w2000`;
-        const fetchWithTimeout = async (url, timeoutMs = 12000) => {
-            const controller = new AbortController();
-            const timer = setTimeout(() => controller.abort(), timeoutMs);
-            try {
-                return await fetch(url, { signal: controller.signal });
-            } finally {
-                clearTimeout(timer);
-            }
-        };
-
-        // --- المحاولة الأولى: مشاركة الملف الفعلي عبر Web Share ---
-        if (typeof navigator.share === 'function') {
-            try {
-                showToast('جاري تجهيز الصورة للمشاركة...', 'success');
-                const response = await fetchWithTimeout(fetchUrl);
-                if (!response.ok) throw new Error('fetch_failed');
-                const blob = await response.blob();
-                const ext  = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
-                const safeExt = ['jpeg','jpg','png','gif','webp','heic'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg';
-                const fileName = imageName.replace(/\.[^.]*$/, '') + '.' + safeExt;
-                const file = new File([blob], fileName, { type: blob.type || 'image/jpeg', lastModified: Date.now() });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({ files: [file], title: imageName, text: 'مشاركة صورة' });
-                    return;
-                }
-            } catch (e) {
-                if (e.name === 'AbortError') return; // المستخدم ألغى
-            }
-        }
-
-        // --- fallback: تنزيل الملف محليًا ليمكن مشاركته من أي تطبيق ---
-        try {
-            const response = await fetchWithTimeout(fetchUrl);
-            if (response.ok) {
-                const blob    = await response.blob();
-                const ext     = blob.type.split('/')[1]?.split(';')[0] || 'jpg';
-                const safeExt = ext === 'jpeg' ? 'jpg' : ext;
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = imageName.replace(/\.[^.]*$/, '') + '.' + safeExt;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                showToast('تم تنزيل الصورة. يمكنك الآن مشاركتها من أي تطبيق 📤', 'success');
-                return;
-            }
-        } catch(e) { /* استمر */ }
-
-        // --- fallback أخير: نسخ الرابط ---
         const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
         try {
             await navigator.clipboard.writeText(driveUrl);
-            showToast('تعذر مشاركة الملف، تم نسخ الرابط كبديل 📋', 'success');
+            showToast(`تم حفظ رابط "${imageName || 'الصورة'}" 📋`, 'success');
         } catch {
-            showToast('تعذّرت المشاركة', 'error');
+            showToast('تعذر حفظ الرابط', 'error');
         }
     }
 
@@ -1986,7 +2089,7 @@
             progressEl.innerText = 'جاري فحص المجلدات الرئيسية...';
             const allImages = await fetchAllImagesRecursive(ROOT_FOLDER_ID, '', progressEl);
             if (allImages.length === 0) { showNoMemories('لا توجد صور حتى الآن'); return; }
-            progressEl.innerText = `تم العثور على ${allImages.length} صورة، جاري تحليل التواريخ...`;
+            progressEl.innerText = `تم العثور على ${formatCountEn(allImages.length)} صورة، جاري تحليل التواريخ...`;
             const memories = filterMemories(allImages);
             cacheMemories(memories, allImages);
             renderMemories(memories, allImages);
@@ -2000,7 +2103,7 @@
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
         document.getElementById('memoriesTitle').innerText    = 'في مثل هذا اليوم';
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]}`;
+        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]}`;
     }
  
     async function fetchAllImagesRecursive(folderId, parentPath, progressEl) {
@@ -2011,7 +2114,7 @@
             const images  = files.filter(f => f.mimeType?.startsWith('image/'));
             images.forEach(img => allImages.push({ ...img, folderPath: parentPath || 'الرئيسية', parentFolderId: folderId }));
             if (progressEl && images.length > 0)
-                progressEl.innerText = `تم فحص "${parentPath || 'الرئيسية'}" - ${allImages.length} صورة حتى الآن`;
+                progressEl.innerText = `تم فحص "${parentPath || 'الرئيسية'}" - ${formatCountEn(allImages.length)} صورة حتى الآن`;
             const batchSize = 3;
             for (let i = 0; i < folders.length; i += batchSize) {
                 const results = await Promise.all(
@@ -2125,17 +2228,20 @@
         const periodLabel = weekMemories.length > 0 ? 'هذا الأسبوع' : 'هذا الشهر';
         const hasPeriodMemories = periodMemories.length > 0;
         const scatteredMemories = pickScatteredImages(allImages || []);
+        const totalImagesCount = (allImages || []).length;
         const years   = Object.keys(todayMemories).map(Number).sort((a, b) => a - b);
+        const totalEl = document.getElementById('memoriesTotalCount');
+        if (totalEl) totalEl.innerText = `🖼️ إجمالي الصور: ${formatCountEn(totalImagesCount)}`;
 
         const totalToday   = years.reduce((s, y) => s + todayMemories[y].length, 0);
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
         const subtitleBits = [];
-        if (totalToday > 0) subtitleBits.push(`${totalToday} ذكرى اليوم`);
-        if (periodMemories.length > 0) subtitleBits.push(`${periodMemories.length} من ${periodLabel}`);
-        if (scatteredMemories.length > 0) subtitleBits.push(`${scatteredMemories.length} صور متفرقة`);
+        if (totalToday > 0) subtitleBits.push(`${formatCountEn(totalToday)} ذكرى اليوم`);
+        if (periodMemories.length > 0) subtitleBits.push(`${formatCountEn(periodMemories.length)} من ${periodLabel}`);
+        if (scatteredMemories.length > 0) subtitleBits.push(`${formatCountEn(scatteredMemories.length)} صور متفرقة`);
         if (subtitleBits.length === 0) subtitleBits.push('لقطات من الذكريات');
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
+        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
         content.innerHTML = `
             <div class="memories-tabs">
                 <button class="memories-tab active" id="memTabToday" type="button">اليوم</button>
@@ -2162,7 +2268,7 @@
                     <div class="memory-year-header">
                         <span class="memory-year-number">${year}</span>
                         <span class="memory-year-label">${yearLabel}</span>
-                        <span class="memory-year-count">${images.length} صورة</span>
+                        <span class="memory-year-count">${formatCountEn(images.length)} صورة</span>
                     </div>
                     <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
                 todayPanel.appendChild(group);
@@ -2172,7 +2278,7 @@
 
                 images.forEach((p, i) => {
                     const imgDate = new Date(p.imgDate);
-                    const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
+                    const dateStr = `${formatCountEn(imgDate.getDate())} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
                     const card = document.createElement('div');
                     card.className = 'image-card memory-card';
                     card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
@@ -2200,8 +2306,8 @@
                                 حفظ
                             </a>
                             <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                                <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                                مشاركة
+                                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                                حفظ الرابط
                             </button>
                         </div>`;
                     grid.appendChild(card);
@@ -2218,7 +2324,7 @@
                 <div class="memory-year-header">
                     <span class="memory-year-number">📅</span>
                     <span class="memory-year-label">في ${periodLabel}</span>
-                    <span class="memory-year-count">${periodMemories.length} صورة</span>
+                    <span class="memory-year-count">${formatCountEn(periodMemories.length)} صورة</span>
                 </div>
                 <div class="images-grid" id="week-memory-grid"></div>`;
             weekPanel.appendChild(weekGroup);
@@ -2226,7 +2332,7 @@
             const weekImgs = periodMemories.map(img => ({ id: img.id, name: img.name }));
             periodMemories.forEach((p, i) => {
                 const imgDate = new Date(p.imgDate);
-                const dateStr = `${imgDate.getDate()} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
+                const dateStr = `${formatCountEn(imgDate.getDate())} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
                 const card = document.createElement('div');
                 card.className = 'image-card memory-card';
                 card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
@@ -2254,8 +2360,8 @@
                             حفظ
                         </a>
                         <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                            مشاركة
+                            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                            حفظ الرابط
                         </button>
                     </div>`;
                 weekGrid.appendChild(card);
@@ -2269,7 +2375,7 @@
                 <div class="memory-year-header">
                     <span class="memory-year-number">🎯</span>
                     <span class="memory-year-label">صورة من كل مجلد</span>
-                    <span class="memory-year-count">${scatteredMemories.length} صورة</span>
+                    <span class="memory-year-count">${formatCountEn(scatteredMemories.length)} صورة</span>
                 </div>
                 <div class="images-grid" id="scattered-grid"></div>`;
             scatteredPanel.appendChild(scatteredGroup);
@@ -2301,8 +2407,8 @@
                             حفظ
                         </a>
                         <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                            مشاركة
+                            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                            حفظ الرابط
                         </button>
                     </div>`;
                 scGrid.appendChild(card);
@@ -2338,7 +2444,7 @@
         const today    = new Date();
         const dayName  = ARABIC_DAYS[today.getDay()];
         if (!append) {
-            document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${today.getDate()} ${ARABIC_MONTHS[today.getMonth()]} • لقطات عشوائية`;
+            document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • لقطات عشوائية`;
             document.getElementById('memoriesTitle').innerText = '✨ لقطات من الذاكرة';
         }
 
@@ -2352,7 +2458,7 @@
             <div class="memory-year-header">
                 <span class="memory-year-number">🎲</span>
                 <span class="memory-year-label">لا توجد ذكريات من هذا اليوم</span>
-                <span class="memory-year-count">${picked.length} صورة عشوائية</span>
+                <span class="memory-year-count">${formatCountEn(picked.length)} صورة عشوائية</span>
             </div>
             <div class="images-grid" id="random-grid"></div>`;
         content.appendChild(group);
@@ -2383,8 +2489,8 @@
                         حفظ
                     </a>
                     <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                        مشاركة
+                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                        حفظ الرابط
                     </button>
                 </div>`;
             grid.appendChild(card);
