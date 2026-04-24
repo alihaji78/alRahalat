@@ -352,12 +352,11 @@
         .images-grid.list-view .img-container { width: 88px; min-height: 66px; height: 66px; flex-shrink: 0; border-radius: 10px; margin: 8px; overflow: hidden; }
         .images-grid.list-view .img-container img { max-height: 66px; object-fit: cover; }
         .images-grid.list-view .img-overlay { display: none; }
-        .images-grid.list-view .img-info { flex: 1; padding: 8px 12px 8px 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .images-grid.list-view .img-info { flex: 1; padding: 10px 12px; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
         .images-grid.list-view .img-name { white-space: normal; -webkit-line-clamp: 2; line-clamp: 2; }
         .images-grid.list-view .img-checkbox { top: 50%; transform: translateY(-50%); }
         .images-grid.list-view .img-meta { flex: 1; min-width: 120px; }
-        .images-grid.list-view .btn-download,
-        .images-grid.list-view .btn-share { padding: 7px 10px; font-size: 11px; white-space: nowrap; }
+        .images-grid.list-view .btn-more { padding: 7px 10px; font-size: 11px; white-space: nowrap; }
  
         /* ====== Skeleton ====== */
         .skeleton-card { background: var(--bg-secondary); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); }
@@ -416,11 +415,12 @@
         }
         .img-overlay svg { width: 14px; height: 14px; fill: none; stroke: white; stroke-width: 2.5; }
  
-        .img-info { padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .img-info { padding: 12px 14px; display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
         .img-meta { flex: 1; min-width: 0; }
         .img-name { font-size: 12px; color: var(--text-secondary); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
         .img-date { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
         .img-date svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .img-favorite-badge { margin-top: 5px; font-size: 10px; font-weight: 800; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px; }
  
         .btn-download {
             background: var(--accent); color: var(--accent-text); text-decoration: none; padding: 7px 13px;
@@ -431,16 +431,48 @@
         .btn-download:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-download svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
  
-        .btn-share {
-            background: var(--bg-primary); color: var(--text-primary); padding: 7px 11px;
-            border-radius: 10px; font-size: 12px; font-weight: 700; flex-shrink: 0;
+        .img-actions { display: flex; align-items: center; justify-content: flex-end; position: relative; }
+        .btn-more {
+            background: var(--bg-primary); color: var(--text-primary); padding: 7px 10px;
+            border-radius: 10px; font-size: 12px; font-weight: 800; flex-shrink: 0;
             transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
             cursor: pointer; border: 1px solid var(--border); font-family: 'Cairo', sans-serif;
-            min-width: 0;
+            width: 100%; justify-content: center;
         }
-        .btn-share:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); background: var(--hover-bg); }
-        .btn-share svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        .img-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+        .btn-more:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); background: var(--hover-bg); }
+        .btn-more svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .img-more-menu {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 160px;
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            padding: 6px;
+            display: none;
+            z-index: 20;
+        }
+        .img-more-menu.show { display: block; }
+        .img-more-item {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: block;
+            text-align: right;
+            padding: 8px 10px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+        }
+        .img-more-item:hover { background: var(--hover-bg); }
  
         /* ====== Empty State ====== */
         .empty-state { text-align: center; padding: 70px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 14px; animation: fadeIn 0.5s ease; }
@@ -702,6 +734,24 @@
  
         .memories-empty { text-align: center; padding: 50px 20px; background: var(--bg-glass-strong); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; }
         .memories-empty-icon { font-size: 60px; margin-bottom: 14px; opacity: 0.5; }
+
+        /* شريط أدوات الذكريات */
+        .memories-toolbar {
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px; padding: 10px 14px;
+            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+            box-shadow: var(--shadow-sm); flex-wrap: wrap;
+        }
+        .mem-count-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-right: auto; }
+        .mem-selection-mode .img-checkbox { display: flex !important; }
+        /* شريط تحميل صور الذكريات (احتفاظ بالقديم كـ alias) */
+        .memories-download-bar {
+            display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 14px; margin-bottom: 14px;
+            box-shadow: var(--shadow-sm); flex-wrap: wrap;
+        }
+        .mem-dl-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); flex: 1; }
         .memories-empty-title { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
         .memories-empty-text { font-size: 13px; color: var(--text-muted); font-weight: 600; }
  
@@ -741,8 +791,7 @@
             .btn-sort-opt svg { width: 13px; height: 13px; }
             .content-actions { width: 100%; }
             .btn-action { max-width: 100%; }
-            .images-grid.list-view .btn-download,
-            .images-grid.list-view .btn-share { white-space: normal; }
+            .images-grid.list-view .btn-more { white-space: normal; }
         }
         @media (max-width: 400px) {
             .nav-title { font-size: 15px; }
@@ -833,9 +882,9 @@
                     <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.1-3.36L23 10M1 14l5.4 4.36A9 9 0 0 0 20.5 15"/></svg>
                     <span>تحديث</span>
                 </button>
-                <button class="btn-action primary hidden-el" id="downloadZipBtn" onclick="downloadSelectedAsZip()">
+                <button class="btn-action primary hidden-el" id="downloadSelectedBtn" onclick="downloadSelectedImages()">
                     <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span id="downloadZipText">تنزيل (0)</span>
+                    <span id="downloadSelectedText">تنزيل المحدد (0)</span>
                 </button>
             </div>
         </div>
@@ -1003,6 +1052,7 @@
     let filteredImages    = [];
     let selectionMode     = false;
     let selectedImages    = new Set();
+    let favoriteImages    = new Set();
     let lightboxIndex     = 0;
     let lightboxImages    = [];
     let navigationPath    = [];
@@ -1014,6 +1064,7 @@
  
     const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const ARABIC_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    const FAVORITES_KEY = 'alrahalat_favorites_v1';
  
     function formatDate(dateStr) {
         if (!dateStr) return '';
@@ -1637,15 +1688,9 @@
                     <div class="img-meta">
                         <span class="img-name">${escapeHtml(p.name)}</span>
                         ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                        ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
                     </div>
-                    <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
-                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        حفظ
-                    </a>
-                    <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${escapeHtml(p.name).replace(/'/g,"\\'")}')">
-                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                        حفظ الرابط
-                    </button>
+                    ${renderImageActions({ id: p.id, name: p.name, createdTime: p.createdTime, folderPath: p.folderPath || currentFolderName || '' }, true)}
                 </div>`;
             area.appendChild(card);
         });
@@ -1668,8 +1713,8 @@
     function updateSelectionUI() {
         const area = document.getElementById('displayArea');
         const selectBtnText = document.getElementById('selectBtnText');
-        const downloadBtn   = document.getElementById('downloadZipBtn');
-        const downloadText  = document.getElementById('downloadZipText');
+        const downloadBtn   = document.getElementById('downloadSelectedBtn');
+        const downloadText  = document.getElementById('downloadSelectedText');
  
         if (selectionMode) {
             area.classList.add('selection-mode');
@@ -1684,7 +1729,7 @@
  
         if (selectedImages.size > 0) {
             downloadBtn.classList.remove('hidden-el');
-            downloadText.innerText = `تنزيل (${formatCountEn(selectedImages.size)})`;
+            downloadText.innerText = `تنزيل المحدد (${formatCountEn(selectedImages.size)})`;
         } else {
             downloadBtn.classList.add('hidden-el');
         }
@@ -1726,7 +1771,8 @@
         const label = encodeURIComponent(last?.name || currentFolderName || 'folder');
         const link = `${window.location.origin}${window.location.pathname}#${label}`;
         try {
-            await navigator.clipboard.writeText(link);
+            const copied = await copyTextSafely(link);
+            if (!copied) throw new Error('copy-failed');
             showToast('تم نسخ رابط المجلد 📋', 'success');
         } catch (_) {
             showToast('تعذر نسخ الرابط', 'error');
@@ -1741,48 +1787,82 @@
         showToast('تم تحديث المحتوى', 'success');
     }
  
-    // ====== Download ZIP ======
-    async function downloadSelectedAsZip() {
+    // ====== Bulk Download (original files, no ZIP) ======
+    async function downloadSelectedImages() {
         if (selectedImages.size === 0) { showToast('لم تحدد أي صور', 'error'); return; }
         const overlay   = document.getElementById('progressOverlay');
         const fill      = document.getElementById('progressFill');
         const ptitle    = document.getElementById('progressTitle');
         const psub      = document.getElementById('progressSubtitle');
+        const imgs      = currentImages.filter(img => selectedImages.has(img.id));
+        if (imgs.length === 0) { showToast('لا توجد صور صالحة للتنزيل', 'error'); return; }
+
         overlay.classList.add('active');
-        ptitle.innerText = '📦 جاري تجهيز الصور...';
-        psub.innerText   = `0 من ${formatCountEn(selectedImages.size)}`;
+        ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
+        psub.innerText   = `0 من ${formatCountEn(imgs.length)}`;
         fill.style.width = '0%';
- 
-        const zip    = new JSZip();
-        const folder = zip.folder(currentFolderName || 'images');
-        const imgs   = currentImages.filter(img => selectedImages.has(img.id));
-        let completed = 0, failed = 0;
+        let completed = 0;
+        let failed = 0;
  
         for (const img of imgs) {
             try {
-                const r = await fetch(`https://drive.google.com/thumbnail?id=${img.id}&sz=w2000`);
-                if (r.ok) { folder.file(img.name, await r.blob()); completed++; }
-                else failed++;
-            } catch { failed++; }
+                const directUrl = `https://drive.google.com/uc?export=download&id=${img.id}`;
+                triggerDownloadFrame(directUrl);
+                completed++;
+            } catch (_) {
+                failed++;
+            }
             fill.style.width = `${((completed + failed) / imgs.length) * 100}%`;
             psub.innerText   = `${formatCountEn(completed + failed)} من ${formatCountEn(imgs.length)}`;
+            await new Promise(resolve => setTimeout(resolve, 900));
         }
  
-        ptitle.innerText = '🗜️ جاري ضغط الملفات...';
-        try {
-            const content = await zip.generateAsync({ type: 'blob' }, m => { fill.style.width = `${m.percent.toFixed(0)}%`; });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(content);
-            link.download = `${currentFolderName || 'images'}.zip`;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            URL.revokeObjectURL(link.href);
-            overlay.classList.remove('active');
-            showToast(failed > 0 ? `تم تنزيل ${formatCountEn(completed)} صورة (فشل ${formatCountEn(failed)})` : `تم تنزيل ${formatCountEn(completed)} صورة بنجاح ✨`, 'success');
-            selectionMode = false; selectedImages.clear(); updateSelectionUI(); renderImagesGrid();
-        } catch {
-            overlay.classList.remove('active');
-            showToast('حدث خطأ أثناء الضغط', 'error');
+        overlay.classList.remove('active');
+        showToast(
+            failed > 0
+                ? `تم إرسال تنزيل ${formatCountEn(completed)} صورة (تعذر ${formatCountEn(failed)})`
+                : `تم إرسال تنزيل ${formatCountEn(completed)} صورة بنجاح ✨`,
+            failed > 0 ? 'error' : 'success'
+        );
+        selectionMode = false;
+        selectedImages.clear();
+        updateSelectionUI();
+        renderImagesGrid();
+    }
+
+    let _memCurrentTabImages = [];
+    window.downloadCurrentTabImages = async function() {
+        // نحصل على الصور من المتغير المُحدَّث من activateMemTab
+        const imgs = window._memCurrentTabImagesGlobal || [];
+        if (!imgs || imgs.length === 0) { showToast('لا توجد صور للتحميل', 'error'); return; }
+        const overlay = document.getElementById('progressOverlay');
+        const fill = document.getElementById('progressFill');
+        const ptitle = document.getElementById('progressTitle');
+        const psub = document.getElementById('progressSubtitle');
+        overlay.classList.add('active');
+        ptitle.innerText = '⬇️ جاري تحميل الصور...';
+        psub.innerText = `0 من ${formatCountEn(imgs.length)}`;
+        fill.style.width = '0%';
+        let completed = 0;
+        for (const img of imgs) {
+            triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
+            completed++;
+            fill.style.width = `${(completed / imgs.length) * 100}%`;
+            psub.innerText = `${formatCountEn(completed)} من ${formatCountEn(imgs.length)}`;
+            await new Promise(r => setTimeout(r, 900));
         }
+        overlay.classList.remove('active');
+        showToast(`تم إرسال تحميل ${formatCountEn(completed)} صورة ✨`, 'success');
+    };
+
+    function triggerDownloadFrame(url) {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = url;
+        document.body.appendChild(iframe);
+        setTimeout(() => {
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 8000);
     }
  
     // ====== Lightbox ======
@@ -2030,14 +2110,184 @@
     });
     window.addEventListener('mouseup', () => { isDragging = false; lbBody?.classList.remove('dragging'); });
  
-    // ====== Save Link ======
+    // ====== Save/Share Link (Android WebView friendly) ======
+    async function copyTextSafely(text) {
+        if (!text) return false;
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        ta.style.left = '-1000px';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let copied = false;
+        try {
+            copied = document.execCommand('copy');
+        } catch (_) {
+            copied = false;
+        }
+        document.body.removeChild(ta);
+        return copied;
+    }
+
+    function escapeJsSingleQuote(value) {
+        return String(value || '')
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/\r?\n/g, ' ');
+    }
+
+    function loadFavorites() {
+        try {
+            const raw = localStorage.getItem(FAVORITES_KEY);
+            const list = raw ? JSON.parse(raw) : [];
+            if (Array.isArray(list)) favoriteImages = new Set(list.filter(Boolean));
+        } catch (_) {
+            favoriteImages = new Set();
+        }
+    }
+
+    function saveFavorites() {
+        try {
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favoriteImages]));
+        } catch (_) {}
+    }
+
+    function toggleFavoriteImage(imageId, imageName) {
+        if (!imageId) return;
+        const isFav = favoriteImages.has(imageId);
+        if (isFav) {
+            favoriteImages.delete(imageId);
+            showToast(`أزيلت "${imageName || 'الصورة'}" من المفضلة`, 'success');
+        } else {
+            favoriteImages.add(imageId);
+            showToast(`أضيفت "${imageName || 'الصورة'}" إلى المفضلة ⭐`, 'success');
+        }
+        saveFavorites();
+        closeAllImageMenus();
+        const nowFav = favoriteImages.has(imageId);
+        const newLabel = nowFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
+        document.querySelectorAll('[data-menu-wrap="' + imageId + '"]').forEach(wrap => {
+            const menuEl = wrap.querySelector('#imgMoreMenu-' + imageId);
+            if (menuEl) {
+                const favBtn = [...menuEl.querySelectorAll('.img-more-item')].find(function(b){ return b.textContent.includes('مفضلة'); });
+                if (favBtn) favBtn.textContent = newLabel;
+            }
+            const card = wrap.closest('.image-card');
+            if (card) {
+                const meta = card.querySelector('.img-meta');
+                if (meta) {
+                    let badge = meta.querySelector('.img-favorite-badge');
+                    if (nowFav) {
+                        if (!badge) {
+                            badge = document.createElement('div');
+                            badge.className = 'img-favorite-badge';
+                            badge.textContent = '⭐ مفضلة';
+                            meta.appendChild(badge);
+                        }
+                    } else {
+                        if (badge) badge.remove();
+                    }
+                }
+            }
+        });
+        if (!document.getElementById('imagesSection').classList.contains('hidden-el')) {
+            renderImagesGrid();
+        }
+    }
+
+    function renderImageActions({ id, name, createdTime, folderPath }, allowSelectionAction = true) {
+        const safeName = escapeJsSingleQuote(name || '');
+        const safeDate = escapeJsSingleQuote(createdTime || '');
+        const safePath = escapeJsSingleQuote(folderPath || '');
+        const favoriteLabel = favoriteImages.has(id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
+        const selectionLabel = selectedImages.has(id) ? 'إلغاء التحديد' : 'تحديد الصورة';
+        const selectionAction = allowSelectionAction
+            ? `<button class="img-more-item" onclick="event.stopPropagation();toggleSelection('${id}');closeAllImageMenus()">${selectionLabel}</button>`
+            : `<button class="img-more-item" onclick="event.stopPropagation();showToast('التحديد متاح من عرض الصور الرئيسي', 'success');closeAllImageMenus()">تحديد الصورة</button>`;
+        return `
+            <div class="img-actions" data-menu-wrap="${id}">
+                <button class="btn-more" onclick="openImageMoreMenu(event,'${id}')">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+                    المزيد
+                </button>
+                <div class="img-more-menu" id="imgMoreMenu-${id}">
+                    <a href="https://drive.google.com/uc?export=download&id=${id}" target="_blank" class="img-more-item" onclick="event.stopPropagation();closeAllImageMenus()">تنزيل الصورة</a>
+                    <button class="img-more-item" onclick="event.stopPropagation();saveImageLinkOnly('${id}','${safeName}')">نسخ الرابط</button>
+                    <button class="img-more-item" onclick="event.stopPropagation();openImageInExternalBrowser('${id}')">فتح في المتصفح</button>
+                    <button class="img-more-item" onclick="event.stopPropagation();showImageDetails('${safeName}','${safeDate}','${safePath}')">تفاصيل الصورة</button>
+                    <button class="img-more-item" onclick="event.stopPropagation();toggleFavoriteImage('${id}','${safeName}')">${favoriteLabel}</button>
+                    ${selectionAction}
+                </div>
+            </div>`;
+    }
+
+    function closeAllImageMenus() {
+        document.querySelectorAll('.img-more-menu.show').forEach(menu => menu.classList.remove('show'));
+    }
+
+    function openImageMoreMenu(event, imageId) {
+        event.stopPropagation();
+        const menu = document.getElementById(`imgMoreMenu-${imageId}`);
+        if (!menu) return;
+        const willShow = !menu.classList.contains('show');
+        closeAllImageMenus();
+        if (willShow) menu.classList.add('show');
+    }
+
+    function openImageInExternalBrowser(imageId) {
+        const url = `https://drive.google.com/file/d/${imageId}/view`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+        closeAllImageMenus();
+        showToast('تم فتح الصورة في المتصفح', 'success');
+    }
+
+    function showImageDetails(imageName, createdTime, folderPath) {
+        const parts = [];
+        if (imageName) parts.push(`الاسم: ${imageName}`);
+        if (createdTime) parts.push(`التاريخ: ${formatDate(createdTime) || createdTime}`);
+        if (folderPath) parts.push(`المجلد: ${folderPath}`);
+        showToast(parts.join(' • ') || 'لا توجد تفاصيل متاحة', 'success');
+        closeAllImageMenus();
+    }
+
     async function shareImage(imageId, imageName) {
         const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
         try {
-            await navigator.clipboard.writeText(driveUrl);
+            if (navigator.share) {
+                await navigator.share({
+                    title: imageName || 'صورة',
+                    text: imageName || 'رابط الصورة',
+                    url: driveUrl
+                });
+                showToast(`تم فتح المشاركة لـ "${imageName || 'الصورة'}"`, 'success');
+                return;
+            }
+
+            const copied = await copyTextSafely(driveUrl);
+            if (!copied) throw new Error('copy-failed');
+            showToast(`تم حفظ رابط "${imageName || 'الصورة'}" 📋`, 'success');
+        } catch (err) {
+            if (err && err.name === 'AbortError') return;
+            showToast('تعذر حفظ الرابط، جرّب زر "حفظ" المباشر للصورة', 'error');
+        }
+    }
+
+    async function saveImageLinkOnly(imageId, imageName) {
+        closeAllImageMenus();
+        const driveUrl = `https://drive.google.com/file/d/${imageId}/view`;
+        try {
+            const copied = await copyTextSafely(driveUrl);
+            if (!copied) throw new Error('copy-failed');
             showToast(`تم نسخ رابط "${imageName || 'الصورة'}" 📋`, 'success');
-        } catch {
-            showToast('تعذر نسخ رابط الصورة', 'error');
+        } catch (_) {
+            showToast('تعذر نسخ الرابط', 'error');
         }
     }
 
@@ -2045,6 +2295,8 @@
         const img = lightboxImages[lightboxIndex];
         if (img) shareImage(img.id, img.name);
     }
+
+    document.addEventListener('click', () => closeAllImageMenus());
  
     // ====== Toast ======
     let toastTimer = null;
@@ -2262,10 +2514,35 @@
                 <button class="memories-tab active" id="memTabToday" type="button">اليوم</button>
                 ${hasPeriodMemories ? `<button class="memories-tab" id="memTabWeek" type="button">${periodLabel}</button>` : ''}
                 <button class="memories-tab" id="memTabScattered" type="button">صور متفرقة</button>
+                <button class="memories-tab" id="memTabFavorites" type="button">⭐ المفضلة</button>
+            </div>
+            <div class="memories-toolbar" id="memToolbar" style="display:none;">
+                <button class="btn-action" id="memSelBtn" onclick="toggleMemSelectionMode()">
+                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <span id="memSelBtnText">تحديد</span>
+                </button>
+                <button class="btn-action" id="memSelAllBtn" onclick="selectAllMemVisible()">
+                    <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/></svg>
+                    <span>تحديد الكل</span>
+                </button>
+                <button class="btn-action" id="memClearSelBtn" onclick="clearMemSelection()">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    <span>إلغاء التحديد</span>
+                </button>
+                <span class="mem-count-label" id="memCountLabel"></span>
+                <button class="btn-action primary hidden-el" id="memDlSelectedBtn" onclick="downloadMemSelected()">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span id="memDlSelText">تنزيل المحدد (0)</span>
+                </button>
+                <button class="btn-action primary" id="memDlAllBtn" onclick="downloadCurrentTabImages()">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span id="memDlLabel">تحميل الكل (0)</span>
+                </button>
             </div>
             <div class="memories-tab-panel" id="memoriesTodayPanel"></div>
             <div class="memories-tab-panel hidden-el" id="memoriesWeekPanel"></div>
             <div class="memories-tab-panel hidden-el" id="memoriesScatteredPanel"></div>
+            <div class="memories-tab-panel hidden-el" id="memoriesFavoritesPanel"></div>
         `;
         const todayPanel = document.getElementById('memoriesTodayPanel');
         const weekPanel = document.getElementById('memoriesWeekPanel');
@@ -2296,6 +2573,7 @@
                     const dateStr = `${formatCountEn(imgDate.getDate())} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
                     const card = document.createElement('div');
                     card.className = 'image-card memory-card';
+                    card.dataset.memId = p.id;
                     card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
                     card.innerHTML = `
                         <div class="memory-card-badge">
@@ -2315,15 +2593,9 @@
                             <div class="img-meta">
                                 <div class="img-name">${escapeHtml(p.name)}</div>
                                 <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath)}</div>
+                                ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
                             </div>
-                            <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
-                                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                                حفظ
-                            </a>
-                            <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                                حفظ الرابط
-                            </button>
+                            ${renderImageActions({ id: p.id, name: p.name, createdTime: p.imgDate || p.createdTime, folderPath: p.folderPath || '' }, false)}
                         </div>`;
                     grid.appendChild(card);
                 });
@@ -2350,6 +2622,7 @@
                 const dateStr = `${formatCountEn(imgDate.getDate())} ${ARABIC_MONTHS[imgDate.getMonth()]}`;
                 const card = document.createElement('div');
                 card.className = 'image-card memory-card';
+                card.dataset.memId = p.id;
                 card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
                 card.innerHTML = `
                     <div class="memory-card-badge">
@@ -2369,15 +2642,9 @@
                         <div class="img-meta">
                             <div class="img-name">${escapeHtml(p.name)}</div>
                             <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath)}</div>
+                            ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
                         </div>
-                        <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            حفظ
-                        </a>
-                        <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                            حفظ الرابط
-                        </button>
+                        ${renderImageActions({ id: p.id, name: p.name, createdTime: p.imgDate || p.createdTime, folderPath: p.folderPath || '' }, false)}
                     </div>`;
                 weekGrid.appendChild(card);
             });
@@ -2400,6 +2667,7 @@
                 const dateStr = formatDate(p.createdTime);
                 const card = document.createElement('div');
                 card.className = 'image-card memory-card';
+                card.dataset.memId = p.id;
                 card.style.animationDelay = `${Math.min(i * 50, 500)}ms`;
                 card.innerHTML = `
                     <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(scImgs)},${i})'>
@@ -2416,15 +2684,9 @@
                             <div class="img-name">${escapeHtml(p.name)}</div>
                             <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath || 'مجلد')}</div>
                             ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                        ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
                         </div>
-                        <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
-                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                            حفظ
-                        </a>
-                        <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                            حفظ الرابط
-                        </button>
+                    ${renderImageActions({ id: p.id, name: p.name, createdTime: p.createdTime, folderPath: p.folderPath || '' }, false)}
                     </div>`;
                 scGrid.appendChild(card);
             });
@@ -2438,20 +2700,200 @@
         const tabToday = document.getElementById('memTabToday');
         const tabWeek = document.getElementById('memTabWeek');
         const tabScattered = document.getElementById('memTabScattered');
+        const favoritesPanel = document.getElementById('memoriesFavoritesPanel');
+        const tabFavorites = document.getElementById('memTabFavorites');
+
+        let currentTabImages = [];
+
+        function updateMemDownloadBar(images) {
+            currentTabImages = images || [];
+            window._memCurrentTabImagesGlobal = currentTabImages;
+            const toolbar = document.getElementById('memToolbar');
+            const dlAllBtn = document.getElementById('memDlLabel');
+            if (!toolbar) return;
+            if (currentTabImages.length > 0) {
+                toolbar.style.display = 'flex';
+                if (dlAllBtn) dlAllBtn.textContent = `تحميل الكل (${formatCountEn(currentTabImages.length)})`;
+                document.getElementById('memCountLabel').innerText = `${formatCountEn(currentTabImages.length)} صورة`;
+            } else {
+                toolbar.style.display = 'none';
+            }
+            // إعادة تعيين التحديد عند تغيير التبويب
+            memSelectedImages.clear();
+            updateMemSelectionUI();
+        }
+
+        let memSelectedImages = new Set();
+        let memSelectionMode = false;
+
+        function updateMemSelectionUI() {
+            const dlSelBtn = document.getElementById('memDlSelectedBtn');
+            const dlSelText = document.getElementById('memDlSelText');
+            const selBtnText = document.getElementById('memSelBtnText');
+            const countLabel = document.getElementById('memCountLabel');
+            if (!dlSelBtn) return;
+            if (memSelectedImages.size > 0) {
+                dlSelBtn.classList.remove('hidden-el');
+                if (dlSelText) dlSelText.textContent = `تنزيل المحدد (${formatCountEn(memSelectedImages.size)})`;
+            } else {
+                dlSelBtn.classList.add('hidden-el');
+            }
+            if (selBtnText) selBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
+            if (countLabel) {
+                countLabel.innerText = memSelectionMode && memSelectedImages.size > 0
+                    ? `${formatCountEn(memSelectedImages.size)} محدد من ${formatCountEn(currentTabImages.length)}`
+                    : `${formatCountEn(currentTabImages.length)} صورة`;
+            }
+            // تحديث checkboxes في بطاقات الذكريات
+            document.querySelectorAll('.mem-panel-active .image-card').forEach(card => {
+                const id = card.dataset.memId;
+                if (!id) return;
+                let cb = card.querySelector('.img-checkbox');
+                if (!cb) {
+                    cb = document.createElement('div');
+                    cb.className = 'img-checkbox';
+                    cb.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+                    cb.onclick = (e) => { e.stopPropagation(); toggleMemSelection(id); };
+                    card.insertBefore(cb, card.firstChild);
+                }
+                cb.style.display = memSelectionMode ? 'flex' : 'none';
+                cb.classList.toggle('active', memSelectedImages.has(id));
+                card.classList.toggle('selected', memSelectedImages.has(id));
+            });
+        }
+
+        function toggleMemSelectionMode() {
+            memSelectionMode = !memSelectionMode;
+            if (!memSelectionMode) { memSelectedImages.clear(); }
+            updateMemSelectionUI();
+        }
+
+        function toggleMemSelection(id) {
+            if (!memSelectionMode) { memSelectionMode = true; }
+            if (memSelectedImages.has(id)) memSelectedImages.delete(id);
+            else memSelectedImages.add(id);
+            updateMemSelectionUI();
+        }
+
+        function selectAllMemVisible() {
+            memSelectionMode = true;
+            currentTabImages.forEach(img => memSelectedImages.add(img.id));
+            updateMemSelectionUI();
+            showToast(`تم تحديد ${formatCountEn(currentTabImages.length)} صورة`, 'success');
+        }
+
+        function clearMemSelection() {
+            memSelectionMode = false;
+            memSelectedImages.clear();
+            updateMemSelectionUI();
+            showToast('تم إلغاء التحديد', 'success');
+        }
+
+        window.downloadMemSelected = async function() {
+            const imgs = currentTabImages.filter(img => memSelectedImages.has(img.id));
+            if (!imgs.length) { showToast('لم تحدد أي صور', 'error'); return; }
+            const overlay = document.getElementById('progressOverlay');
+            const fill = document.getElementById('progressFill');
+            const ptitle = document.getElementById('progressTitle');
+            const psub = document.getElementById('progressSubtitle');
+            overlay.classList.add('active');
+            ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
+            let done = 0;
+            for (const img of imgs) {
+                triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
+                done++;
+                fill.style.width = `${(done / imgs.length) * 100}%`;
+                psub.innerText = `${formatCountEn(done)} من ${formatCountEn(imgs.length)}`;
+                await new Promise(r => setTimeout(r, 900));
+            }
+            overlay.classList.remove('active');
+            showToast(`تم إرسال تحميل ${formatCountEn(done)} صورة ✨`, 'success');
+            memSelectionMode = false; memSelectedImages.clear(); updateMemSelectionUI();
+        };
+
         const activateMemTab = (tab) => {
             const showToday = tab === 'today';
             const showWeek = tab === 'week';
             const showScattered = tab === 'scattered';
+            const showFavorites = tab === 'favorites';
             tabToday.classList.toggle('active', showToday);
             if (tabWeek) tabWeek.classList.toggle('active', showWeek);
             tabScattered.classList.toggle('active', showScattered);
+            tabFavorites.classList.toggle('active', showFavorites);
             todayPanel.classList.toggle('hidden-el', !showToday);
             weekPanel.classList.toggle('hidden-el', !showWeek);
             scatteredPanel.classList.toggle('hidden-el', !showScattered);
+            favoritesPanel.classList.toggle('hidden-el', !showFavorites);
+            // تحديث كلاس البانل النشط
+            [todayPanel, weekPanel, scatteredPanel, favoritesPanel].forEach(p => p && p.classList.remove('mem-panel-active'));
+            if (showToday) todayPanel.classList.add('mem-panel-active');
+            else if (showWeek) weekPanel.classList.add('mem-panel-active');
+            else if (showScattered) scatteredPanel.classList.add('mem-panel-active');
+            else if (showFavorites) favoritesPanel.classList.add('mem-panel-active');
+
+            if (showToday) updateMemDownloadBar(years.reduce((a, y) => a.concat(todayMemories[y]), []));
+            else if (showWeek) updateMemDownloadBar(periodMemories);
+            else if (showScattered) updateMemDownloadBar(scatteredMemories);
+            else if (showFavorites) renderFavoritesPanel();
         };
         tabToday.onclick = () => activateMemTab('today');
         if (tabWeek) tabWeek.onclick = () => activateMemTab('week');
         tabScattered.onclick = () => activateMemTab('scattered');
+        tabFavorites.onclick = () => activateMemTab('favorites');
+
+        // شريط التحميل الأولي لتبويب اليوم
+        todayPanel.classList.add('mem-panel-active');
+        updateMemDownloadBar(years.reduce((a, y) => a.concat(todayMemories[y]), []));
+
+        function renderFavoritesPanel() {
+            favoritesPanel.innerHTML = '';
+            const favIds = [...favoriteImages];
+            const favImgs = (allImages || []).filter(img => favIds.includes(img.id));
+            updateMemDownloadBar(favImgs);
+            if (favImgs.length === 0) {
+                favoritesPanel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-title">لا توجد صور في المفضلة</div><div>أضف صوراً للمفضلة من قائمة المزيد</div></div>';
+                return;
+            }
+            const group = document.createElement('div');
+            group.className = 'memory-year-group';
+            group.innerHTML = `
+                <div class="memory-year-header">
+                    <span class="memory-year-number">⭐</span>
+                    <span class="memory-year-label">صورك المفضلة</span>
+                    <span class="memory-year-count">${formatCountEn(favImgs.length)} صورة</span>
+                </div>
+                <div class="images-grid" id="favorites-grid"></div>`;
+            favoritesPanel.appendChild(group);
+            const grid = group.querySelector('#favorites-grid');
+            const favImgsRef = favImgs.map(img => ({ id: img.id, name: img.name, createdTime: img.createdTime }));
+            favImgs.forEach((p, i) => {
+                const dateStr = formatDate(p.createdTime);
+                const card = document.createElement('div');
+                card.className = 'image-card memory-card';
+                card.dataset.memId = p.id;
+                card.style.animationDelay = `${Math.min(i * 40, 400)}ms`;
+                card.innerHTML = `
+                    <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(favImgsRef)},${i})'>
+                        <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
+                        <div class="img-overlay">
+                            <span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10l6.1-6.1M9 21H3v-6M10 14l-6.1 6.1"/></svg>
+                                عرض بالحجم الكامل
+                            </span>
+                        </div>
+                    </div>
+                    <div class="img-info">
+                        <div class="img-meta">
+                            <div class="img-name">${escapeHtml(p.name)}</div>
+                            <div class="memory-card-folder">📁 ${escapeHtml(p.folderPath || 'مجلد')}</div>
+                            ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                            <div class="img-favorite-badge">⭐ مفضلة</div>
+                        </div>
+                        ${renderImageActions({ id: p.id, name: p.name, createdTime: p.createdTime, folderPath: p.folderPath || '' }, false)}
+                    </div>`;
+                grid.appendChild(card);
+            });
+        }
     }
 
     function renderRandomImages(allImages, targetContent = null, append = false) {
@@ -2483,6 +2925,7 @@
             const dateStr = formatDate(p.createdTime);
             const card    = document.createElement('div');
             card.className = 'image-card memory-card';
+            card.dataset.memId = p.id;
             card.style.animationDelay = `${Math.min(i * 40, 400)}ms`;
             card.innerHTML = `
                 <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(memImgs)},${i})'>
@@ -2498,15 +2941,9 @@
                     <div class="img-meta">
                         <div class="img-name">${escapeHtml(p.name)}</div>
                         ${dateStr ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                        ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
                     </div>
-                    <a href="https://drive.google.com/uc?export=download&id=${p.id}" target="_blank" class="btn-download" onclick="event.stopPropagation()">
-                        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        حفظ
-                    </a>
-                    <button class="btn-share" onclick="event.stopPropagation();shareImage('${p.id}','${p.name.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">
-                        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                        حفظ الرابط
-                    </button>
+                    ${renderImageActions({ id: p.id, name: p.name, createdTime: p.createdTime, folderPath: p.folderPath || '' }, false)}
                 </div>`;
             grid.appendChild(card);
         });
@@ -2560,6 +2997,7 @@
  
     // ====== Init ======
     initTheme();
+    loadFavorites();
     loadSidebarFolders();
     loadMemories();
     if (!history.state) history.replaceState({ type: 'home' }, '', window.location.pathname);
