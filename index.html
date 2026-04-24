@@ -225,7 +225,12 @@
         .content-header-text { min-width: 0; flex: 1; }
         .content-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
         .content-header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-        .content-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .content-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .content-actions .btn-action { padding: 8px 11px; font-size: 11px; }
+        @media (max-width: 500px) {
+            .content-actions .btn-action span { font-size: 10px; }
+            .content-actions .btn-action svg { width: 12px; height: 12px; }
+        }
  
         .btn-action {
             display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px;
@@ -583,15 +588,24 @@
         .toast {
             position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-            color: var(--text-primary); padding: 13px 20px; border-radius: 14px;
+            color: var(--text-primary); padding: 13px 14px 13px 18px; border-radius: 14px;
             border: 1px solid var(--border); box-shadow: var(--shadow-lg); font-size: 13px; font-weight: 700;
             z-index: 3000; display: flex; align-items: center; gap: 10px;
-            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-width: 90%;
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); max-width: 92%;
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
         .toast-icon { width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
         .toast.success .toast-icon { stroke: var(--success); }
         .toast.error .toast-icon { stroke: var(--danger); }
+        .toast-msg { flex: 1; min-width: 0; }
+        .toast-close-btn {
+            width: 26px; height: 26px; border-radius: 7px; background: var(--hover-bg);
+            border: 1px solid var(--border); color: var(--text-muted); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        .toast-close-btn:hover { background: var(--border); color: var(--text-primary); }
+        .toast-close-btn svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
  
         /* ====== Progress Overlay ====== */
         .progress-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2500; display: none; align-items: center; justify-content: center; }
@@ -738,11 +752,18 @@
         /* شريط أدوات الذكريات */
         .memories-toolbar {
             background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--border); border-radius: 16px; padding: 10px 14px;
-            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+            border: 1px solid var(--border); border-radius: 16px; padding: 8px 12px;
+            margin-bottom: 14px; display: flex; align-items: center; gap: 5px;
             box-shadow: var(--shadow-sm); flex-wrap: wrap;
         }
-        .mem-count-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-right: auto; }
+        .memories-toolbar .btn-action { padding: 7px 9px; font-size: 11px; gap: 4px; }
+        .memories-toolbar .btn-action svg { width: 13px; height: 13px; }
+        .mem-count-label { font-size: 11px; font-weight: 700; color: var(--text-muted); flex: 1; text-align: center; white-space: nowrap; }
+        @media (max-width: 540px) {
+            .memories-toolbar .btn-action span { display: none; }
+            .memories-toolbar .btn-action { padding: 8px; width: 34px; height: 34px; justify-content: center; }
+            .mem-count-label { font-size: 10px; }
+        }
         .mem-selection-mode .img-checkbox { display: flex !important; }
         /* شريط تحميل صور الذكريات (احتفاظ بالقديم كـ alias) */
         .memories-download-bar {
@@ -1034,7 +1055,10 @@
 <!-- Toast -->
 <div class="toast" id="toast">
     <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24"></svg>
-    <span id="toastMessage"></span>
+    <span class="toast-msg" id="toastMessage"></span>
+    <button class="toast-close-btn" onclick="hideToastNow()" aria-label="إغلاق">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
 </div>
  
 <script>
@@ -2176,7 +2200,9 @@
         document.querySelectorAll('[data-menu-wrap="' + imageId + '"]').forEach(wrap => {
             const menuEl = wrap.querySelector('#imgMoreMenu-' + imageId);
             if (menuEl) {
-                const favBtn = [...menuEl.querySelectorAll('.img-more-item')].find(function(b){ return b.textContent.includes('مفضلة'); });
+                // محاولة الزر المُعرَّف بـ id أولاً، ثم البحث عام
+                const favBtn = menuEl.querySelector('#favMenuBtn-' + imageId) ||
+                    [...menuEl.querySelectorAll('.img-more-item')].find(function(b){ return b.textContent.includes('مفضلة'); });
                 if (favBtn) favBtn.textContent = newLabel;
             }
             const card = wrap.closest('.image-card');
@@ -2222,7 +2248,7 @@
                     <button class="img-more-item" onclick="event.stopPropagation();saveImageLinkOnly('${id}','${safeName}')">نسخ الرابط</button>
                     <button class="img-more-item" onclick="event.stopPropagation();openImageInExternalBrowser('${id}')">فتح في المتصفح</button>
                     <button class="img-more-item" onclick="event.stopPropagation();showImageDetails('${safeName}','${safeDate}','${safePath}')">تفاصيل الصورة</button>
-                    <button class="img-more-item" onclick="event.stopPropagation();toggleFavoriteImage('${id}','${safeName}')">${favoriteLabel}</button>
+                    <button class="img-more-item" id="favMenuBtn-${id}" onclick="event.stopPropagation();toggleFavoriteImage('${id}','${safeName}')">${favoriteLabel}</button>
                     ${selectionAction}
                 </div>
             </div>`;
@@ -2303,10 +2329,7 @@
     function showToast(message, type = 'success') {
         const toast = document.getElementById('toast');
         const icon  = document.getElementById('toastIcon');
-        if (toastTimer) {
-            clearTimeout(toastTimer);
-            toastTimer = null;
-        }
+        if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
         toast.classList.remove('show');
         toast.className = `toast ${type}`;
         document.getElementById('toastMessage').innerText = message;
@@ -2314,19 +2337,44 @@
             ? '<polyline points="20 6 9 17 4 12"/>'
             : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
         requestAnimationFrame(() => toast.classList.add('show'));
+        // يختفي تلقائياً بعد 5 ثوان، أو يمكن إغلاقه يدوياً
         toastTimer = setTimeout(() => {
             toast.classList.remove('show');
             toastTimer = null;
-        }, 3000);
+        }, 5000);
     }
     function hideToastNow() {
         const toast = document.getElementById('toast');
         if (!toast) return;
-        if (toastTimer) {
-            clearTimeout(toastTimer);
-            toastTimer = null;
-        }
+        if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
         toast.classList.remove('show');
+    }
+
+    // نسخ رابط التبويب الحالي للذكريات
+    async function copyMemTabLink() {
+        const link = window.location.href.split('#')[0];
+        try {
+            const copied = await copyTextSafely(link);
+            if (!copied) throw new Error();
+            showToast('تم نسخ رابط الصفحة 📋', 'success');
+        } catch (_) {
+            showToast('تعذر نسخ الرابط', 'error');
+        }
+    }
+
+    // تحديث الذكريات (مسح الكاش وإعادة التحميل)
+    function refreshMemories() {
+        try { localStorage.removeItem(MEMORIES_CACHE_KEY); } catch(_) {}
+        showToast('جاري تحديث الذكريات... 🔄', 'success');
+        setTimeout(() => {
+            // إعادة تحميل قسم الذكريات بعد مسح الكاش
+            const defaultState = document.getElementById('defaultEmptyState');
+            if (defaultState && !defaultState.classList.contains('hidden-el')) {
+                // نحن في صفحة الذكريات - نعيد تحميلها
+                document.getElementById('memoriesContent').innerHTML = '<div class="memories-loading"><div class="memories-loading-spinner"></div><div class="memories-loading-text">⏳ جاري تحديث الذكريات...</div></div>';
+                loadMemories();
+            }
+        }, 800);
     }
  
     // ====== Sidebar toggle ======
@@ -2523,11 +2571,15 @@
                 </button>
                 <button class="btn-action" id="memSelAllBtn" onclick="selectAllMemVisible()">
                     <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/></svg>
-                    <span>تحديد الكل</span>
+                    <span>تحديد الظاهر</span>
                 </button>
                 <button class="btn-action" id="memClearSelBtn" onclick="clearMemSelection()">
                     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     <span>إلغاء التحديد</span>
+                </button>
+                <button class="btn-action" id="memCopyLinkBtn" onclick="copyMemTabLink()">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                    <span>نسخ الرابط</span>
                 </button>
                 <span class="mem-count-label" id="memCountLabel"></span>
                 <button class="btn-action primary hidden-el" id="memDlSelectedBtn" onclick="downloadMemSelected()">
@@ -2711,105 +2763,16 @@
             const toolbar = document.getElementById('memToolbar');
             const dlAllBtn = document.getElementById('memDlLabel');
             if (!toolbar) return;
-            if (currentTabImages.length > 0) {
-                toolbar.style.display = 'flex';
-                if (dlAllBtn) dlAllBtn.textContent = `تحميل الكل (${formatCountEn(currentTabImages.length)})`;
-                document.getElementById('memCountLabel').innerText = `${formatCountEn(currentTabImages.length)} صورة`;
-            } else {
-                toolbar.style.display = 'none';
-            }
-            // إعادة تعيين التحديد عند تغيير التبويب
-            memSelectedImages.clear();
-            updateMemSelectionUI();
-        }
-
-        let memSelectedImages = new Set();
-        let memSelectionMode = false;
-
-        function updateMemSelectionUI() {
-            const dlSelBtn = document.getElementById('memDlSelectedBtn');
-            const dlSelText = document.getElementById('memDlSelText');
-            const selBtnText = document.getElementById('memSelBtnText');
+            // دائماً نعرض الشريط (حتى لو لا توجد صور)
+            toolbar.style.display = 'flex';
+            if (dlAllBtn) dlAllBtn.textContent = `تحميل الكل (${formatCountEn(currentTabImages.length)})`;
             const countLabel = document.getElementById('memCountLabel');
-            if (!dlSelBtn) return;
-            if (memSelectedImages.size > 0) {
-                dlSelBtn.classList.remove('hidden-el');
-                if (dlSelText) dlSelText.textContent = `تنزيل المحدد (${formatCountEn(memSelectedImages.size)})`;
-            } else {
-                dlSelBtn.classList.add('hidden-el');
-            }
-            if (selBtnText) selBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
-            if (countLabel) {
-                countLabel.innerText = memSelectionMode && memSelectedImages.size > 0
-                    ? `${formatCountEn(memSelectedImages.size)} محدد من ${formatCountEn(currentTabImages.length)}`
-                    : `${formatCountEn(currentTabImages.length)} صورة`;
-            }
-            // تحديث checkboxes في بطاقات الذكريات
-            document.querySelectorAll('.mem-panel-active .image-card').forEach(card => {
-                const id = card.dataset.memId;
-                if (!id) return;
-                let cb = card.querySelector('.img-checkbox');
-                if (!cb) {
-                    cb = document.createElement('div');
-                    cb.className = 'img-checkbox';
-                    cb.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-                    cb.onclick = (e) => { e.stopPropagation(); toggleMemSelection(id); };
-                    card.insertBefore(cb, card.firstChild);
-                }
-                cb.style.display = memSelectionMode ? 'flex' : 'none';
-                cb.classList.toggle('active', memSelectedImages.has(id));
-                card.classList.toggle('selected', memSelectedImages.has(id));
-            });
+            if (countLabel) countLabel.innerText = currentTabImages.length > 0 ? `${formatCountEn(currentTabImages.length)} صورة` : '';
+            // إعادة تعيين التحديد عند تغيير التبويب
+            window._resetMemSelection && window._resetMemSelection();
         }
 
-        function toggleMemSelectionMode() {
-            memSelectionMode = !memSelectionMode;
-            if (!memSelectionMode) { memSelectedImages.clear(); }
-            updateMemSelectionUI();
-        }
 
-        function toggleMemSelection(id) {
-            if (!memSelectionMode) { memSelectionMode = true; }
-            if (memSelectedImages.has(id)) memSelectedImages.delete(id);
-            else memSelectedImages.add(id);
-            updateMemSelectionUI();
-        }
-
-        function selectAllMemVisible() {
-            memSelectionMode = true;
-            currentTabImages.forEach(img => memSelectedImages.add(img.id));
-            updateMemSelectionUI();
-            showToast(`تم تحديد ${formatCountEn(currentTabImages.length)} صورة`, 'success');
-        }
-
-        function clearMemSelection() {
-            memSelectionMode = false;
-            memSelectedImages.clear();
-            updateMemSelectionUI();
-            showToast('تم إلغاء التحديد', 'success');
-        }
-
-        window.downloadMemSelected = async function() {
-            const imgs = currentTabImages.filter(img => memSelectedImages.has(img.id));
-            if (!imgs.length) { showToast('لم تحدد أي صور', 'error'); return; }
-            const overlay = document.getElementById('progressOverlay');
-            const fill = document.getElementById('progressFill');
-            const ptitle = document.getElementById('progressTitle');
-            const psub = document.getElementById('progressSubtitle');
-            overlay.classList.add('active');
-            ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
-            let done = 0;
-            for (const img of imgs) {
-                triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
-                done++;
-                fill.style.width = `${(done / imgs.length) * 100}%`;
-                psub.innerText = `${formatCountEn(done)} من ${formatCountEn(imgs.length)}`;
-                await new Promise(r => setTimeout(r, 900));
-            }
-            overlay.classList.remove('active');
-            showToast(`تم إرسال تحميل ${formatCountEn(done)} صورة ✨`, 'success');
-            memSelectionMode = false; memSelectedImages.clear(); updateMemSelectionUI();
-        };
 
         const activateMemTab = (tab) => {
             const showToday = tab === 'today';
@@ -2831,25 +2794,60 @@
             else if (showScattered) scatteredPanel.classList.add('mem-panel-active');
             else if (showFavorites) favoritesPanel.classList.add('mem-panel-active');
 
-            if (showToday) updateMemDownloadBar(years.reduce((a, y) => a.concat(todayMemories[y]), []));
+            if (showToday) {
+                const todayList = years.reduce((a, y) => a.concat(todayMemories[y]), []);
+                if (todayList.length > 0) {
+                    updateMemDownloadBar(todayList);
+                } else {
+                    // الصور العشوائية محفوظة - فقط نُعيّن الـ selection mode ونُحدّث الـ UI
+                    window._resetMemSelection && window._resetMemSelection();
+                    const tb2 = document.getElementById('memToolbar');
+                    if (tb2) tb2.style.display = 'flex';
+                    const dl2 = document.getElementById('memDlLabel');
+                    const ex2 = window._memCurrentTabImagesGlobal || [];
+                    if (dl2) dl2.textContent = `تحميل الكل (${formatCountEn(ex2.length)})`;
+                    const cl2 = document.getElementById('memCountLabel');
+                    if (cl2) cl2.innerText = ex2.length > 0 ? `${formatCountEn(ex2.length)} صورة` : '';
+                }
+            }
             else if (showWeek) updateMemDownloadBar(periodMemories);
             else if (showScattered) updateMemDownloadBar(scatteredMemories);
-            else if (showFavorites) renderFavoritesPanel();
+            else if (showFavorites) { renderFavoritesPanel(); }
+            // الشريط يظهر دائماً في كل التبويبات
+            const tb = document.getElementById('memToolbar');
+            if (tb) tb.style.display = 'flex';
         };
         tabToday.onclick = () => activateMemTab('today');
         if (tabWeek) tabWeek.onclick = () => activateMemTab('week');
         tabScattered.onclick = () => activateMemTab('scattered');
         tabFavorites.onclick = () => activateMemTab('favorites');
 
-        // شريط التحميل الأولي لتبويب اليوم
+        // شريط التحميل الأولي لتبويب اليوم - يظهر الشريط دائماً
         todayPanel.classList.add('mem-panel-active');
-        updateMemDownloadBar(years.reduce((a, y) => a.concat(todayMemories[y]), []));
+        const todayImgs = years.reduce((a, y) => a.concat(todayMemories[y]), []);
+        // إذا لا توجد ذكريات اليوم، الصور العشوائية مُسجَّلة بالفعل في _memCurrentTabImagesGlobal
+        // من renderRandomImages - لا نُعيد تعيينه بقائمة فارغة
+        if (todayImgs.length > 0) {
+            updateMemDownloadBar(todayImgs);
+        } else {
+            // تحديث label الشريط فقط بعدد الصور العشوائية الموجودة
+            const toolbar = document.getElementById('memToolbar');
+            if (toolbar) toolbar.style.display = 'flex';
+            const dlLabel = document.getElementById('memDlLabel');
+            const existingImgs = window._memCurrentTabImagesGlobal || [];
+            if (dlLabel) dlLabel.textContent = `تحميل الكل (${formatCountEn(existingImgs.length)})`;
+            const countLabel = document.getElementById('memCountLabel');
+            if (countLabel) countLabel.innerText = existingImgs.length > 0 ? `${formatCountEn(existingImgs.length)} صورة` : '';
+        }
+        // نعرض الشريط مباشرة لتبويب اليوم
+        const toolbarEl = document.getElementById('memToolbar');
+        if (toolbarEl) toolbarEl.style.display = 'flex';
 
         function renderFavoritesPanel() {
             favoritesPanel.innerHTML = '';
             const favIds = [...favoriteImages];
             const favImgs = (allImages || []).filter(img => favIds.includes(img.id));
-            updateMemDownloadBar(favImgs);
+            updateMemDownloadBar(favImgs);  // يُحدّث الشريط بصور المفضلة
             if (favImgs.length === 0) {
                 favoritesPanel.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-title">لا توجد صور في المفضلة</div><div>أضف صوراً للمفضلة من قائمة المزيد</div></div>';
                 return;
@@ -2907,6 +2905,21 @@
 
         const picked  = pickRandomImages(allImages, 20);
         const memImgs = picked.map(img => ({ id: img.id, name: img.name, createdTime: img.createdTime }));
+
+        // تحديث الصور للشريط + إظهاره
+        window._memCurrentTabImagesGlobal = picked;
+        window._resetMemSelection && window._resetMemSelection();
+        const toolbar = document.getElementById('memToolbar');
+        if (toolbar) {
+            toolbar.style.display = 'flex';
+            const dlLabel = document.getElementById('memDlLabel');
+            if (dlLabel) dlLabel.textContent = `تحميل الكل (${formatCountEn(picked.length)})`;
+            const countLabel = document.getElementById('memCountLabel');
+            if (countLabel) countLabel.innerText = `${formatCountEn(picked.length)} صورة`;
+        }
+        // تعيين البانل النشط للتحديد
+        document.querySelectorAll('.memories-tab-panel').forEach(p => p.classList.remove('mem-panel-active'));
+        content.classList && content.classList.add('mem-panel-active');
 
         if (!append) content.innerHTML = '';
         const group = document.createElement('div');
@@ -2967,6 +2980,121 @@
             </div>`;
     }
  
+
+    // ====== دوال تحديد الذكريات (عامة - window) ======
+    // state عامة للـ selection في تبويبات الذكريات
+    window._memSelectedImages = new Set();
+    window._memSelectionMode = false;
+
+    window._memUpdateSelUI = function() {
+        const memSelectedImages = window._memSelectedImages;
+        const memSelectionMode  = window._memSelectionMode;
+        const currentTabImages  = window._memCurrentTabImagesGlobal || [];
+
+        const dlSelBtn  = document.getElementById('memDlSelectedBtn');
+        const dlSelText = document.getElementById('memDlSelText');
+        const selBtnText = document.getElementById('memSelBtnText');
+        const countLabel = document.getElementById('memCountLabel');
+        if (!dlSelBtn) return;
+
+        if (memSelectedImages.size > 0) {
+            dlSelBtn.classList.remove('hidden-el');
+            if (dlSelText) dlSelText.textContent = `تنزيل المحدد (${formatCountEn(memSelectedImages.size)})`;
+        } else {
+            dlSelBtn.classList.add('hidden-el');
+        }
+        if (selBtnText) selBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
+        if (countLabel) {
+            countLabel.innerText = memSelectionMode && memSelectedImages.size > 0
+                ? `${formatCountEn(memSelectedImages.size)} محدد من ${formatCountEn(currentTabImages.length)}`
+                : currentTabImages.length > 0 ? `${formatCountEn(currentTabImages.length)} صورة` : '';
+        }
+        // تحديث checkboxes في بطاقات الذكريات
+        // نبحث في البانل النشط أو أي بانل للذكريات مرئي
+        const memCardSelector = '.mem-panel-active .image-card, #memoriesContent .image-card';
+        document.querySelectorAll(memCardSelector).forEach(card => {
+            const id = card.dataset.memId;
+            if (!id) return;
+            let cb = card.querySelector('.img-checkbox');
+            if (!cb) {
+                cb = document.createElement('div');
+                cb.className = 'img-checkbox';
+                cb.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+                cb.onclick = (e) => { e.stopPropagation(); window.toggleMemSelection(id); };
+                card.insertBefore(cb, card.firstChild);
+            }
+            cb.style.display = memSelectionMode ? 'flex' : 'none';
+            cb.classList.toggle('active', memSelectedImages.has(id));
+            card.classList.toggle('selected', memSelectedImages.has(id));
+        });
+    };
+
+    window.toggleMemSelectionMode = function() {
+        window._memSelectionMode = !window._memSelectionMode;
+        if (!window._memSelectionMode) { window._memSelectedImages.clear(); }
+        window._memUpdateSelUI();
+    };
+
+    window.toggleMemSelection = function(id) {
+        if (!window._memSelectionMode) { window._memSelectionMode = true; }
+        if (window._memSelectedImages.has(id)) window._memSelectedImages.delete(id);
+        else window._memSelectedImages.add(id);
+        window._memUpdateSelUI();
+    };
+
+    window.selectAllMemVisible = function() {
+        const imgs = window._memCurrentTabImagesGlobal || [];
+        if (!imgs.length) { showToast('لا توجد صور للتحديد', 'error'); return; }
+        window._memSelectionMode = true;
+        // استدعاء أول لإنشاء وإظهار الـ checkboxes
+        window._memUpdateSelUI();
+        // ثم إضافة الـ IDs وتحديث الـ UI مجدداً ليظهر الصح
+        imgs.forEach(img => window._memSelectedImages.add(img.id));
+        window._memUpdateSelUI();
+        showToast(`تم تحديد ${formatCountEn(imgs.length)} صورة`, 'success');
+    };
+
+    window.clearMemSelection = function() {
+        window._memSelectionMode = false;
+        window._memSelectedImages.clear();
+        window._memUpdateSelUI();
+        showToast('تم إلغاء التحديد', 'success');
+    };
+
+    window.downloadMemSelected = async function() {
+        const currentTabImages = window._memCurrentTabImagesGlobal || [];
+        const imgs = currentTabImages.filter(img => window._memSelectedImages.has(img.id));
+        if (!imgs.length) { showToast('لم تحدد أي صور', 'error'); return; }
+        const overlay = document.getElementById('progressOverlay');
+        const fill    = document.getElementById('progressFill');
+        const ptitle  = document.getElementById('progressTitle');
+        const psub    = document.getElementById('progressSubtitle');
+        overlay.classList.add('active');
+        ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
+        psub.innerText = `0 من ${formatCountEn(imgs.length)}`;
+        fill.style.width = '0%';
+        let done = 0;
+        for (const img of imgs) {
+            triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
+            done++;
+            fill.style.width = `${(done / imgs.length) * 100}%`;
+            psub.innerText = `${formatCountEn(done)} من ${formatCountEn(imgs.length)}`;
+            await new Promise(r => setTimeout(r, 900));
+        }
+        overlay.classList.remove('active');
+        showToast(`تم إرسال تحميل ${formatCountEn(done)} صورة ✨`, 'success');
+        window._memSelectionMode = false;
+        window._memSelectedImages.clear();
+        window._memUpdateSelUI();
+    };
+
+    // إعادة تعيين state عند تغيير التبويب
+    window._resetMemSelection = function() {
+        window._memSelectedImages.clear();
+        window._memSelectionMode = false;
+        window._memUpdateSelUI && window._memUpdateSelUI();
+    };
+
     // ====== Cache ======
     function cacheMemories(memories, allImages) {
         try {
