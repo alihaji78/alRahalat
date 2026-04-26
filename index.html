@@ -223,7 +223,7 @@
         .content-header-info { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
         .content-header-icon { font-size: 32px; flex-shrink: 0; }
         .content-header-text { min-width: 0; flex: 1; }
-        .content-header-title { font-size: 17px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+        .content-header-title { font-size: 15px; font-weight: 800; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 3px; line-height: 1.4; }
         .content-header-subtitle { font-size: 12px; color: var(--text-muted); font-weight: 600; }
         .content-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .content-actions .btn-action { padding: 8px 11px; font-size: 11px; }
@@ -315,10 +315,11 @@
  
         /* ====== Folders Grid ====== */
         .folders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 22px; }
-        .subfolders-toolbar { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-        .subfolders-toolbar .search-box { flex: 1; min-width: 220px; }
+        .subfolders-toolbar { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: nowrap; }
+        .subfolders-toolbar .search-box { flex: 1; min-width: 0; }
         .subfolders-toolbar .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
         .subfolders-toolbar .search-icon { width: 14px; height: 14px; right: 10px; }
+        .subfolders-toolbar .view-toggle { flex-shrink: 0; }
         .folder-card {
             background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 16px;
             padding: 18px 12px; text-align: center; cursor: pointer;
@@ -436,48 +437,20 @@
         .btn-download:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-download svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
  
-        .img-actions { display: flex; align-items: center; justify-content: flex-end; position: relative; }
-        .btn-more {
-            background: var(--bg-primary); color: var(--text-primary); padding: 7px 10px;
-            border-radius: 10px; font-size: 12px; font-weight: 800; flex-shrink: 0;
-            transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px;
-            cursor: pointer; border: 1px solid var(--border); font-family: 'Cairo', sans-serif;
-            width: 100%; justify-content: center;
+        .img-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+
+        /* ====== أزرار الإجراء المباشرة على شريط الصورة ====== */
+        .img-act-btn {
+            background: var(--bg-primary); color: var(--text-primary);
+            border: 1px solid var(--border); border-radius: 10px;
+            padding: 7px 9px; cursor: pointer; flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.18s ease; font-family: 'Cairo', sans-serif;
         }
-        .btn-more:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); background: var(--hover-bg); }
-        .btn-more svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        .img-more-menu {
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 0;
-            min-width: 160px;
-            background: var(--bg-glass-strong);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            box-shadow: var(--shadow-lg);
-            padding: 6px;
-            display: none;
-            z-index: 20;
-        }
-        .img-more-menu.show { display: block; }
-        .img-more-item {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: var(--text-primary);
-            text-decoration: none;
-            display: block;
-            text-align: right;
-            padding: 8px 10px;
-            border-radius: 9px;
-            font-size: 12px;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            cursor: pointer;
-        }
-        .img-more-item:hover { background: var(--hover-bg); }
+        .img-act-btn:hover { background: var(--hover-bg); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .img-act-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+        .img-act-btn.fav-active { color: #f59e0b; border-color: #f59e0b; background: rgba(245,158,11,0.08); }
+        .img-act-btn.sel-active  { color: #667eea; border-color: #667eea; background: rgba(102,126,234,0.10); }
  
         /* ====== Empty State ====== */
         .empty-state { text-align: center; padding: 70px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 14px; animation: fadeIn 0.5s ease; }
@@ -759,11 +732,8 @@
         .memories-toolbar .btn-action { padding: 7px 9px; font-size: 11px; gap: 4px; }
         .memories-toolbar .btn-action svg { width: 13px; height: 13px; }
         .mem-count-label { font-size: 11px; font-weight: 700; color: var(--text-muted); flex: 1; text-align: center; white-space: nowrap; }
-        @media (max-width: 540px) {
-            .memories-toolbar .btn-action span { display: none; }
-            .memories-toolbar .btn-action { padding: 8px; width: 34px; height: 34px; justify-content: center; }
-            .mem-count-label { font-size: 10px; }
-        }
+        /* أزرار شريط التحديد - كبيرة مع تسميات دائمة */
+        /* ca-btn: تُعالَج في القسم الرئيسي أدناه */
         .mem-selection-mode .img-checkbox { display: flex !important; }
         /* شريط تحميل صور الذكريات (احتفاظ بالقديم كـ alias) */
         .memories-download-bar {
@@ -785,6 +755,14 @@
             padding: 10px 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
         }
         .mem-actions-bar.hidden-el { display: none !important; }
+
+        /* شارة عدد الصور المحددة في زر التنزيل */
+        .dl-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.3); color: inherit;
+            border-radius: 20px; padding: 1px 8px; font-size: 12px; font-weight: 800;
+            min-width: 24px; margin-right: 2px;
+        }
         /* contentHeader للمجلدات: صف اسم + عدد */
         .content-header {
             display: flex; align-items: center; gap: 12px;
@@ -848,54 +826,40 @@
             .filter-bar .filter-search, #memFilterBar .filter-search { min-width: 100%; order: -1; }
         }
 
-        /* ====== Compact Action Buttons — تسمية تظهر حسب المساحة ====== */
+        /* ====== أزرار التحديد (تحديد / الكل / إلغاء) ====== */
         .ca-btn {
             display: inline-flex; align-items: center; justify-content: center;
-            gap: 5px; padding: 7px 12px; font-size: 12px;
+            gap: 6px; padding: 9px 14px; font-size: 13px; font-weight: 700;
             white-space: nowrap; flex-shrink: 0;
         }
         .ca-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
-        /* التسمية تُخفى عند ضيق المساحة */
-        .ca-label {
-            display: inline; overflow: hidden;
-            max-width: 80px;           /* الحد الأقصى الطبيعي */
-            transition: max-width .2s, opacity .2s;
-            opacity: 1;
-        }
+        /* التسمية ظاهرة دائماً */
+        .ca-label { display: inline !important; white-space: nowrap; }
 
-        /* الشريط يوزّع المساحة بالتساوي */
+        /* عند ظهور زر التنزيل → نخفي تسميات الأزرار الثلاثة فقط */
+        .mem-actions-bar.dl-visible .hide-when-dl .ca-label { display: none !important; }
+        .mem-actions-bar.dl-visible .hide-when-dl { padding: 9px !important; gap: 0 !important; }
+
+        /* الشريط: صف واحد مع تمرير أفقي */
         .mem-actions-bar {
             display: flex; flex-wrap: nowrap; align-items: center;
-            gap: 5px; overflow: hidden;
+            gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+            padding: 10px 14px; margin-bottom: 12px;
+        }
+        .mem-actions-bar::-webkit-scrollbar { display: none; }
+
+        /* زر التنزيل: تسمية + شارة دائماً */
+        .dl-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.28); border-radius: 20px;
+            padding: 1px 8px; font-size: 12px; font-weight: 800; min-width: 22px; margin-right: 2px;
         }
 
-        /* عندما يضيق الشريط: نقلّص التسمية تدريجياً باستخدام container queries */
-        @supports (container-type: inline-size) {
-            .mem-actions-bar { container-type: inline-size; }
-
-            /* أقل من 520px من عرض الشريط نفسه */
-            @container (max-width: 520px) {
-                .ca-label { max-width: 0; opacity: 0; }
-                .ca-btn { padding: 8px; border-radius: 10px; }
-            }
-            /* بين 520 و 680 — تسمية مختصرة */
-            @container (min-width: 521px) and (max-width: 680px) {
-                .ca-label { max-width: 36px; font-size: 10px; }
-                .ca-btn { padding: 7px 8px; }
-            }
-        }
-
-        /* fallback للمتصفحات بدون container queries */
-        @supports not (container-type: inline-size) {
-            @media (max-width: 600px) {
-                .ca-label { max-width: 0; opacity: 0; }
-                .ca-btn { padding: 8px; border-radius: 10px; }
-            }
-            @media (min-width: 601px) and (max-width: 760px) {
-                .ca-label { max-width: 36px; font-size: 10px; }
-                .ca-btn { padding: 7px 8px; }
-            }
+        /* شاشات صغيرة جداً: أيقونة فقط لكل الأزرار ما عدا التنزيل */
+        @media (max-width: 360px) {
+            .hide-when-dl .ca-label { display: none !important; }
+            .hide-when-dl { padding: 9px !important; gap: 0 !important; }
         }
 
 
@@ -996,7 +960,12 @@
 <div class="layout">
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3 class="clickable" onclick="showRootFoldersPreview()">📂 المجلدات الرئيسية</h3>
+            <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <span class="clickable" onclick="showRootFoldersPreview()" style="cursor:pointer;user-select:none;flex:1;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color=''">📂 المجلدات الرئيسية</span>
+                <button onclick="goHome()" title="الصفحة الرئيسية" style="background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s ease;" onmouseover="this.style.background='var(--hover-bg)';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--bg-primary)';this.style.transform=''">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </button>
+            </h3>
             <p id="sidebarSubtitle">اختر مجلد لعرض محتواه</p>
             <div class="search-box">
                 <input type="text" class="search-input" id="folderSearch" placeholder="ابحث في المجلدات..." oninput="filterFolders()">
@@ -1074,21 +1043,21 @@
 
             <!-- 3 ▸ شريط التحديد والتنزيل -->
             <div id="memActionsBar" class="mem-actions-bar hidden-el">
-                <button class="btn-action ca-btn" id="memSelBtn" onclick="toggleMemSelectionMode()" title="تحديد">
+                <button class="btn-action ca-btn hide-when-dl" id="memSelBtn" onclick="toggleMemSelectionMode()" title="تحديد">
                     <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                     <span class="ca-label" id="selectBtnText">تحديد</span>
                 </button>
-                <button class="btn-action ca-btn" id="memSelAllBtn" onclick="selectAllMemVisible()" title="تحديد الظاهر">
+                <button class="btn-action ca-btn hide-when-dl" id="memSelAllBtn" onclick="selectAllMemVisible()" title="تحديد الظاهر">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><line x1="12" y1="6" x2="12" y2="18" stroke-width="2.5"/><line x1="6" y1="12" x2="18" y2="12" stroke-width="2.5"/></svg>
                     <span class="ca-label">الكل</span>
                 </button>
-                <button class="btn-action ca-btn" id="memClearBtn" onclick="clearMemSelection()" title="إلغاء التحديد">
+                <button class="btn-action ca-btn hide-when-dl" id="memClearBtn" onclick="clearMemSelection()" title="إلغاء التحديد">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
                     <span class="ca-label">إلغاء</span>
                 </button>
                 <button class="btn-action primary ca-btn hidden-el" id="memDlSelBtn" onclick="downloadMemSelected()" title="تنزيل المحدد">
                     <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span class="ca-label" id="memDlSelText">تنزيل المحدد (0)</span>
+                    <span class="ca-label">تنزيل</span><span id="memDlSelText" class="dl-count-badge">0</span>
                 </button>
             </div>
 
@@ -1156,25 +1125,21 @@
 
         <!-- شريط التحديد والتنزيل للمجلدات -->
         <div id="folderActionsBar" class="mem-actions-bar hidden-el">
-            <button class="btn-action ca-btn" id="selectBtn" onclick="toggleSelectionMode()" title="تحديد">
+            <button class="btn-action ca-btn hide-when-dl" id="selectBtn" onclick="toggleSelectionMode()" title="تحديد">
                 <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 <span class="ca-label" id="folderSelectBtnText">تحديد</span>
             </button>
-            <button class="btn-action ca-btn" id="selectVisibleBtn" onclick="selectAllVisible()" title="تحديد الظاهر">
+            <button class="btn-action ca-btn hide-when-dl" id="selectVisibleBtn" onclick="selectAllVisible()" title="تحديد الظاهر">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><line x1="12" y1="6" x2="12" y2="18" stroke-width="2.5"/><line x1="6" y1="12" x2="18" y2="12" stroke-width="2.5"/></svg>
                 <span class="ca-label">الكل</span>
             </button>
-            <button class="btn-action ca-btn" id="clearSelectionBtn" onclick="clearSelectionFast()" title="إلغاء التحديد">
+            <button class="btn-action ca-btn hide-when-dl" id="clearSelectionBtn" onclick="clearSelectionFast()" title="إلغاء التحديد">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
                 <span class="ca-label">إلغاء</span>
             </button>
-            <button class="btn-action ca-btn" id="copyFolderLinkBtn" onclick="copyCurrentFolderLink()" title="نسخ الرابط">
-                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                <span class="ca-label">رابط</span>
-            </button>
             <button class="btn-action primary ca-btn hidden-el" id="downloadSelectedBtn" onclick="downloadSelectedImages()" title="تنزيل المحدد">
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                <span class="ca-label" id="downloadSelectedText">تنزيل المحدد (0)</span>
+                <span class="ca-label">تنزيل</span><span id="downloadSelectedText" class="dl-count-badge">0</span>
             </button>
         </div>
 
@@ -1691,7 +1656,7 @@
         document.getElementById('breadcrumb').classList.remove('hidden-el');
         document.getElementById('contentHeader').classList.remove('hidden-el');
         document.getElementById('folderActionsBar').classList.remove('hidden-el');
-        document.getElementById('currentFolderName').innerText = folderName;
+        document.getElementById('currentFolderName').innerText = navigationPath.map(p => p.name).join(' › ');
         document.getElementById('currentFolderCount').innerText = 'جاري التحميل...';
         document.getElementById('imageFilter').value = '';
         document.getElementById('imageFilter').value = '';
@@ -1800,6 +1765,9 @@
                       : hasImg ? `${formatCountEn(currentImages.length)} صورة`
                       : 'مجلد فارغ';
         document.getElementById('currentFolderCount').innerText = countText;
+        // عرض المسار الكامل في العنوان
+        const fullPath = navigationPath.map(p => p.name).join(' › ');
+        if (fullPath) document.getElementById('currentFolderName').innerText = fullPath;
  
         document.getElementById('subFoldersSection').classList.toggle('hidden-el', !hasSub);
         if (hasSub) renderSubFolders();
@@ -1966,9 +1934,11 @@
 
         if (selectedImages.size > 0) {
             if (downloadBtn) downloadBtn.classList.remove('hidden-el');
-            if (downloadText) downloadText.innerText = `تنزيل المحدد (${formatCountEn(selectedImages.size)})`;
+            if (downloadText) downloadText.innerText = formatCountEn(selectedImages.size);
+            document.getElementById('folderActionsBar')?.classList.add('dl-visible');
         } else {
             if (downloadBtn) downloadBtn.classList.add('hidden-el');
+            document.getElementById('folderActionsBar')?.classList.remove('dl-visible');
         }
     }
 
@@ -2607,43 +2577,68 @@
     }
 
     function renderImageActions({ id, name, createdTime, folderPath }, allowSelectionAction = true) {
-        const safeName = escapeJsSingleQuote(name || '');
-        const safeDate = escapeJsSingleQuote(createdTime || '');
-        const safePath = escapeJsSingleQuote(folderPath || '');
-        const favoriteLabel = favoriteImages.has(id) ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
-        const selectionLabel = selectedImages.has(id) ? 'إلغاء التحديد' : 'تحديد الصورة';
-        const selectionAction = allowSelectionAction
-            ? `<button class="img-more-item" onclick="event.stopPropagation();toggleSelection('${id}');closeAllImageMenus()">${selectionLabel}</button>`
-            : `<button class="img-more-item" onclick="event.stopPropagation();showToast('التحديد متاح من عرض الصور الرئيسي', 'success');closeAllImageMenus()">تحديد الصورة</button>`;
+        const safeName  = escapeJsSingleQuote(name || '');
+        const isFav     = favoriteImages.has(id);
+        const isSel     = selectedImages.has(id);
+
+        // أيقونة تنزيل
+        const dlIcon = `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+        // أيقونة مفضلة (نجمة)
+        const favIconOutline = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        const favIconFill    = `<svg viewBox="0 0 24 24" stroke="#f59e0b" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        // أيقونة تحديد (مربع اختيار)
+        const selIconOff = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>`;
+        const selIconOn  = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#667eea" stroke="#667eea"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`;
+
+        const selBtn = allowSelectionAction
+            ? `<button class="img-act-btn ${isSel ? 'sel-active' : ''}"
+                       title="${isSel ? 'إلغاء التحديد' : 'تحديد الصورة'}"
+                       onclick="event.stopPropagation();imgActToggleSel('${id}',this)">
+                   ${isSel ? selIconOn : selIconOff}
+               </button>`
+            : '';
+
         return `
-            <div class="img-actions" data-menu-wrap="${id}">
-                <button class="btn-more" onclick="openImageMoreMenu(event,'${id}')">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
-                    المزيد
+            <div class="img-actions">
+                ${selBtn}
+                <a  class="img-act-btn" title="تنزيل الصورة"
+                    href="https://drive.google.com/uc?export=download&id=${id}"
+                    target="_blank" onclick="event.stopPropagation()">
+                    ${dlIcon}
+                </a>
+                <button class="img-act-btn ${isFav ? 'fav-active' : ''}"
+                        id="favBtn-${id}"
+                        title="${isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة'}"
+                        onclick="event.stopPropagation();imgActToggleFav('${id}','${safeName}',this)">
+                    ${isFav ? favIconFill : favIconOutline}
                 </button>
-                <div class="img-more-menu" id="imgMoreMenu-${id}">
-                    <a href="https://drive.google.com/uc?export=download&id=${id}" target="_blank" class="img-more-item" onclick="event.stopPropagation();closeAllImageMenus()">تنزيل الصورة</a>
-                    <button class="img-more-item" onclick="event.stopPropagation();saveImageLinkOnly('${id}','${safeName}')">نسخ الرابط</button>
-                    <button class="img-more-item" onclick="event.stopPropagation();openImageInExternalBrowser('${id}')">فتح في المتصفح</button>
-                    <button class="img-more-item" onclick="event.stopPropagation();showImageDetails('${safeName}','${safeDate}','${safePath}')">تفاصيل الصورة</button>
-                    <button class="img-more-item" id="favMenuBtn-${id}" onclick="event.stopPropagation();toggleFavoriteImage('${id}','${safeName}')">${favoriteLabel}</button>
-                    ${selectionAction}
-                </div>
             </div>`;
     }
 
-    function closeAllImageMenus() {
-        document.querySelectorAll('.img-more-menu.show').forEach(menu => menu.classList.remove('show'));
+    // ====== معالجات أزرار الإجراء المباشرة ======
+    function imgActToggleFav(id, name, btn) {
+        toggleFavoriteImage(id, name);
+        // تحديث مظهر الزر فوراً
+        const isFav = favoriteImages.has(id);
+        btn.title = isFav ? 'إزالة من المفضلة' : 'إضافة للمفضلة';
+        btn.classList.toggle('fav-active', isFav);
+        btn.innerHTML = isFav
+            ? `<svg viewBox="0 0 24 24" stroke="#f59e0b" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+            : `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
     }
 
-    function openImageMoreMenu(event, imageId) {
-        event.stopPropagation();
-        const menu = document.getElementById(`imgMoreMenu-${imageId}`);
-        if (!menu) return;
-        const willShow = !menu.classList.contains('show');
-        closeAllImageMenus();
-        if (willShow) menu.classList.add('show');
+    function imgActToggleSel(id, btn) {
+        toggleSelection(id);
+        const isSel = selectedImages.has(id);
+        btn.title = isSel ? 'إلغاء التحديد' : 'تحديد الصورة';
+        btn.classList.toggle('sel-active', isSel);
+        btn.innerHTML = isSel
+            ? `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#667eea" stroke="#667eea"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`
+            : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>`;
     }
+
+    // stub للتوافق مع الكود القديم الذي يستدعيها
+    function closeAllImageMenus() {}
 
     function openImageInExternalBrowser(imageId) {
         const url = `https://drive.google.com/file/d/${imageId}/view`;
@@ -2716,7 +2711,7 @@
         if (img) shareImage(img.id, img.name);
     }
 
-    document.addEventListener('click', () => closeAllImageMenus());
+    // ملاحظة: إغلاق القوائم عند النقر خارجها يُدار الآن بواسطة event delegation في الأعلى
  
     // ====== Toast ======
     let _downloadCancelled = false;
@@ -3332,9 +3327,11 @@
         if (selectBtnText) selectBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
         if (memSelectedImages.size > 0) {
             if (dlSelBtn) dlSelBtn.classList.remove('hidden-el');
-            if (dlSelText) dlSelText.textContent = `تنزيل المحدد (${formatCountEn(memSelectedImages.size)})`;
+            if (dlSelText) dlSelText.textContent = formatCountEn(memSelectedImages.size);
+            document.getElementById('memActionsBar')?.classList.add('dl-visible');
         } else {
             if (dlSelBtn) dlSelBtn.classList.add('hidden-el');
+            document.getElementById('memActionsBar')?.classList.remove('dl-visible');
         }
         // تحديث checkboxes
         document.querySelectorAll('.mem-panel-active .image-card, #memoriesContent .image-card').forEach(card => {
