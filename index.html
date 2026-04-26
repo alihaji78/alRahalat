@@ -776,7 +776,146 @@
         .memories-empty-title { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; }
         .memories-empty-text { font-size: 13px; color: var(--text-muted); font-weight: 600; }
  
-        /* ====== Responsive ====== */
+        /* ====== شريط أدوات (مشترك: ذكريات + مجلدات) ====== */
+        .mem-actions-bar {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 10px 14px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+        }
+        .mem-actions-bar.hidden-el { display: none !important; }
+        /* contentHeader للمجلدات: صف اسم + عدد */
+        .content-header {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 12px 16px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+        }
+        .content-header.hidden-el { display: none !important; }
+
+        /* ====== Snackbar (بديل Toast) ====== */
+        .snackbar {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 14px;
+            padding: 11px 20px; display: flex; align-items: center; gap: 10px;
+            font-size: 13px; color: var(--text); font-family: 'Cairo', sans-serif;
+            box-shadow: 0 8px 32px rgba(0,0,0,.18); z-index: 9999;
+            opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
+            max-width: min(90vw, 420px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .snackbar.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .snackbar.success .snackbar-icon svg { stroke: #22c55e; }
+        .snackbar.error   .snackbar-icon svg { stroke: #ef4444; }
+
+        /* ====== Info Panel (تفاصيل الصورة) ====== */
+        .info-panel {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(24px);
+            background: var(--bg-glass-strong); backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 16px 22px; z-index: 9998; box-shadow: 0 8px 40px rgba(0,0,0,.22);
+            opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
+            max-width: min(92vw, 380px); cursor: pointer;
+        }
+        .info-panel.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .info-panel-text { margin: 0; font-family: 'Cairo', sans-serif; font-size: 12.5px; color: var(--text); white-space: pre-wrap; line-height: 1.9; }
+
+        /* ====== Progress cancel button ====== */
+        .progress-cancel-btn {
+            margin-top: 14px; display: flex; align-items: center; gap: 7px; justify-content: center;
+            width: 100%; padding: 9px 0; border: none; border-radius: 10px; cursor: pointer;
+            background: rgba(239,68,68,.12); color: #ef4444; font-family: 'Cairo', sans-serif;
+            font-size: 13px; font-weight: 600; transition: background .2s;
+        }
+        .progress-cancel-btn:hover { background: rgba(239,68,68,.22); }
+
+        /* ====== contentHeader: two-row layout ====== */
+        .content-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; padding-bottom: 12px !important; }
+        .content-header-top { display: flex; align-items: center; }
+        .content-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        /* filterBar & memFilterBar: single aligned row */
+        .filter-bar, #memFilterBar { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
+        .filter-bar .filter-search, #memFilterBar .filter-search { flex: 1; min-width: 0; }
+        .filter-bar .filter-search .search-input, #memFilterBar .filter-search .search-input { padding-top: 8px; padding-bottom: 8px; }
+        .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        .view-toggle  { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+        @media (max-width: 480px) {
+            .filter-bar, #memFilterBar { flex-wrap: wrap; }
+            .filter-bar .filter-search, #memFilterBar .filter-search { min-width: 100%; order: -1; }
+        }
+
+        /* ====== Compact Action Buttons — تسمية تظهر حسب المساحة ====== */
+        .ca-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 5px; padding: 7px 12px; font-size: 12px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .ca-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+        /* التسمية تُخفى عند ضيق المساحة */
+        .ca-label {
+            display: inline; overflow: hidden;
+            max-width: 80px;           /* الحد الأقصى الطبيعي */
+            transition: max-width .2s, opacity .2s;
+            opacity: 1;
+        }
+
+        /* الشريط يوزّع المساحة بالتساوي */
+        .mem-actions-bar {
+            display: flex; flex-wrap: nowrap; align-items: center;
+            gap: 5px; overflow: hidden;
+        }
+
+        /* عندما يضيق الشريط: نقلّص التسمية تدريجياً باستخدام container queries */
+        @supports (container-type: inline-size) {
+            .mem-actions-bar { container-type: inline-size; }
+
+            /* أقل من 520px من عرض الشريط نفسه */
+            @container (max-width: 520px) {
+                .ca-label { max-width: 0; opacity: 0; }
+                .ca-btn { padding: 8px; border-radius: 10px; }
+            }
+            /* بين 520 و 680 — تسمية مختصرة */
+            @container (min-width: 521px) and (max-width: 680px) {
+                .ca-label { max-width: 36px; font-size: 10px; }
+                .ca-btn { padding: 7px 8px; }
+            }
+        }
+
+        /* fallback للمتصفحات بدون container queries */
+        @supports not (container-type: inline-size) {
+            @media (max-width: 600px) {
+                .ca-label { max-width: 0; opacity: 0; }
+                .ca-btn { padding: 8px; border-radius: 10px; }
+            }
+            @media (min-width: 601px) and (max-width: 760px) {
+                .ca-label { max-width: 36px; font-size: 10px; }
+                .ca-btn { padding: 7px 8px; }
+            }
+        }
+
+
+        /* ====== Memories Filter Bar ====== */
+        #memFilterBar {
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px; padding: 10px 14px;
+            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-sm); flex-wrap: wrap;
+        }
+        #memFilterBar .filter-search { flex: 1; position: relative; min-width: 130px; }
+        #memFilterBar .filter-search .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
+        #memFilterBar .filter-search .search-icon { width: 14px; height: 14px; right: 10px; }
+        @media (max-width: 540px) {
+            #memFilterBar { padding: 8px 10px; gap: 6px; }
+            #memFilterBar .sort-text { display: none; }
+            #memFilterBar .btn-sort-opt { padding: 6px 8px; }
+            #memFilterBar .btn-sort-opt svg { width: 13px; height: 13px; }
+        }
+
         @media (max-width: 900px) {
             :root { --sidebar-width: 270px; }
             .images-grid { grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 14px; }
@@ -873,7 +1012,102 @@
  
     <main class="main-content">
         <nav class="breadcrumb hidden-el" id="breadcrumb"></nav>
- 
+
+        <!-- ═══════════════════════════════════════════
+             وضع الذكريات (الصفحة الرئيسية)
+             الترتيب: مربع أزرق → تبويبات → بحث/فرز → تحديد/تنزيل → صور
+        ════════════════════════════════════════════════ -->
+        <div id="defaultEmptyState">
+
+            <!-- 1 ▸ المربع الأزرق -->
+            <div class="memories-hero">
+                <div class="memories-hero-content">
+                    <div class="memories-hero-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        ذكريات من الماضي
+                    </div>
+                    <div class="memories-hero-title" id="memoriesTitle">في مثل هذه الأيام</div>
+                    <div class="memories-hero-subtitle" id="memoriesSubtitle">لحظات جميلة عشتموها سويا</div>
+                    <div class="memories-hero-stats">
+                        <span class="memories-total-pill" id="memoriesTotalCount">🖼️ إجمالي الصور: ...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2 ▸ شريط البحث والفرز والعرض -->
+            <div id="memFilterBar" class="filter-bar hidden-el">
+                <div class="filter-search">
+                    <input type="text" class="search-input" id="memImageFilter" placeholder="ابحث في الصور..." oninput="filterMemImages()">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </div>
+                <div class="sort-wrapper">
+                    <button class="btn-sort-opt active" data-memsort="newest" onclick="applyMemSort('newest')">
+                        <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                        <span class="sort-text">الأحدث</span>
+                    </button>
+                    <button class="btn-sort-opt" data-memsort="oldest" onclick="applyMemSort('oldest')">
+                        <svg viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                        <span class="sort-text">الأقدم</span>
+                    </button>
+                    <button class="btn-sort-opt" data-memsort="name-asc" onclick="applyMemSort('name-asc')">
+                        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
+                        <span class="sort-text">أ→ي</span>
+                    </button>
+                    <button class="btn-sort-opt" data-memsort="name-desc" onclick="applyMemSort('name-desc')">
+                        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="9" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                        <span class="sort-text">ي→أ</span>
+                    </button>
+                </div>
+                <div class="view-toggle">
+                    <button class="btn-view active" id="memViewGrid" onclick="setMemView('grid')" title="شبكي">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    </button>
+                    <button class="btn-view" id="memViewList" onclick="setMemView('list')" title="قائمة">
+                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3 ▸ شريط التحديد والتنزيل -->
+            <div id="memActionsBar" class="mem-actions-bar hidden-el">
+                <button class="btn-action ca-btn" id="memSelBtn" onclick="toggleMemSelectionMode()" title="تحديد">
+                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <span class="ca-label" id="selectBtnText">تحديد</span>
+                </button>
+                <button class="btn-action ca-btn" id="memSelAllBtn" onclick="selectAllMemVisible()" title="تحديد الظاهر">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><line x1="12" y1="6" x2="12" y2="18" stroke-width="2.5"/><line x1="6" y1="12" x2="18" y2="12" stroke-width="2.5"/></svg>
+                    <span class="ca-label">الكل</span>
+                </button>
+                <button class="btn-action ca-btn" id="memClearBtn" onclick="clearMemSelection()" title="إلغاء التحديد">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+                    <span class="ca-label">إلغاء</span>
+                </button>
+                <button class="btn-action primary ca-btn hidden-el" id="memDlSelBtn" onclick="downloadMemSelected()" title="تنزيل المحدد">
+                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <span class="ca-label" id="memDlSelText">تنزيل المحدد (0)</span>
+                </button>
+            </div>
+
+            <!-- 4 ▸ محتوى الذكريات (تُحقن فيه التبويبات والصور من JS) -->
+            <div id="memoriesContent">
+                <div class="memories-loading">
+                    <div class="memories-loading-spinner"></div>
+                    <div class="memories-loading-text">⏳ جاري استرجاع الذكريات...</div>
+                    <div class="memories-loading-progress" id="memoriesProgress">جاري فحص المجلدات...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             وضع المجلدات
+             الترتيب: اسم المجلد → بحث/فرز → تحديد/تنزيل → مجلدات فرعية → صور
+        ════════════════════════════════════════════════ -->
+
+        <!-- شريط اسم المجلد وعدد الصور فقط -->
         <div id="contentHeader" class="content-header hidden-el">
             <div class="content-header-info">
                 <span class="content-header-icon">📁</span>
@@ -882,34 +1116,9 @@
                     <div class="content-header-subtitle" id="currentFolderCount"></div>
                 </div>
             </div>
-            <div class="content-actions" id="contentActions">
-                <button class="btn-action" id="selectBtn" onclick="toggleSelectionMode()">
-                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    <span id="selectBtnText">تحديد</span>
-                </button>
-                <button class="btn-action" id="selectVisibleBtn" onclick="selectAllVisible()">
-                    <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/></svg>
-                    <span>تحديد الظاهر</span>
-                </button>
-                <button class="btn-action" id="clearSelectionBtn" onclick="clearSelectionFast()">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    <span>إلغاء التحديد</span>
-                </button>
-                <button class="btn-action" id="copyFolderLinkBtn" onclick="copyCurrentFolderLink()">
-                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                    <span>نسخ الرابط</span>
-                </button>
-                <button class="btn-action" id="refreshFolderBtn" onclick="refreshCurrentFolder()">
-                    <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.1-3.36L23 10M1 14l5.4 4.36A9 9 0 0 0 20.5 15"/></svg>
-                    <span>تحديث</span>
-                </button>
-                <button class="btn-action primary hidden-el" id="downloadSelectedBtn" onclick="downloadSelectedImages()">
-                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span id="downloadSelectedText">تنزيل المحدد (0)</span>
-                </button>
-            </div>
         </div>
- 
+
+        <!-- شريط البحث والفرز والعرض للمجلدات -->
         <div id="filterBar" class="filter-bar hidden-el">
             <div class="filter-search">
                 <input type="text" class="search-input" id="imageFilter" placeholder="ابحث عن صورة أو مجلد..." oninput="filterImages()">
@@ -936,17 +1145,40 @@
                 </button>
             </div>
             <div class="view-toggle">
-                <button class="btn-view active" id="viewGrid" onclick="setView('grid')" title="عرض شبكي">
+                <button class="btn-view active" id="viewGrid" onclick="setView('grid')" title="شبكي">
                     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                 </button>
-                <button class="btn-view" id="viewList" onclick="setView('list')" title="عرض قائمة">
+                <button class="btn-view" id="viewList" onclick="setView('list')" title="قائمة">
                     <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
                 </button>
             </div>
         </div>
- 
-        <div id="subFoldersSection" class="hidden-el">
-            <div class="section-title">📁 المجلدات الفرعية</div>
+
+        <!-- شريط التحديد والتنزيل للمجلدات -->
+        <div id="folderActionsBar" class="mem-actions-bar hidden-el">
+            <button class="btn-action ca-btn" id="selectBtn" onclick="toggleSelectionMode()" title="تحديد">
+                <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                <span class="ca-label" id="folderSelectBtnText">تحديد</span>
+            </button>
+            <button class="btn-action ca-btn" id="selectVisibleBtn" onclick="selectAllVisible()" title="تحديد الظاهر">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><line x1="12" y1="6" x2="12" y2="18" stroke-width="2.5"/><line x1="6" y1="12" x2="18" y2="12" stroke-width="2.5"/></svg>
+                <span class="ca-label">الكل</span>
+            </button>
+            <button class="btn-action ca-btn" id="clearSelectionBtn" onclick="clearSelectionFast()" title="إلغاء التحديد">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+                <span class="ca-label">إلغاء</span>
+            </button>
+            <button class="btn-action ca-btn" id="copyFolderLinkBtn" onclick="copyCurrentFolderLink()" title="نسخ الرابط">
+                <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
+                <span class="ca-label">رابط</span>
+            </button>
+            <button class="btn-action primary ca-btn hidden-el" id="downloadSelectedBtn" onclick="downloadSelectedImages()" title="تنزيل المحدد">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span class="ca-label" id="downloadSelectedText">تنزيل المحدد (0)</span>
+            </button>
+        </div>
+
+        <div id="subFoldersSection" class="hidden-el">            <div class="section-title">📁 المجلدات الفرعية</div>
             <div class="subfolders-toolbar">
                 <div class="search-box">
                     <input type="text" class="search-input" id="subFolderFilter" placeholder="ابحث في المجلدات الفرعية..." oninput="filterSubFolders()">
@@ -976,30 +1208,6 @@
             </div>
         </div>
  
-        <div id="defaultEmptyState">
-            <div class="memories-hero">
-                <div class="memories-hero-content">
-                    <div class="memories-hero-badge">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                        </svg>
-                        ذكريات من الماضي
-                    </div>
-                    <div class="memories-hero-title" id="memoriesTitle">في مثل هذه الأيام</div>
-                    <div class="memories-hero-subtitle" id="memoriesSubtitle">لحظات جميلة عشتموها سويا</div>
-                    <div class="memories-hero-stats">
-                        <span class="memories-total-pill" id="memoriesTotalCount">🖼️ إجمالي الصور: ...</span>
-                    </div>
-                </div>
-            </div>
-            <div id="memoriesContent">
-                <div class="memories-loading">
-                    <div class="memories-loading-spinner"></div>
-                    <div class="memories-loading-text">⏳ جاري استرجاع الذكريات...</div>
-                    <div class="memories-loading-progress" id="memoriesProgress">جاري فحص المجلدات...</div>
-                </div>
-            </div>
-        </div>
     </main>
 </div>
  
@@ -1049,16 +1257,17 @@
         <div class="progress-title" id="progressTitle">جاري التحضير...</div>
         <div class="progress-subtitle" id="progressSubtitle">يرجى الانتظار</div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <button class="progress-cancel-btn" id="progressCancelBtn" onclick="cancelDownload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            إلغاء التحميل
+        </button>
     </div>
 </div>
  
-<!-- Toast -->
-<div class="toast" id="toast">
-    <svg class="toast-icon" id="toastIcon" viewBox="0 0 24 24"></svg>
-    <span class="toast-msg" id="toastMessage"></span>
-    <button class="toast-close-btn" onclick="hideToastNow()" aria-label="إغلاق">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+<!-- Snackbar -->
+<div class="snackbar" id="snackbar" role="alert" aria-live="polite">
+    <span class="snackbar-icon" id="snackbarIcon"></span>
+    <span class="snackbar-msg" id="snackbarMsg"></span>
 </div>
  
 <script>
@@ -1435,9 +1644,9 @@
         document.getElementById('breadcrumb').classList.remove('hidden-el');
         document.getElementById('contentHeader').classList.remove('hidden-el');
         document.getElementById('filterBar').classList.add('hidden-el');
+        document.getElementById('folderActionsBar').classList.remove('hidden-el');
         document.getElementById('imagesSection').classList.add('hidden-el');
         document.getElementById('subFoldersSection').classList.remove('hidden-el');
-        document.getElementById('contentActions').style.display = 'none';
         document.getElementById('currentFolderName').innerText = 'المجلدات الرئيسية';
         document.getElementById('currentFolderCount').innerText = `${formatCountEn(currentSubFolders.length)} مجلد`;
         const bc = document.getElementById('breadcrumb');
@@ -1481,8 +1690,10 @@
         renderBreadcrumb();
         document.getElementById('breadcrumb').classList.remove('hidden-el');
         document.getElementById('contentHeader').classList.remove('hidden-el');
+        document.getElementById('folderActionsBar').classList.remove('hidden-el');
         document.getElementById('currentFolderName').innerText = folderName;
         document.getElementById('currentFolderCount').innerText = 'جاري التحميل...';
+        document.getElementById('imageFilter').value = '';
         document.getElementById('imageFilter').value = '';
         const subFolderFilter = document.getElementById('subFolderFilter');
         if (subFolderFilter) subFolderFilter.value = '';
@@ -1539,7 +1750,9 @@
         currentImages = []; currentSubFolders = []; filteredImages = [];
         selectionMode = false; selectedImages.clear();
         document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('active'));
-        ['breadcrumb','contentHeader','filterBar','subFoldersSection','imagesSection'].forEach(id => document.getElementById(id).classList.add('hidden-el'));
+        ['breadcrumb','contentHeader','filterBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
+        });
         document.getElementById('defaultEmptyState').classList.remove('hidden-el');
         const cached = getCachedMemories();
         if (cached) renderMemories(cached.memories, cached.allImages);
@@ -1594,11 +1807,11 @@
         if (hasImg) {
             document.getElementById('imagesSection').classList.remove('hidden-el');
             document.getElementById('filterBar').classList.remove('hidden-el');
-            document.getElementById('contentActions').style.display = 'flex';
+            document.getElementById('folderActionsBar').classList.remove('hidden-el');
             renderImagesGrid();
         } else {
             document.getElementById('filterBar').classList.add('hidden-el');
-            document.getElementById('contentActions').style.display = 'none';
+            document.getElementById('folderActionsBar').classList.add('hidden-el');
             if (!hasSub) {
                 document.getElementById('imagesSection').classList.remove('hidden-el');
                 document.getElementById('displayArea').innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">مجلد فارغ</div><div>هذا المجلد لا يحتوي على أي محتوى</div></div>';
@@ -1736,34 +1949,35 @@
  
     function updateSelectionUI() {
         const area = document.getElementById('displayArea');
-        const selectBtnText = document.getElementById('selectBtnText');
+        const selectBtnText = document.getElementById('folderSelectBtnText');
         const downloadBtn   = document.getElementById('downloadSelectedBtn');
         const downloadText  = document.getElementById('downloadSelectedText');
- 
+
         if (selectionMode) {
             area.classList.add('selection-mode');
-            selectBtnText.innerText = 'إلغاء';
+            if (selectBtnText) selectBtnText.innerText = 'إلغاء';
         } else {
             area.classList.remove('selection-mode');
-            selectBtnText.innerText = 'تحديد';
+            if (selectBtnText) selectBtnText.innerText = 'تحديد';
             selectedImages.clear();
             document.querySelectorAll('.image-card').forEach(c => c.classList.remove('selected'));
             document.querySelectorAll('.img-checkbox').forEach(c => c.classList.remove('active'));
         }
- 
+
         if (selectedImages.size > 0) {
-            downloadBtn.classList.remove('hidden-el');
-            downloadText.innerText = `تنزيل المحدد (${formatCountEn(selectedImages.size)})`;
+            if (downloadBtn) downloadBtn.classList.remove('hidden-el');
+            if (downloadText) downloadText.innerText = `تنزيل المحدد (${formatCountEn(selectedImages.size)})`;
         } else {
-            downloadBtn.classList.add('hidden-el');
+            if (downloadBtn) downloadBtn.classList.add('hidden-el');
         }
     }
- 
+
     function toggleSelection(id) {
         if (!selectionMode) {
             selectionMode = true;
             document.getElementById('displayArea').classList.add('selection-mode');
-            document.getElementById('selectBtnText').innerText = 'إلغاء';
+            const sbt = document.getElementById('folderSelectBtnText');
+            if (sbt) sbt.innerText = 'إلغاء';
         }
         const card = document.querySelector(`.image-card[data-id="${id}"]`);
         if (!card) return;
@@ -1821,62 +2035,226 @@
         const imgs      = currentImages.filter(img => selectedImages.has(img.id));
         if (imgs.length === 0) { showToast('لا توجد صور صالحة للتنزيل', 'error'); return; }
 
+        _downloadCancelled = false;
         overlay.classList.add('active');
         ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
         psub.innerText   = `0 من ${formatCountEn(imgs.length)}`;
         fill.style.width = '0%';
         let completed = 0;
         let failed = 0;
- 
+
         for (const img of imgs) {
+            if (_downloadCancelled) break;
             try {
                 const directUrl = `https://drive.google.com/uc?export=download&id=${img.id}`;
                 triggerDownloadFrame(directUrl);
                 completed++;
-            } catch (_) {
-                failed++;
-            }
+            } catch (_) { failed++; }
             fill.style.width = `${((completed + failed) / imgs.length) * 100}%`;
             psub.innerText   = `${formatCountEn(completed + failed)} من ${formatCountEn(imgs.length)}`;
             await new Promise(resolve => setTimeout(resolve, 900));
         }
- 
-        overlay.classList.remove('active');
-        showToast(
-            failed > 0
-                ? `تم إرسال تنزيل ${formatCountEn(completed)} صورة (تعذر ${formatCountEn(failed)})`
-                : `تم إرسال تنزيل ${formatCountEn(completed)} صورة بنجاح ✨`,
-            failed > 0 ? 'error' : 'success'
-        );
+
+        if (!_downloadCancelled) {
+            overlay.classList.remove('active');
+            showToast(
+                failed > 0
+                    ? `تم إرسال تنزيل ${formatCountEn(completed)} صورة (تعذر ${formatCountEn(failed)})`
+                    : `تم إرسال تنزيل ${formatCountEn(completed)} صورة بنجاح ✨`,
+                failed > 0 ? 'error' : 'success'
+            );
+        }
         selectionMode = false;
         selectedImages.clear();
         updateSelectionUI();
         renderImagesGrid();
     }
 
-    let _memCurrentTabImages = [];
+    // ====== وضع الذكريات: الكشف ======
+    function isMemoriesMode() {
+        const defaultState = document.getElementById('defaultEmptyState');
+        return defaultState && !defaultState.classList.contains('hidden-el');
+    }
+
+    // ====== متغيرات فرز وعرض الذكريات ======
+    let memCurrentSort = 'newest';
+    let memCurrentView = 'grid';
+    // الصور الأصلية للتبويب النشط (لإعادة الفلترة)
+    window._memOriginalTabImages = [];
+
+    function applyMemSort(sortKey) {
+        memCurrentSort = sortKey;
+        document.querySelectorAll('[data-memsort]').forEach(el =>
+            el.classList.toggle('active', el.dataset.memsort === sortKey));
+        renderMemActivePanel();
+    }
+
+    function setMemView(view) {
+        memCurrentView = view;
+        document.getElementById('memViewGrid')?.classList.toggle('active', view === 'grid');
+        document.getElementById('memViewList')?.classList.toggle('active', view === 'list');
+        // تطبيق على كل شبكات الذكريات
+        document.querySelectorAll('#memoriesContent .images-grid').forEach(g =>
+            g.classList.toggle('list-view', view === 'list'));
+    }
+
+    function filterMemImages() {
+        renderMemActivePanel();
+    }
+
+    function getMemFilteredSorted(images) {
+        const q = (document.getElementById('memImageFilter')?.value || '').toLowerCase().trim();
+        let list = q ? images.filter(img => (img.name || '').toLowerCase().includes(q)) : [...images];
+        list.sort((a, b) => {
+            const dateA = new Date(a.imgDate || a.createdTime || 0);
+            const dateB = new Date(b.imgDate || b.createdTime || 0);
+            switch (memCurrentSort) {
+                case 'newest':    return dateB - dateA;
+                case 'oldest':    return dateA - dateB;
+                case 'name-asc':  return (a.name || '').localeCompare(b.name || '', 'ar');
+                case 'name-desc': return (b.name || '').localeCompare(a.name || '', 'ar');
+                default: return 0;
+            }
+        });
+        return list;
+    }
+
+    // إعادة رسم البانل النشط بعد الفلترة/الفرز
+    function renderMemActivePanel() {
+        const activePanel = document.querySelector('.mem-panel-active');
+        if (!activePanel) return;
+        const allImgs = window._memOriginalTabImages || [];
+        const filtered = getMemFilteredSorted(allImgs);
+        window._memCurrentTabImagesGlobal = filtered;
+
+        // تحديث عدد الصور في الشريط
+        const folderCount = document.getElementById('currentFolderCount');
+        if (folderCount) {
+            folderCount.innerText = filtered.length !== allImgs.length
+                ? `${formatCountEn(filtered.length)} من ${formatCountEn(allImgs.length)} صورة`
+                : `${formatCountEn(filtered.length)} صورة`;
+        }
+
+        // جمع كل شبكات البانل النشط وإعادة رسمها
+        const grids = activePanel.querySelectorAll('.images-grid');
+        if (grids.length === 1) {
+            rerenderMemGrid(grids[0], filtered);
+        } else if (grids.length > 1) {
+            // تبويب اليوم: شبكات متعددة (واحدة لكل سنة) - نفلتر كل شبكة بمصدرها
+            grids.forEach(grid => {
+                const src = grid.dataset.memSource;
+                const imgs = src ? filtered.filter(img => img._memSource === src) : filtered;
+                rerenderMemGrid(grid, imgs);
+            });
+        }
+        // تطبيق selection mode لو نشط
+        if (window._memSelectionMode) window._memUpdateSelUI && window._memUpdateSelUI();
+    }
+
+    function rerenderMemGrid(grid, images) {
+        grid.innerHTML = '';
+        grid.classList.toggle('list-view', memCurrentView === 'list');
+        const panelImgsRef = images.map(img => ({ id: img.id, name: img.name }));
+        images.forEach((p, i) => {
+            const dateStr = p.imgDate ? `${formatCountEn(new Date(p.imgDate).getDate())} ${ARABIC_MONTHS[new Date(p.imgDate).getMonth()]}` : formatDate(p.createdTime);
+            const card = document.createElement('div');
+            card.className = 'image-card memory-card';
+            card.dataset.memId = p.id;
+            card.style.animationDelay = `${Math.min(i * 30, 300)}ms`;
+            card.innerHTML = `
+                ${p.imgDate ? `<div class="memory-card-badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${dateStr}</div>` : ''}
+                <div class="img-container" onclick='openMemoryLightbox(${JSON.stringify(panelImgsRef)},${i})'>
+                    <img src="https://drive.google.com/thumbnail?id=${p.id}&sz=w800" loading="lazy" alt="${escapeHtml(p.name)}" onload="this.classList.add('loaded')">
+                    <div class="img-overlay"><span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M14 10l6.1-6.1M9 21H3v-6M10 14l-6.1 6.1"/></svg>
+                        عرض بالحجم الكامل
+                    </span></div>
+                </div>
+                <div class="img-info">
+                    <div class="img-meta">
+                        <div class="img-name">${escapeHtml(p.name)}</div>
+                        ${p.folderPath ? `<div class="memory-card-folder">📁 ${escapeHtml(p.folderPath)}</div>` : ''}
+                        ${dateStr && !p.imgDate ? `<div class="img-date"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${dateStr}</div>` : ''}
+                        ${favoriteImages.has(p.id) ? '<div class="img-favorite-badge">⭐ مفضلة</div>' : ''}
+                    </div>
+                    ${renderImageActions({ id: p.id, name: p.name, createdTime: p.imgDate || p.createdTime, folderPath: p.folderPath || '' }, false)}
+                </div>`;
+            grid.appendChild(card);
+        });
+        // تطبيق selection mode لو نشط
+        if (window._memSelectionMode) window._memUpdateSelUI && window._memUpdateSelUI();
+    }
+
+    // دالة مساعدة: إظهار شريط فلترة الذكريات وإخفاء filterBar
+    function showMemFilterBar(images) {
+        window._memOriginalTabImages = images || [];
+        const fb = document.getElementById('memFilterBar');
+        if (fb) fb.classList.remove('hidden-el');
+        // إعادة تعيين البحث عند تغيير التبويب
+        const inp = document.getElementById('memImageFilter');
+        if (inp) inp.value = '';
+        // إعادة تعيين الفرز للافتراضي
+        memCurrentSort = 'newest';
+        document.querySelectorAll('[data-memsort]').forEach(el =>
+            el.classList.toggle('active', el.dataset.memsort === 'newest'));
+    }
+
+    function hideMemFilterBar() {
+        const fb = document.getElementById('memFilterBar');
+        if (fb) fb.classList.add('hidden-el');
+        window._memOriginalTabImages = [];
+    }
+
+
+    function unifiedToggleSelect() {
+        if (isMemoriesMode()) window.toggleMemSelectionMode();
+        else toggleSelectionMode();
+    }
+    function unifiedSelectAllVisible() {
+        if (isMemoriesMode()) window.selectAllMemVisible();
+        else selectAllVisible();
+    }
+    function unifiedClearSelection() {
+        if (isMemoriesMode()) window.clearMemSelection();
+        else clearSelectionFast();
+    }
+
+    // ====== تحميل: موحد حسب الوضع ======
+    const _origDownloadSelected = downloadSelectedImages;
+    downloadSelectedImages = async function() {
+        if (isMemoriesMode()) {
+            await window.downloadMemSelected();
+        } else {
+            await _origDownloadSelected();
+        }
+    };
+
+
     window.downloadCurrentTabImages = async function() {
-        // نحصل على الصور من المتغير المُحدَّث من activateMemTab
         const imgs = window._memCurrentTabImagesGlobal || [];
         if (!imgs || imgs.length === 0) { showToast('لا توجد صور للتحميل', 'error'); return; }
         const overlay = document.getElementById('progressOverlay');
         const fill = document.getElementById('progressFill');
         const ptitle = document.getElementById('progressTitle');
         const psub = document.getElementById('progressSubtitle');
+        _downloadCancelled = false;
         overlay.classList.add('active');
         ptitle.innerText = '⬇️ جاري تحميل الصور...';
         psub.innerText = `0 من ${formatCountEn(imgs.length)}`;
         fill.style.width = '0%';
         let completed = 0;
         for (const img of imgs) {
+            if (_downloadCancelled) break;
             triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
             completed++;
             fill.style.width = `${(completed / imgs.length) * 100}%`;
             psub.innerText = `${formatCountEn(completed)} من ${formatCountEn(imgs.length)}`;
             await new Promise(r => setTimeout(r, 900));
         }
-        overlay.classList.remove('active');
-        showToast(`تم إرسال تحميل ${formatCountEn(completed)} صورة ✨`, 'success');
+        if (!_downloadCancelled) {
+            overlay.classList.remove('active');
+            showToast(`تم إرسال تحميل ${formatCountEn(completed)} صورة ✨`, 'success');
+        }
     };
 
     function triggerDownloadFrame(url) {
@@ -2275,12 +2653,28 @@
     }
 
     function showImageDetails(imageName, createdTime, folderPath) {
-        const parts = [];
-        if (imageName) parts.push(`الاسم: ${imageName}`);
-        if (createdTime) parts.push(`التاريخ: ${formatDate(createdTime) || createdTime}`);
-        if (folderPath) parts.push(`المجلد: ${folderPath}`);
-        showToast(parts.join(' • ') || 'لا توجد تفاصيل متاحة', 'success');
         closeAllImageMenus();
+        const dateFormatted = createdTime ? (formatDate(createdTime) || createdTime) : '';
+        const lines = [];
+        if (imageName)     lines.push(`📄 ${imageName}`);
+        if (dateFormatted) lines.push(`📅 ${dateFormatted}`);
+        if (folderPath)    lines.push(`📁 ${folderPath}`);
+        showSnackInfo(lines.join('\n') || 'لا توجد تفاصيل');
+    }
+
+    function showSnackInfo(text) {
+        let panel = document.getElementById('infoPanel');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'infoPanel';
+            panel.className = 'info-panel';
+            panel.innerHTML = `<div class="info-panel-body"><pre class="info-panel-text" id="infoPanelText"></pre></div>`;
+            panel.addEventListener('click', () => panel.classList.remove('show'));
+            document.body.appendChild(panel);
+        }
+        document.getElementById('infoPanelText').textContent = text;
+        panel.classList.add('show');
+        setTimeout(() => panel.classList.remove('show'), 4500);
     }
 
     async function shareImage(imageId, imageName) {
@@ -2325,29 +2719,37 @@
     document.addEventListener('click', () => closeAllImageMenus());
  
     // ====== Toast ======
-    let toastTimer = null;
+    let _downloadCancelled = false;
+    // ====== Snackbar (بديل Toast — يختفي تلقائياً بعد 3 ث) ======
+    let _snackTimer = null;
     function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const icon  = document.getElementById('toastIcon');
-        if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
-        toast.classList.remove('show');
-        toast.className = `toast ${type}`;
-        document.getElementById('toastMessage').innerText = message;
-        icon.innerHTML = type === 'success'
-            ? '<polyline points="20 6 9 17 4 12"/>'
-            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
-        requestAnimationFrame(() => toast.classList.add('show'));
-        // يختفي تلقائياً بعد 5 ثوان، أو يمكن إغلاقه يدوياً
-        toastTimer = setTimeout(() => {
-            toast.classList.remove('show');
-            toastTimer = null;
-        }, 5000);
+        const sb  = document.getElementById('snackbar');
+        const ico = document.getElementById('snackbarIcon');
+        const msg = document.getElementById('snackbarMsg');
+        if (_snackTimer) { clearTimeout(_snackTimer); _snackTimer = null; }
+        sb.className = 'snackbar ' + type;
+        ico.innerHTML = type === 'success'
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        msg.textContent = message;
+        sb.classList.add('show');
+        _snackTimer = setTimeout(() => {
+            sb.classList.remove('show');
+            _snackTimer = null;
+        }, 3000);
     }
     function hideToastNow() {
-        const toast = document.getElementById('toast');
-        if (!toast) return;
-        if (toastTimer) { clearTimeout(toastTimer); toastTimer = null; }
-        toast.classList.remove('show');
+        const sb = document.getElementById('snackbar');
+        if (!sb) return;
+        if (_snackTimer) { clearTimeout(_snackTimer); _snackTimer = null; }
+        sb.classList.remove('show');
+    }
+
+    // ====== إلغاء التحميل ======
+    function cancelDownload() {
+        _downloadCancelled = true;
+        document.getElementById('progressOverlay').classList.remove('active');
+        showToast('تم إلغاء التحميل', 'error');
     }
 
     // نسخ رابط التبويب الحالي للذكريات
@@ -2557,39 +2959,21 @@
         if (scatteredMemories.length > 0) subtitleBits.push(`${formatCountEn(scatteredMemories.length)} صور متفرقة`);
         if (subtitleBits.length === 0) subtitleBits.push('لقطات من الذكريات');
         document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
+        // عناصر الذكريات الآن موجودة داخل defaultEmptyState — نخفي فقط شرائط المجلدات
+        ['breadcrumb','contentHeader','filterBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
+        });
+        // إظهار شريط الذكريات
+        const mab = document.getElementById('memActionsBar');
+        if (mab) mab.classList.remove('hidden-el');
+
+        // نُدرج: 1-التبويبات  2-شريط الفلترة (يُحقن لاحقاً بـ showMemFilterBar)  3-البانلات
         content.innerHTML = `
             <div class="memories-tabs">
                 <button class="memories-tab active" id="memTabToday" type="button">اليوم</button>
                 ${hasPeriodMemories ? `<button class="memories-tab" id="memTabWeek" type="button">${periodLabel}</button>` : ''}
                 <button class="memories-tab" id="memTabScattered" type="button">صور متفرقة</button>
                 <button class="memories-tab" id="memTabFavorites" type="button">⭐ المفضلة</button>
-            </div>
-            <div class="memories-toolbar" id="memToolbar" style="display:none;">
-                <button class="btn-action" id="memSelBtn" onclick="toggleMemSelectionMode()">
-                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                    <span id="memSelBtnText">تحديد</span>
-                </button>
-                <button class="btn-action" id="memSelAllBtn" onclick="selectAllMemVisible()">
-                    <svg viewBox="0 0 24 24"><path d="M3 12h18"/><path d="M12 3v18"/></svg>
-                    <span>تحديد الظاهر</span>
-                </button>
-                <button class="btn-action" id="memClearSelBtn" onclick="clearMemSelection()">
-                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    <span>إلغاء التحديد</span>
-                </button>
-                <button class="btn-action" id="memCopyLinkBtn" onclick="copyMemTabLink()">
-                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L13 19"/></svg>
-                    <span>نسخ الرابط</span>
-                </button>
-                <span class="mem-count-label" id="memCountLabel"></span>
-                <button class="btn-action primary hidden-el" id="memDlSelectedBtn" onclick="downloadMemSelected()">
-                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span id="memDlSelText">تنزيل المحدد (0)</span>
-                </button>
-                <button class="btn-action primary" id="memDlAllBtn" onclick="downloadCurrentTabImages()">
-                    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    <span id="memDlLabel">تحميل الكل (0)</span>
-                </button>
             </div>
             <div class="memories-tab-panel" id="memoriesTodayPanel"></div>
             <div class="memories-tab-panel hidden-el" id="memoriesWeekPanel"></div>
@@ -2602,7 +2986,7 @@
 
         if (years.length > 0) {
             years.forEach((yearsAgo, groupIdx) => {
-                const images    = todayMemories[yearsAgo];
+                const images    = todayMemories[yearsAgo].map(img => ({ ...img, _memSource: String(yearsAgo) }));
                 const year      = new Date().getFullYear() - yearsAgo;
                 const yearLabel = yearsAgo === 1 ? 'قبل سنة' : `قبل ${yearsAgo} سنوات`;
                 const group     = document.createElement('div');
@@ -2612,9 +2996,9 @@
                     <div class="memory-year-header">
                         <span class="memory-year-number">${year}</span>
                         <span class="memory-year-label">${yearLabel}</span>
-                        <span class="memory-year-count">${formatCountEn(images.length)} صورة</span>
+                        <span class="memory-year-count" id="mem-year-count-${yearsAgo}">${formatCountEn(images.length)} صورة</span>
                     </div>
-                    <div class="images-grid" id="memory-grid-${yearsAgo}"></div>`;
+                    <div class="images-grid" id="memory-grid-${yearsAgo}" data-mem-source="${yearsAgo}"></div>`;
                 todayPanel.appendChild(group);
 
                 const grid    = group.querySelector(`#memory-grid-${yearsAgo}`);
@@ -2760,19 +3144,9 @@
         function updateMemDownloadBar(images) {
             currentTabImages = images || [];
             window._memCurrentTabImagesGlobal = currentTabImages;
-            const toolbar = document.getElementById('memToolbar');
-            const dlAllBtn = document.getElementById('memDlLabel');
-            if (!toolbar) return;
-            // دائماً نعرض الشريط (حتى لو لا توجد صور)
-            toolbar.style.display = 'flex';
-            if (dlAllBtn) dlAllBtn.textContent = `تحميل الكل (${formatCountEn(currentTabImages.length)})`;
-            const countLabel = document.getElementById('memCountLabel');
-            if (countLabel) countLabel.innerText = currentTabImages.length > 0 ? `${formatCountEn(currentTabImages.length)} صورة` : '';
-            // إعادة تعيين التحديد عند تغيير التبويب
+            showMemFilterBar(currentTabImages);
             window._resetMemSelection && window._resetMemSelection();
         }
-
-
 
         const activateMemTab = (tab) => {
             const showToday = tab === 'today';
@@ -2787,7 +3161,6 @@
             weekPanel.classList.toggle('hidden-el', !showWeek);
             scatteredPanel.classList.toggle('hidden-el', !showScattered);
             favoritesPanel.classList.toggle('hidden-el', !showFavorites);
-            // تحديث كلاس البانل النشط
             [todayPanel, weekPanel, scatteredPanel, favoritesPanel].forEach(p => p && p.classList.remove('mem-panel-active'));
             if (showToday) todayPanel.classList.add('mem-panel-active');
             else if (showWeek) weekPanel.classList.add('mem-panel-active');
@@ -2795,53 +3168,22 @@
             else if (showFavorites) favoritesPanel.classList.add('mem-panel-active');
 
             if (showToday) {
-                const todayList = years.reduce((a, y) => a.concat(todayMemories[y]), []);
-                if (todayList.length > 0) {
-                    updateMemDownloadBar(todayList);
-                } else {
-                    // الصور العشوائية محفوظة - فقط نُعيّن الـ selection mode ونُحدّث الـ UI
-                    window._resetMemSelection && window._resetMemSelection();
-                    const tb2 = document.getElementById('memToolbar');
-                    if (tb2) tb2.style.display = 'flex';
-                    const dl2 = document.getElementById('memDlLabel');
-                    const ex2 = window._memCurrentTabImagesGlobal || [];
-                    if (dl2) dl2.textContent = `تحميل الكل (${formatCountEn(ex2.length)})`;
-                    const cl2 = document.getElementById('memCountLabel');
-                    if (cl2) cl2.innerText = ex2.length > 0 ? `${formatCountEn(ex2.length)} صورة` : '';
-                }
+                const todayList = years.reduce((a, y) => a.concat(todayMemories[y].map(img => ({ ...img, _memSource: String(y) }))), []);
+                updateMemDownloadBar(todayList.length > 0 ? todayList : (window._memCurrentTabImagesGlobal || []));
             }
             else if (showWeek) updateMemDownloadBar(periodMemories);
             else if (showScattered) updateMemDownloadBar(scatteredMemories);
-            else if (showFavorites) { renderFavoritesPanel(); }
-            // الشريط يظهر دائماً في كل التبويبات
-            const tb = document.getElementById('memToolbar');
-            if (tb) tb.style.display = 'flex';
+            else if (showFavorites) renderFavoritesPanel();
         };
         tabToday.onclick = () => activateMemTab('today');
         if (tabWeek) tabWeek.onclick = () => activateMemTab('week');
         tabScattered.onclick = () => activateMemTab('scattered');
         tabFavorites.onclick = () => activateMemTab('favorites');
 
-        // شريط التحميل الأولي لتبويب اليوم - يظهر الشريط دائماً
+        // تهيئة تبويب اليوم
         todayPanel.classList.add('mem-panel-active');
-        const todayImgs = years.reduce((a, y) => a.concat(todayMemories[y]), []);
-        // إذا لا توجد ذكريات اليوم، الصور العشوائية مُسجَّلة بالفعل في _memCurrentTabImagesGlobal
-        // من renderRandomImages - لا نُعيد تعيينه بقائمة فارغة
-        if (todayImgs.length > 0) {
-            updateMemDownloadBar(todayImgs);
-        } else {
-            // تحديث label الشريط فقط بعدد الصور العشوائية الموجودة
-            const toolbar = document.getElementById('memToolbar');
-            if (toolbar) toolbar.style.display = 'flex';
-            const dlLabel = document.getElementById('memDlLabel');
-            const existingImgs = window._memCurrentTabImagesGlobal || [];
-            if (dlLabel) dlLabel.textContent = `تحميل الكل (${formatCountEn(existingImgs.length)})`;
-            const countLabel = document.getElementById('memCountLabel');
-            if (countLabel) countLabel.innerText = existingImgs.length > 0 ? `${formatCountEn(existingImgs.length)} صورة` : '';
-        }
-        // نعرض الشريط مباشرة لتبويب اليوم
-        const toolbarEl = document.getElementById('memToolbar');
-        if (toolbarEl) toolbarEl.style.display = 'flex';
+        const todayImgs = years.reduce((a, y) => a.concat(todayMemories[y].map(img => ({ ...img, _memSource: String(y) }))), []);
+        updateMemDownloadBar(todayImgs);
 
         function renderFavoritesPanel() {
             favoritesPanel.innerHTML = '';
@@ -2906,17 +3248,10 @@
         const picked  = pickRandomImages(allImages, 20);
         const memImgs = picked.map(img => ({ id: img.id, name: img.name, createdTime: img.createdTime }));
 
-        // تحديث الصور للشريط + إظهاره
+        // تحديث الصور للشريط الموحد + إظهاره
         window._memCurrentTabImagesGlobal = picked;
         window._resetMemSelection && window._resetMemSelection();
-        const toolbar = document.getElementById('memToolbar');
-        if (toolbar) {
-            toolbar.style.display = 'flex';
-            const dlLabel = document.getElementById('memDlLabel');
-            if (dlLabel) dlLabel.textContent = `تحميل الكل (${formatCountEn(picked.length)})`;
-            const countLabel = document.getElementById('memCountLabel');
-            if (countLabel) countLabel.innerText = `${formatCountEn(picked.length)} صورة`;
-        }
+        showMemFilterBar(picked);
         // تعيين البانل النشط للتحديد
         document.querySelectorAll('.memories-tab-panel').forEach(p => p.classList.remove('mem-panel-active'));
         content.classList && content.classList.add('mem-panel-active');
@@ -2989,36 +3324,24 @@
     window._memUpdateSelUI = function() {
         const memSelectedImages = window._memSelectedImages;
         const memSelectionMode  = window._memSelectionMode;
-        const currentTabImages  = window._memCurrentTabImagesGlobal || [];
 
-        const dlSelBtn  = document.getElementById('memDlSelectedBtn');
-        const dlSelText = document.getElementById('memDlSelText');
-        const selBtnText = document.getElementById('memSelBtnText');
-        const countLabel = document.getElementById('memCountLabel');
-        if (!dlSelBtn) return;
+        const selectBtnText = document.getElementById('selectBtnText');
+        const dlSelBtn      = document.getElementById('memDlSelBtn');
+        const dlSelText     = document.getElementById('memDlSelText');
 
+        if (selectBtnText) selectBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
         if (memSelectedImages.size > 0) {
-            dlSelBtn.classList.remove('hidden-el');
+            if (dlSelBtn) dlSelBtn.classList.remove('hidden-el');
             if (dlSelText) dlSelText.textContent = `تنزيل المحدد (${formatCountEn(memSelectedImages.size)})`;
         } else {
-            dlSelBtn.classList.add('hidden-el');
+            if (dlSelBtn) dlSelBtn.classList.add('hidden-el');
         }
-        if (selBtnText) selBtnText.textContent = memSelectionMode ? 'إلغاء' : 'تحديد';
-        if (countLabel) {
-            countLabel.innerText = memSelectionMode && memSelectedImages.size > 0
-                ? `${formatCountEn(memSelectedImages.size)} محدد من ${formatCountEn(currentTabImages.length)}`
-                : currentTabImages.length > 0 ? `${formatCountEn(currentTabImages.length)} صورة` : '';
-        }
-        // تحديث checkboxes في بطاقات الذكريات
-        // نبحث في البانل النشط أو أي بانل للذكريات مرئي
-        const memCardSelector = '.mem-panel-active .image-card, #memoriesContent .image-card';
-        document.querySelectorAll(memCardSelector).forEach(card => {
-            const id = card.dataset.memId;
-            if (!id) return;
+        // تحديث checkboxes
+        document.querySelectorAll('.mem-panel-active .image-card, #memoriesContent .image-card').forEach(card => {
+            const id = card.dataset.memId; if (!id) return;
             let cb = card.querySelector('.img-checkbox');
             if (!cb) {
-                cb = document.createElement('div');
-                cb.className = 'img-checkbox';
+                cb = document.createElement('div'); cb.className = 'img-checkbox';
                 cb.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
                 cb.onclick = (e) => { e.stopPropagation(); window.toggleMemSelection(id); };
                 card.insertBefore(cb, card.firstChild);
@@ -3069,20 +3392,24 @@
         const fill    = document.getElementById('progressFill');
         const ptitle  = document.getElementById('progressTitle');
         const psub    = document.getElementById('progressSubtitle');
+        _downloadCancelled = false;
         overlay.classList.add('active');
         ptitle.innerText = '⬇️ جاري تنزيل الصور المحددة...';
         psub.innerText = `0 من ${formatCountEn(imgs.length)}`;
         fill.style.width = '0%';
         let done = 0;
         for (const img of imgs) {
+            if (_downloadCancelled) break;
             triggerDownloadFrame(`https://drive.google.com/uc?export=download&id=${img.id}`);
             done++;
             fill.style.width = `${(done / imgs.length) * 100}%`;
             psub.innerText = `${formatCountEn(done)} من ${formatCountEn(imgs.length)}`;
             await new Promise(r => setTimeout(r, 900));
         }
-        overlay.classList.remove('active');
-        showToast(`تم إرسال تحميل ${formatCountEn(done)} صورة ✨`, 'success');
+        if (!_downloadCancelled) {
+            overlay.classList.remove('active');
+            showToast(`تم إرسال تحميل ${formatCountEn(done)} صورة ✨`, 'success');
+        }
         window._memSelectionMode = false;
         window._memSelectedImages.clear();
         window._memUpdateSelUI();
