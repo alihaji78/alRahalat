@@ -10,43 +10,46 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
  
         :root {
-            --bg-primary: #f0f2f5;
+            --bg-primary: #fff8f2;
             --bg-secondary: #ffffff;
-            --bg-glass: rgba(255,255,255,0.7);
-            --bg-glass-strong: rgba(255,255,255,0.85);
-            --text-primary: #1a1a1a;
-            --text-secondary: #666;
-            --text-muted: #999;
-            --border: rgba(0,0,0,0.08);
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
-            --accent: #000000;
+            --bg-glass: rgba(255,248,242,0.72);
+            --bg-glass-strong: rgba(255,248,242,0.88);
+            --text-primary: #2a1a0e;
+            --text-secondary: #7a5c42;
+            --text-muted: #b08060;
+            --border: rgba(200,130,60,0.13);
+            --shadow-sm: 0 2px 8px rgba(200,100,30,0.07);
+            --shadow-md: 0 4px 16px rgba(200,100,30,0.11);
+            --shadow-lg: 0 10px 30px rgba(200,100,30,0.16);
+            --accent: #e07030;
             --accent-text: #ffffff;
-            --gradient-primary: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-            --gradient-bg: linear-gradient(135deg,#f0f2f5 0%,#e8eef5 50%,#f0f2f5 100%);
-            --hover-bg: rgba(0,0,0,0.04);
+            --gradient-primary: linear-gradient(135deg,#ff9a3c 0%,#e05c10 100%);
+            --gradient-bg: linear-gradient(135deg,#fff5ec 0%,#ffe8d6 50%,#fff5ec 100%);
+            --hover-bg: rgba(224,112,48,0.07);
             --danger: #ff3b30;
             --success: #34c759;
             --sidebar-width: 300px;
         }
  
         [data-theme="dark"] {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #16161d;
-            --bg-glass: rgba(22,22,29,0.7);
-            --bg-glass-strong: rgba(22,22,29,0.9);
-            --text-primary: #f0f0f5;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
-            --border: rgba(255,255,255,0.08);
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
-            --accent: #ffffff;
-            --accent-text: #000000;
-            --gradient-bg: linear-gradient(135deg,#0a0a0f 0%,#12121a 50%,#0a0a0f 100%);
-            --hover-bg: rgba(255,255,255,0.06);
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-glass: rgba(13,17,23,0.78);
+            --bg-glass-strong: rgba(18,24,32,0.94);
+            --text-primary: #e6edf3;
+            --text-secondary: #8b9ab0;
+            --text-muted: #4d6080;
+            --border: rgba(80,130,200,0.15);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.5);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.55);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.65);
+            --accent: #4f8ef7;
+            --accent-text: #ffffff;
+            --gradient-primary: linear-gradient(135deg,#4f8ef7 0%,#1a5cc8 100%);
+            --gradient-bg: linear-gradient(135deg,#0d1117 0%,#0f1923 50%,#0d1117 100%);
+            --hover-bg: rgba(79,142,247,0.10);
+            --danger: #f85149;
+            --success: #3fb950;
         }
  
         html, body { height: 100%; overflow-x: hidden; }
@@ -66,16 +69,16 @@
             content: '';
             position: fixed; top:0; left:0; right:0; bottom:0;
             background-image:
-                radial-gradient(circle at 20% 50%, rgba(102,126,234,0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(118,75,162,0.06) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(240,147,251,0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(255,154,60,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(224,92,16,0.09) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255,200,100,0.08) 0%, transparent 50%);
             pointer-events: none; z-index: -1;
         }
         [data-theme="dark"] body::before {
             background-image:
-                radial-gradient(circle at 20% 50%, rgba(102,126,234,0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(118,75,162,0.12) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, rgba(240,147,251,0.08) 0%, transparent 50%);
+                radial-gradient(circle at 20% 50%, rgba(79,142,247,0.12) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26,92,200,0.10) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(100,160,255,0.07) 0%, transparent 50%);
         }
  
         /* ====== Nav ====== */
@@ -127,7 +130,7 @@
         }
         .sidebar-header h3 { font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
         .sidebar-header h3.clickable { cursor: pointer; user-select: none; }
-        .sidebar-header h3.clickable:hover { color: #667eea; }
+        .sidebar-header h3.clickable:hover { color: var(--accent); }
         .sidebar-header p { font-size: 12px; color: var(--text-muted); font-weight: 600; }
  
         .search-box { position: relative; margin-top: 12px; }
@@ -137,7 +140,7 @@
             font-family: 'Cairo', sans-serif; font-size: 13px; color: var(--text-primary);
             transition: all 0.2s ease; direction: rtl;
         }
-        .search-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.15); }
+        .search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--hover-bg); }
         .search-input::placeholder { color: var(--text-muted); }
         .search-icon {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -156,7 +159,7 @@
             background: var(--gradient-primary);
             color: #ffffff;
             border-color: rgba(255,255,255,0.18);
-            box-shadow: 0 8px 22px rgba(102,126,234,0.35);
+            box-shadow: 0 8px 22px rgba(224,112,48,0.35);
             transform: translateX(-3px);
         }
         .folder-item.active .folder-item-count {
@@ -164,8 +167,8 @@
             color: #ffffff;
         }
         [data-theme="dark"] .folder-item.active {
-            border-color: rgba(255,255,255,0.14);
-            box-shadow: 0 10px 26px rgba(0,0,0,0.45);
+            border-color: rgba(255,200,120,0.2);
+            box-shadow: 0 10px 26px rgba(200,80,10,0.45);
         }
         [data-theme="dark"] .folder-item.active .folder-item-count { background: rgba(255,255,255,0.18); }
         .folder-item.hidden-el { display: none; }
@@ -185,7 +188,7 @@
             color: var(--text-secondary);
         }
         .sidebar-sub-item:hover { background: var(--hover-bg); color: var(--text-primary); }
-        .sidebar-sub-item.active { background: rgba(102,126,234,0.13); color: #667eea; }
+        .sidebar-sub-item.active { background: var(--hover-bg); color: var(--accent); }
         .sidebar-sub-item.hidden-el { display: none; }
         .sidebar-sub-item-icon { font-size: 13px; flex-shrink: 0; opacity: 0.7; }
         .sidebar-sub-item-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -242,7 +245,7 @@
         .btn-action span { overflow: hidden; text-overflow: ellipsis; }
         .btn-action:hover { background: var(--hover-bg); transform: translateY(-1px); }
         .btn-action.primary { background: var(--gradient-primary); color: white; border-color: transparent; }
-        .btn-action.primary:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+        .btn-action.primary:hover { box-shadow: 0 6px 20px rgba(224,112,48,0.4); }
         .btn-action svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
  
         /* ====== Filter Bar ====== */
@@ -265,7 +268,7 @@
             color: var(--text-secondary); transition: all 0.2s ease; white-space: nowrap; user-select: none;
         }
         .btn-sort-opt:hover { background: var(--hover-bg); color: var(--text-primary); }
-        .btn-sort-opt.active { background: var(--gradient-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(102,126,234,0.3); }
+        .btn-sort-opt.active { background: var(--gradient-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(224,112,48,0.3); }
         .btn-sort-opt svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
         .sort-text { display: inline; }
  
@@ -327,7 +330,7 @@
             animation: fadeIn 0.4s ease backwards; position: relative; overflow: hidden;
         }
         .folder-card::before { content: ''; position: absolute; inset: 0; background: var(--gradient-primary); opacity: 0; transition: opacity 0.3s; z-index: 0; }
-        .folder-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(102,126,234,0.4); }
+        .folder-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(224,112,48,0.4); }
         .folder-card:hover::before { opacity: 0.05; }
         .folder-card-icon { font-size: 44px; display: block; margin-bottom: 8px; position: relative; z-index: 1; }
         .folder-card-name { font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; position: relative; z-index: 1; }
@@ -382,8 +385,8 @@
             border: 1px solid var(--border); box-shadow: var(--shadow-sm);
             transition: all 0.3s cubic-bezier(0.4,0,0.2,1); position: relative; animation: fadeIn 0.4s ease backwards;
         }
-        .image-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(102,126,234,0.3); }
-        .image-card.selected { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.3), var(--shadow-md); }
+        .image-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(224,112,48,0.3); }
+        .image-card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--hover-bg), var(--shadow-md); }
  
         .img-checkbox {
             position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 8px;
@@ -391,7 +394,7 @@
             border: 2px solid rgba(255,255,255,0.8); display: none; align-items: center; justify-content: center;
             cursor: pointer; z-index: 5; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        .img-checkbox.active { background: #667eea; border-color: white; }
+        .img-checkbox.active { background: var(--accent); border-color: white; }
         .img-checkbox svg { width: 16px; height: 16px; fill: none; stroke: white; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity 0.2s; }
         .img-checkbox.active svg { opacity: 1; }
         .selection-mode .img-checkbox { display: flex; }
@@ -437,7 +440,7 @@
         .btn-download:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .btn-download svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
  
-        .img-actions { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+        .img-actions { display: flex; align-items: center; justify-content: center; gap: 6px; }
 
         /* ====== أزرار الإجراء المباشرة على شريط الصورة ====== */
         .img-act-btn {
@@ -450,7 +453,7 @@
         .img-act-btn:hover { background: var(--hover-bg); transform: translateY(-1px); box-shadow: var(--shadow-md); }
         .img-act-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
         .img-act-btn.fav-active { color: #f59e0b; border-color: #f59e0b; background: rgba(245,158,11,0.08); }
-        .img-act-btn.sel-active  { color: #667eea; border-color: #667eea; background: rgba(102,126,234,0.10); }
+        .img-act-btn.sel-active  { color: var(--accent); border-color: var(--accent); background: var(--hover-bg); }
  
         /* ====== Empty State ====== */
         .empty-state { text-align: center; padding: 70px 20px; color: var(--text-muted); grid-column: 1/-1; font-size: 14px; animation: fadeIn 0.5s ease; }
@@ -512,7 +515,7 @@
         /* Lightbox info bar */
         .lightbox-info {
             background: rgba(0,0,0,0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 9px 18px; display: flex; align-items: center; gap: 18px; flex-shrink: 0;
+            padding: 9px 18px; display: flex; align-items: center; justify-content: center; gap: 18px; flex-shrink: 0;
             color: rgba(255,255,255,0.65); font-size: 11px; font-weight: 600; flex-wrap: wrap;
         }
         .lightbox-info-item { display: flex; align-items: center; gap: 5px; }
@@ -695,10 +698,24 @@
         .memory-card-folder { font-size: 10px; color: var(--text-muted); font-weight: 700; display: flex; align-items: center; gap: 4px; margin-top: 3px; }
  
         .memories-loading { text-align: center; padding: 50px 20px; color: var(--text-muted); }
-        .memories-loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+        .memories-loading-spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
         .memories-loading-text { font-size: 14px; font-weight: 600; }
         .memories-loading-progress { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-        .memories-tabs { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+        .memories-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 540px) {
+            .memories-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .memories-tab {
+                width: 100%;
+                justify-content: center;
+            }
+        }
         .memories-tab {
             border: 1px solid var(--border);
             background: var(--bg-glass-strong);
@@ -710,6 +727,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
+            text-align: center;
         }
         .memories-tab.active {
             background: var(--gradient-primary);
@@ -816,14 +834,32 @@
         .content-header-top { display: flex; align-items: center; }
         .content-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
         /* filterBar & memFilterBar: single aligned row */
-        .filter-bar, #memFilterBar { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
-        .filter-bar .filter-search, #memFilterBar .filter-search { flex: 1; min-width: 0; }
-        .filter-bar .filter-search .search-input, #memFilterBar .filter-search .search-input { padding-top: 8px; padding-bottom: 8px; }
+        .filter-bar, #memFilterBar, #memFilterBarClone { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
+        .filter-bar .filter-search, #memFilterBar .filter-search, #memFilterBarClone .filter-search { flex: 1; min-width: 0; }
+        .filter-bar .filter-search .search-input, #memFilterBar .filter-search .search-input, #memFilterBarClone .filter-search .search-input { padding-top: 8px; padding-bottom: 8px; }
         .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
         .view-toggle  { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-        @media (max-width: 480px) {
-            .filter-bar, #memFilterBar { flex-wrap: wrap; }
-            .filter-bar .filter-search, #memFilterBar .filter-search { min-width: 100%; order: -1; }
+
+        /* التسميات مخفية افتراضياً في الصف الكبير لأن البحث موجود معها */
+        .sort-text { display: none; font-size: 11px; }
+        .btn-sort-opt { padding: 6px 9px; }
+        .btn-sort-opt svg { width: 13px; height: 13px; }
+
+        @media (max-width: 520px) {
+            /* في الشاشة الصغيرة: البحث يصعد لصفه الأول، وأزرار الفرز تنزل للسطر الثاني
+               ولأنها في صفها الخاص تتسع لإظهار التسميات */
+            .filter-bar, #memFilterBar, #memFilterBarClone { flex-wrap: wrap; gap: 8px; }
+            .filter-bar .filter-search,
+            #memFilterBar .filter-search,
+            #memFilterBarClone .filter-search { min-width: 100%; order: -1; }
+            .sort-text { display: inline; }
+            .btn-sort-opt { padding: 6px 10px; }
+        }
+
+        @media (min-width: 521px) {
+            .filter-bar, #memFilterBar, #memFilterBarClone { flex-wrap: nowrap; }
+            /* في الشاشة الكبيرة البحث يضغط المساحة فنبقي الأيقونات فقط */
+            .sort-text { display: none; }
         }
 
         /* ====== أزرار التحديد (تحديد / الكل / إلغاء) ====== */
@@ -873,12 +909,6 @@
         #memFilterBar .filter-search { flex: 1; position: relative; min-width: 130px; }
         #memFilterBar .filter-search .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
         #memFilterBar .filter-search .search-icon { width: 14px; height: 14px; right: 10px; }
-        @media (max-width: 540px) {
-            #memFilterBar { padding: 8px 10px; gap: 6px; }
-            #memFilterBar .sort-text { display: none; }
-            #memFilterBar .btn-sort-opt { padding: 6px 8px; }
-            #memFilterBar .btn-sort-opt svg { width: 13px; height: 13px; }
-        }
 
         @media (max-width: 900px) {
             :root { --sidebar-width: 270px; }
@@ -910,9 +940,6 @@
             .btn-back-top { bottom: 18px; left: 18px; width: 44px; height: 44px; }
         }
         @media (max-width: 500px) {
-            .sort-text { display: none; }
-            .btn-sort-opt { padding: 6px 8px; }
-            .btn-sort-opt svg { width: 13px; height: 13px; }
             .content-actions { width: 100%; }
             .btn-action { max-width: 100%; }
             .images-grid.list-view .btn-more { white-space: normal; }
@@ -931,6 +958,107 @@
             .sidebar { -webkit-overflow-scrolling: touch; }
             body { -webkit-overflow-scrolling: touch; }
         }
+
+        /* ====== Color Slider Bar ====== */
+        #colorSliderBar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 18px;
+            background: var(--bg-glass-strong);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            transition: opacity 0.3s, height 0.3s, padding 0.3s;
+            overflow: hidden;
+            height: 38px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+        [data-theme="dark"] #colorSliderBar {
+            display: none !important;
+        }
+        #colorSliderLabel { font-size: 16px; flex-shrink: 0; }
+        #colorSliderValue { flex-shrink: 0; min-width: 90px; color: var(--accent); font-weight: 800; font-size: 11px; }
+        #colorSlider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 99px;
+            outline: none;
+            cursor: pointer;
+            background: linear-gradient(to left,
+                #ff80a8 0%,
+                #8848d8 6%,
+                #b070f0 13%,
+                #3868d8 19%,
+                #2060c8 25%,
+                #2090d8 31%,
+                #5a8830 37%,
+                #28a060 44%,
+                #c89010 50%,
+                #e8a060 56%,
+                #e07030 62%,
+                #e06020 68%,
+                #d07828 74%,
+                #a89880 81%,
+                #bdbdbd 88%,
+                #ffffff 100%
+            );
+            transition: opacity 0.2s;
+        }
+        #colorSlider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        #colorSlider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+        }
+        #colorSlider::-moz-range-thumb {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            cursor: pointer;
+        }
+
+        /* Dark Mode Blue Overrides */
+
+        [data-theme="dark"] .sidebar-header h3.clickable:hover { color: #4f8ef7; }
+        [data-theme="dark"] .search-input:focus { border-color: #4f8ef7; box-shadow: 0 0 0 3px rgba(79,142,247,0.18); }
+        [data-theme="dark"] .folder-item.active { background: var(--gradient-primary); box-shadow: 0 8px 22px rgba(26,92,200,0.45); border-color: rgba(100,160,255,0.22); }
+        [data-theme="dark"] .folder-item.active .folder-item-count { background: rgba(255,255,255,0.18); color: #fff; }
+        [data-theme="dark"] .sidebar-sub-item.active { background: rgba(79,142,247,0.15); color: #4f8ef7; }
+        [data-theme="dark"] .btn-sort-opt.active { box-shadow: 0 2px 8px rgba(79,142,247,0.35); }
+        [data-theme="dark"] .btn-action.primary:hover { box-shadow: 0 6px 20px rgba(79,142,247,0.4); }
+        [data-theme="dark"] .folder-card:hover { border-color: rgba(79,142,247,0.4); }
+        [data-theme="dark"] .image-card:hover { border-color: rgba(79,142,247,0.35); }
+        [data-theme="dark"] .image-card.selected { border-color: #4f8ef7; box-shadow: 0 0 0 3px rgba(79,142,247,0.3), var(--shadow-md); }
+        [data-theme="dark"] .img-checkbox.active { background: #4f8ef7; }
+        [data-theme="dark"] .img-act-btn.sel-active { color: #4f8ef7; border-color: #4f8ef7; background: rgba(79,142,247,0.12); }
+        [data-theme="dark"] .memories-loading-spinner { border-top-color: #4f8ef7; }
+        [data-theme="dark"] .memories-tab.active { background: var(--gradient-primary); box-shadow: 0 4px 14px rgba(26,92,200,0.5); }
+        [data-theme="dark"] .memories-tab:hover:not(.active) { background: rgba(79,142,247,0.12); color: #4f8ef7; }
+        [data-theme="dark"] .memory-year-number { background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; }
+        [data-theme="dark"] .btn-view.active { background: #4f8ef7; color: #fff; }
+        [data-theme="dark"] .breadcrumb-item.current { color: #4f8ef7; }
+        [data-theme="dark"] .load-more-btn,
+        [data-theme="dark"] .btn-load-more { border-color: rgba(79,142,247,0.35); color: #4f8ef7; }
+        [data-theme="dark"] .load-more-btn:hover,
+        [data-theme="dark"] .btn-load-more:hover { background: rgba(79,142,247,0.12); }
+        [data-theme="dark"] .memories-total-pill { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.3); color: #a8c8ff; }
+        [data-theme="dark"] .memories-hero-badge { background: rgba(79,142,247,0.22); border-color: rgba(100,160,255,0.35); }
     </style>
 </head>
 <body>
@@ -951,7 +1079,14 @@
         </button>
     </div>
 </div>
- 
+
+<!-- ====== شريط منتقي اللون (وضع نهاري فقط) ====== -->
+<div id="colorSliderBar">
+    <span id="colorSliderLabel">🎨</span>
+    <input type="range" id="colorSlider" min="0" max="100" value="87" step="1">
+    <span id="colorSliderValue">بنفسجي هادئ</span>
+</div>
+
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <button class="btn-back-top" id="floatingScrollTop" onclick="scrollToTopSafe()" aria-label="الصعود للأعلى" title="الصعود للأعلى">
     <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
@@ -961,14 +1096,14 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <h3 style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-                <span class="clickable" onclick="showRootFoldersPreview()" style="cursor:pointer;user-select:none;flex:1;" onmouseover="this.style.color='#667eea'" onmouseout="this.style.color=''">📂 المجلدات الرئيسية</span>
+                <span class="clickable" onclick="showRootFoldersPreview()" style="cursor:pointer;user-select:none;flex:1;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color=''">🗂️ المجلدات الرئيسية</span>
                 <button onclick="goHome()" title="الصفحة الرئيسية" style="background:var(--bg-primary);border:1px solid var(--border);border-radius:10px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s ease;" onmouseover="this.style.background='var(--hover-bg)';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--bg-primary)';this.style.transform=''">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </button>
             </h3>
-            <p id="sidebarSubtitle">اختر مجلد لعرض محتواه</p>
+            <p id="sidebarSubtitle">🔍 اختر مجلد لعرض محتواه</p>
             <div class="search-box">
-                <input type="text" class="search-input" id="folderSearch" placeholder="ابحث في المجلدات..." oninput="filterFolders()">
+                <input type="text" class="search-input" id="folderSearch" placeholder="🔎 ابحث في المجلدات..." oninput="filterFolders()">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -995,10 +1130,10 @@
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                         </svg>
-                        ذكريات من الماضي
+                        ⏰ ذكريات من الماضي
                     </div>
-                    <div class="memories-hero-title" id="memoriesTitle">في مثل هذه الأيام</div>
-                    <div class="memories-hero-subtitle" id="memoriesSubtitle">لحظات جميلة عشتموها سويا</div>
+                    <div class="memories-hero-title" id="memoriesTitle">📅 في مثل هذه الأيام</div>
+                    <div class="memories-hero-subtitle" id="memoriesSubtitle">💫 لحظات جميلة عشتموها سويا</div>
                     <div class="memories-hero-stats">
                         <span class="memories-total-pill" id="memoriesTotalCount">🖼️ إجمالي الصور: ...</span>
                     </div>
@@ -1008,7 +1143,7 @@
             <!-- 2 ▸ شريط البحث والفرز والعرض -->
             <div id="memFilterBar" class="filter-bar hidden-el">
                 <div class="filter-search">
-                    <input type="text" class="search-input" id="memImageFilter" placeholder="ابحث في الصور..." oninput="filterMemImages()">
+                    <input type="text" class="search-input" id="memImageFilter" placeholder="🔎 ابحث في الصور..." oninput="filterMemImages()">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
@@ -1090,7 +1225,7 @@
         <!-- شريط البحث والفرز والعرض للمجلدات -->
         <div id="filterBar" class="filter-bar hidden-el">
             <div class="filter-search">
-                <input type="text" class="search-input" id="imageFilter" placeholder="ابحث عن صورة أو مجلد..." oninput="filterImages()">
+                <input type="text" class="search-input" id="imageFilter" placeholder="🔎 ابحث عن صورة أو مجلد..." oninput="filterImages()">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
@@ -1143,10 +1278,10 @@
             </button>
         </div>
 
-        <div id="subFoldersSection" class="hidden-el">            <div class="section-title">📁 المجلدات الفرعية</div>
+        <div id="subFoldersSection" class="hidden-el">            <div class="section-title">🗂️ المجلدات الفرعية</div>
             <div class="subfolders-toolbar">
                 <div class="search-box">
-                    <input type="text" class="search-input" id="subFolderFilter" placeholder="ابحث في المجلدات الفرعية..." oninput="filterSubFolders()">
+                    <input type="text" class="search-input" id="subFolderFilter" placeholder="🔎 ابحث في المجلدات الفرعية..." oninput="filterSubFolders()">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -1169,7 +1304,7 @@
             <div id="displayArea" class="images-grid"></div>
             <div class="load-more-wrap hidden-el" id="loadMoreWrap">
                 <span class="load-more-status" id="loadMoreStatus"></span>
-                <button class="btn-load-more" id="loadMoreBtn" onclick="loadMoreImages()">تحميل المزيد</button>
+                <button class="btn-load-more" id="loadMoreBtn" onclick="loadMoreImages()">⬇️ تحميل المزيد</button>
             </div>
         </div>
  
@@ -1219,8 +1354,8 @@
 <!-- Progress -->
 <div class="progress-overlay" id="progressOverlay">
     <div class="progress-box">
-        <div class="progress-title" id="progressTitle">جاري التحضير...</div>
-        <div class="progress-subtitle" id="progressSubtitle">يرجى الانتظار</div>
+        <div class="progress-title" id="progressTitle">⏳ جاري التحضير...</div>
+        <div class="progress-subtitle" id="progressSubtitle">🔄 يرجى الانتظار</div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         <button class="progress-cancel-btn" id="progressCancelBtn" onclick="cancelDownload()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1459,7 +1594,7 @@
                 return;
             }
             allFolders = rootFolders;
-            document.getElementById('sidebarSubtitle').innerText = `${formatCountEn(allFolders.length)} مجلد رئيسي`;
+            document.getElementById('sidebarSubtitle').innerText = `📁 ${formatCountEn(allFolders.length)} مجلد رئيسي`;
             sidebarTree = allFolders.map(f => ({ id: f.id, name: f.name, depth: 1, children: [], imageCount: null }));
             renderSidebarTree();
             // جلب الأبناء والعدادات في الخلفية
@@ -1612,14 +1747,15 @@
         document.getElementById('folderActionsBar').classList.remove('hidden-el');
         document.getElementById('imagesSection').classList.add('hidden-el');
         document.getElementById('subFoldersSection').classList.remove('hidden-el');
-        document.getElementById('currentFolderName').innerText = 'المجلدات الرئيسية';
-        document.getElementById('currentFolderCount').innerText = `${formatCountEn(currentSubFolders.length)} مجلد`;
+        document.getElementById('currentFolderName').innerText = '🗂️ المجلدات الرئيسية';
+        document.getElementById('currentFolderCount').innerText = `📁 ${formatCountEn(currentSubFolders.length)} مجلد`;
         const bc = document.getElementById('breadcrumb');
         bc.innerHTML = '<button class="breadcrumb-item current">📂 المجلدات الرئيسية</button>';
         const subFolderFilter = document.getElementById('subFolderFilter');
         if (subFolderFilter) subFolderFilter.value = '';
         renderSubFolders();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.innerWidth <= 768) closeSidebar();
     }
  
     // ====== Open Folder ======
@@ -1657,7 +1793,7 @@
         document.getElementById('contentHeader').classList.remove('hidden-el');
         document.getElementById('folderActionsBar').classList.remove('hidden-el');
         document.getElementById('currentFolderName').innerText = navigationPath.map(p => p.name).join(' › ');
-        document.getElementById('currentFolderCount').innerText = 'جاري التحميل...';
+        document.getElementById('currentFolderCount').innerText = '⏳ جاري التحميل...';
         document.getElementById('imageFilter').value = '';
         document.getElementById('imageFilter').value = '';
         const subFolderFilter = document.getElementById('subFolderFilter');
@@ -1679,7 +1815,7 @@
             renderContent();
         } catch (e) {
             document.getElementById('displayArea').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">حدث خطأ</div><div>تعذر تحميل المحتوى. حاول مرة أخرى.</div></div>';
-            document.getElementById('currentFolderCount').innerText = 'خطأ في التحميل';
+            document.getElementById('currentFolderCount').innerText = '❌ خطأ في التحميل';
         }
     }
  
@@ -1719,6 +1855,7 @@
             const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
         });
         document.getElementById('defaultEmptyState').classList.remove('hidden-el');
+        if (window.innerWidth <= 768) closeSidebar();
         const cached = getCachedMemories();
         if (cached) renderMemories(cached.memories, cached.allImages);
         else loadMemories();
@@ -1821,10 +1958,10 @@
             if (!el) return;
             const images  = files.filter(f => f.mimeType?.startsWith('image/')).length;
             const folders = files.filter(f => f.mimeType === 'application/vnd.google-apps.folder').length;
-            const countText = folders > 0 && images > 0 ? `${formatCountEn(folders)} مجلد، ${formatCountEn(images)} صورة`
-                            : folders > 0 ? `${formatCountEn(folders)} مجلد`
-                            : images  > 0 ? `${formatCountEn(images)} صورة`
-                            : 'فارغ';
+            const countText = folders > 0 && images > 0 ? `📁 ${formatCountEn(folders)} مجلد، 🖼️ ${formatCountEn(images)} صورة`
+                            : folders > 0 ? `📁 ${formatCountEn(folders)} مجلد`
+                            : images  > 0 ? `🖼️ ${formatCountEn(images)} صورة`
+                            : '📭 فارغ';
             subFolderCounts[folderId] = countText;
             el.innerText = countText;
         } catch (e) {}
@@ -1841,7 +1978,7 @@
         if (!wrap || !status || !btn) return;
         const shown = Math.min(visibleImagesCount, filteredImages.length);
         const total = filteredImages.length;
-        status.innerText = `المعروض ${formatCountEn(shown)} من ${formatCountEn(total)}`;
+        status.innerText = `👁️ المعروض ${formatCountEn(shown)} من ${formatCountEn(total)}`;
         const hasMore = shown < total;
         wrap.classList.toggle('hidden-el', total === 0);
         btn.classList.toggle('hidden-el', !hasMore);
@@ -2073,7 +2210,8 @@
     }
 
     function getMemFilteredSorted(images) {
-        const q = (document.getElementById('memImageFilter')?.value || '').toLowerCase().trim();
+        const inp = document.getElementById('memImageFilterActive') || document.getElementById('memImageFilter');
+        const q = (inp?.value || '').toLowerCase().trim();
         let list = q ? images.filter(img => (img.name || '').toLowerCase().includes(q)) : [...images];
         list.sort((a, b) => {
             const dateA = new Date(a.imgDate || a.createdTime || 0);
@@ -2159,10 +2297,28 @@
     function showMemFilterBar(images) {
         window._memOriginalTabImages = images || [];
         const fb = document.getElementById('memFilterBar');
-        if (fb) fb.classList.remove('hidden-el');
-        // إعادة تعيين البحث عند تغيير التبويب
-        const inp = document.getElementById('memImageFilter');
-        if (inp) inp.value = '';
+        const slot = document.getElementById('memFilterBarInline');
+        if (fb && slot) {
+            // نقل شريط الفلترة داخل المحتوى مباشرة تحت التبويبات
+            slot.innerHTML = '';
+            const clone = fb.cloneNode(true);
+            clone.id = 'memFilterBarClone';
+            clone.classList.remove('hidden-el');
+            slot.appendChild(clone);
+            // ربط الأحداث على النسخة
+            const inp = clone.querySelector('#memImageFilter');
+            if (inp) { inp.id = 'memImageFilterActive'; inp.oninput = filterMemImages; inp.value = ''; }
+            clone.querySelectorAll('[data-memsort]').forEach(el => {
+                el.onclick = () => applyMemSort(el.dataset.memsort);
+                el.classList.toggle('active', el.dataset.memsort === 'newest');
+            });
+            const gridBtn = clone.querySelector('#memViewGrid');
+            const listBtn = clone.querySelector('#memViewList');
+            if (gridBtn) gridBtn.onclick = () => setMemView('grid');
+            if (listBtn) listBtn.onclick = () => setMemView('list');
+        } else if (fb) {
+            fb.classList.remove('hidden-el');
+        }
         // إعادة تعيين الفرز للافتراضي
         memCurrentSort = 'newest';
         document.querySelectorAll('[data-memsort]').forEach(el =>
@@ -2170,6 +2326,8 @@
     }
 
     function hideMemFilterBar() {
+        const slot = document.getElementById('memFilterBarInline');
+        if (slot) slot.innerHTML = '';
         const fb = document.getElementById('memFilterBar');
         if (fb) fb.classList.add('hidden-el');
         window._memOriginalTabImages = [];
@@ -2587,8 +2745,9 @@
         const favIconOutline = `<svg viewBox="0 0 24 24" stroke="currentColor" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
         const favIconFill    = `<svg viewBox="0 0 24 24" stroke="#f59e0b" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
         // أيقونة تحديد (مربع اختيار)
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e07030';
         const selIconOff = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>`;
-        const selIconOn  = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#667eea" stroke="#667eea"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`;
+        const selIconOn  = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="${accentColor}" stroke="${accentColor}"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`;
 
         const selBtn = allowSelectionAction
             ? `<button class="img-act-btn ${isSel ? 'sel-active' : ''}"
@@ -2630,10 +2789,11 @@
     function imgActToggleSel(id, btn) {
         toggleSelection(id);
         const isSel = selectedImages.has(id);
+        const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#e07030';
         btn.title = isSel ? 'إلغاء التحديد' : 'تحديد الصورة';
         btn.classList.toggle('sel-active', isSel);
         btn.innerHTML = isSel
-            ? `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#667eea" stroke="#667eea"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`
+            ? `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="${ac}" stroke="${ac}"/><polyline points="7 12 10.5 15.5 17 9" stroke="white" stroke-width="2.5" fill="none"/></svg>`
             : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>`;
     }
 
@@ -2798,7 +2958,7 @@
         if (cached) { renderMemories(cached.memories, cached.allImages); return; }
         const progressEl = document.getElementById('memoriesProgress');
         try {
-            progressEl.innerText = 'جاري فحص المجلدات الرئيسية...';
+            progressEl.innerText = '🔍 جاري فحص المجلدات الرئيسية...';
             const allImages = await fetchAllImagesRecursive(ROOT_FOLDER_ID, '', progressEl);
             if (allImages.length === 0) { showNoMemories('لا توجد صور حتى الآن'); return; }
             progressEl.innerText = `تم العثور على ${formatCountEn(allImages.length)} صورة، جاري تحليل التواريخ...`;
@@ -2814,8 +2974,8 @@
     function updateMemoriesHeader() {
         const today   = new Date();
         const dayName = ARABIC_DAYS[today.getDay()];
-        document.getElementById('memoriesTitle').innerText    = 'في مثل هذا اليوم';
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]}`;
+        document.getElementById('memoriesTitle').innerText    = '📅 في مثل هذا اليوم';
+        document.getElementById('memoriesSubtitle').innerText = `📆 ${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]}`;
     }
  
     async function fetchAllImagesRecursive(folderId, parentPath, progressEl) {
@@ -2953,7 +3113,7 @@
         if (periodMemories.length > 0) subtitleBits.push(`${formatCountEn(periodMemories.length)} من ${periodLabel}`);
         if (scatteredMemories.length > 0) subtitleBits.push(`${formatCountEn(scatteredMemories.length)} صور متفرقة`);
         if (subtitleBits.length === 0) subtitleBits.push('لقطات من الذكريات');
-        document.getElementById('memoriesSubtitle').innerText = `${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
+        document.getElementById('memoriesSubtitle').innerText = `📆 ${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
         // عناصر الذكريات الآن موجودة داخل defaultEmptyState — نخفي فقط شرائط المجلدات
         ['breadcrumb','contentHeader','filterBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
             const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
@@ -2965,11 +3125,12 @@
         // نُدرج: 1-التبويبات  2-شريط الفلترة (يُحقن لاحقاً بـ showMemFilterBar)  3-البانلات
         content.innerHTML = `
             <div class="memories-tabs">
-                <button class="memories-tab active" id="memTabToday" type="button">اليوم</button>
-                ${hasPeriodMemories ? `<button class="memories-tab" id="memTabWeek" type="button">${periodLabel}</button>` : ''}
-                <button class="memories-tab" id="memTabScattered" type="button">صور متفرقة</button>
+                <button class="memories-tab active" id="memTabToday" type="button">📅 اليوم</button>
+                ${hasPeriodMemories ? `<button class="memories-tab" id="memTabWeek" type="button">📆 ${periodLabel}</button>` : ''}
+                <button class="memories-tab" id="memTabScattered" type="button">🎲 صور متفرقة</button>
                 <button class="memories-tab" id="memTabFavorites" type="button">⭐ المفضلة</button>
             </div>
+            <div id="memFilterBarInline"></div>
             <div class="memories-tab-panel" id="memoriesTodayPanel"></div>
             <div class="memories-tab-panel hidden-el" id="memoriesWeekPanel"></div>
             <div class="memories-tab-panel hidden-el" id="memoriesScatteredPanel"></div>
@@ -2990,8 +3151,8 @@
                 group.innerHTML = `
                     <div class="memory-year-header">
                         <span class="memory-year-number">${year}</span>
-                        <span class="memory-year-label">${yearLabel}</span>
-                        <span class="memory-year-count" id="mem-year-count-${yearsAgo}">${formatCountEn(images.length)} صورة</span>
+                        <span class="memory-year-label">🕰️ ${yearLabel}</span>
+                        <span class="memory-year-count" id="mem-year-count-${yearsAgo}">📸 ${formatCountEn(images.length)} صورة</span>
                     </div>
                     <div class="images-grid" id="memory-grid-${yearsAgo}" data-mem-source="${yearsAgo}"></div>`;
                 todayPanel.appendChild(group);
@@ -3040,9 +3201,9 @@
             weekGroup.className = 'memory-year-group';
             weekGroup.innerHTML = `
                 <div class="memory-year-header">
-                    <span class="memory-year-number">📅</span>
-                    <span class="memory-year-label">في ${periodLabel}</span>
-                    <span class="memory-year-count">${formatCountEn(periodMemories.length)} صورة</span>
+                    <span class="memory-year-number">📆</span>
+                    <span class="memory-year-label">✨ في ${periodLabel}</span>
+                    <span class="memory-year-count">📸 ${formatCountEn(periodMemories.length)} صورة</span>
                 </div>
                 <div class="images-grid" id="week-memory-grid"></div>`;
             weekPanel.appendChild(weekGroup);
@@ -3086,9 +3247,9 @@
             scatteredGroup.className = 'memory-year-group';
             scatteredGroup.innerHTML = `
                 <div class="memory-year-header">
-                    <span class="memory-year-number">🎯</span>
-                    <span class="memory-year-label">صورة من كل مجلد</span>
-                    <span class="memory-year-count">${formatCountEn(scatteredMemories.length)} صورة</span>
+                    <span class="memory-year-number">🎲</span>
+                    <span class="memory-year-label">🗂️ صورة من كل مجلد</span>
+                    <span class="memory-year-count">📸 ${formatCountEn(scatteredMemories.length)} صورة</span>
                 </div>
                 <div class="images-grid" id="scattered-grid"></div>`;
             scatteredPanel.appendChild(scatteredGroup);
@@ -3453,6 +3614,130 @@
     loadSidebarFolders();
     loadMemories();
     if (!history.state) history.replaceState({ type: 'home' }, '', window.location.pathname);
+
+    // ====== منتقي اللون النهاري ======
+    (function initColorSlider() {
+        const slider = document.getElementById('colorSlider');
+        const label  = document.getElementById('colorSliderValue');
+        if (!slider) return;
+
+        // جدول التدرج: [قيمة 0-100، اسم، bg-primary، bg-secondary، accent، gradient-primary، gradient-bg، hover-bg، text-primary، text-secondary، text-muted، border]
+        const stops = [
+            // ===== أبيض / رمادي =====
+            [0,   'أبيض ناصع',     '#ffffff','#f8f8f8','#757575','linear-gradient(135deg,#9e9e9e 0%,#616161 100%)','linear-gradient(135deg,#ffffff 0%,#f5f5f5 50%,#ffffff 100%)','rgba(120,120,120,0.07)','#1a1a1a','#555','#999','rgba(0,0,0,0.10)'],
+            [6,   'رمادي فاتح',    '#f5f5f5','#ffffff','#9e9e9e','linear-gradient(135deg,#bdbdbd 0%,#757575 100%)','linear-gradient(135deg,#f5f5f5 0%,#eeeeee 50%,#f5f5f5 100%)','rgba(120,120,120,0.07)','#1a1a1a','#555','#999','rgba(0,0,0,0.09)'],
+            [12,  'رمادي دافئ',    '#f0ede8','#faf9f7','#8d7f70','linear-gradient(135deg,#a89880 0%,#7a6858 100%)','linear-gradient(135deg,#f0ede8 0%,#e8e2da 50%,#f0ede8 100%)','rgba(140,120,100,0.08)','#201810','#6a5848','#a08878','rgba(140,110,80,0.12)'],
+            // ===== برتقالي =====
+            [18,  'كريمي دافئ',    '#fff8f0','#fffaf5','#c07840','linear-gradient(135deg,#e8a060 0%,#c07840 100%)','linear-gradient(135deg,#fff8f0 0%,#ffeedd 50%,#fff8f0 100%)','rgba(200,120,60,0.08)','#281808','#7a5030','#c09060','rgba(200,130,60,0.12)'],
+            [24,  'برتقالي فاتح',  '#fff5ea','#ffffff','#d07828','linear-gradient(135deg,#ffb060 0%,#d07828 100%)','linear-gradient(135deg,#fff5ea 0%,#ffe8cc 50%,#fff5ea 100%)','rgba(210,120,40,0.08)','#281400','#7a4c20','#c08848','rgba(210,130,50,0.13)'],
+            [30,  'برتقالي دافئ',  '#fff8f2','#ffffff','#e07030','linear-gradient(135deg,#ff9a3c 0%,#e05c10 100%)','linear-gradient(135deg,#fff5ec 0%,#ffe8d6 50%,#fff5ec 100%)','rgba(224,112,48,0.07)','#2a1a0e','#7a5c42','#b08060','rgba(200,130,60,0.13)'],
+            [36,  'برتقالي غامق',  '#fff0e6','#ffffff','#c04810','linear-gradient(135deg,#e06020 0%,#a03000 100%)','linear-gradient(135deg,#fff0e6 0%,#ffd8c0 50%,#fff0e6 100%)','rgba(192,72,16,0.08)','#220a00','#7a3820','#b06040','rgba(190,80,30,0.13)'],
+            // ===== ذهبي / أصفر =====
+            [43,  'ذهبي صافي',     '#fffbee','#ffffff','#c89010','linear-gradient(135deg,#f5c842 0%,#c89010 100%)','linear-gradient(135deg,#fffbee 0%,#fff3cc 50%,#fffbee 100%)','rgba(200,150,20,0.08)','#1a1200','#7a6020','#b09040','rgba(200,160,30,0.13)'],
+            [49,  'عسلي',          '#fdf6e3','#fffff8','#b07808','linear-gradient(135deg,#e8b828 0%,#986000 100%)','linear-gradient(135deg,#fdf6e3 0%,#f5e8c0 50%,#fdf6e3 100%)','rgba(176,120,8,0.08)','#180e00','#7a5818','#b08838','rgba(176,130,20,0.13)'],
+            // ===== أخضر =====
+            [56,  'أخضر نعناع',    '#f0fff6','#f8fffc','#28a060','linear-gradient(135deg,#50d888 0%,#28a060 100%)','linear-gradient(135deg,#f0fff6 0%,#d0f0e0 50%,#f0fff6 100%)','rgba(40,160,96,0.07)','#041810','#3a6a50','#70aa88','rgba(40,160,96,0.13)'],
+            [62,  'أخضر زيتوني',   '#f4f9f0','#fafdf8','#5a8830','linear-gradient(135deg,#7ab050 0%,#4a7020 100%)','linear-gradient(135deg,#f4f9f0 0%,#ddeece 50%,#f4f9f0 100%)','rgba(90,136,48,0.07)','#0c1408','#4a6838','#7aa060','rgba(90,140,50,0.12)'],
+            // ===== أزرق =====
+            [69,  'سماوي فاتح',    '#f0faff','#f8fdff','#2090d8','linear-gradient(135deg,#60c0f8 0%,#2090d8 100%)','linear-gradient(135deg,#f0faff 0%,#c8e8f8 50%,#f0faff 100%)','rgba(32,144,216,0.07)','#081420','#3a6880','#6098b0','rgba(32,144,216,0.12)'],
+            [75,  'أزرق متوسط',    '#f0f5ff','#f8faff','#2060c8','linear-gradient(135deg,#5090f0 0%,#1a50b8 100%)','linear-gradient(135deg,#f0f5ff 0%,#d0deff 50%,#f0f5ff 100%)','rgba(32,96,200,0.07)','#080e20','#385080','#6880b0','rgba(32,80,200,0.12)'],
+            [81,  'أزرق غامق',     '#eef2ff','#f5f8ff','#1840a0','linear-gradient(135deg,#3868d8 0%,#1030a0 100%)','linear-gradient(135deg,#eef2ff 0%,#c8d4f8 50%,#eef2ff 100%)','rgba(24,64,160,0.08)','#060810','#304068','#5870a8','rgba(24,60,180,0.12)'],
+            // ===== بنفسجي =====
+            [87,  'بنفسجي هادئ',   '#f8f0ff','#fdf8ff','#8040c0','linear-gradient(135deg,#b070f0 0%,#6828b0 100%)','linear-gradient(135deg,#f8f0ff 0%,#e8d0f8 50%,#f8f0ff 100%)','rgba(128,64,192,0.07)','#140820','#603880','#9870c0','rgba(128,64,200,0.12)'],
+            [93,  'بنفسجي غامق',   '#f0eaff','#f8f5ff','#5820a0','linear-gradient(135deg,#8848d8 0%,#401888 100%)','linear-gradient(135deg,#f0eaff 0%,#d8c8f8 50%,#f0eaff 100%)','rgba(88,32,160,0.08)','#100618','#482860','#7858a8','rgba(80,28,160,0.12)'],
+            // ===== وردي =====
+            [100, 'وردي جميل',     '#fff0f8','#fffafd','#c02870','linear-gradient(135deg,#f060a8 0%,#b01858 100%)','linear-gradient(135deg,#fff0f8 0%,#ffd0e8 50%,#fff0f8 100%)','rgba(192,40,112,0.07)','#200810','#703050','#b07090','rgba(200,40,100,0.13)'],
+        ];
+
+        function lerp(a, b, t) { return a + (b - a) * t; }
+
+        function parseRgbFromHex(hex) {
+            const h = hex.replace('#','');
+            return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+        }
+        function toHex(r,g,b) { return '#'+[r,g,b].map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join(''); }
+
+        function interpolateHex(c1, c2, t) {
+            const [r1,g1,b1] = parseRgbFromHex(c1), [r2,g2,b2] = parseRgbFromHex(c2);
+            return toHex(lerp(r1,r2,t), lerp(g1,g2,t), lerp(b1,b2,t));
+        }
+
+        function getBlendedVars(val) {
+            let i = 0;
+            for (let k = stops.length-2; k >= 0; k--) { if (val >= stops[k][0]) { i = k; break; } }
+            const s0 = stops[i], s1 = stops[i+1] || stops[i];
+            const t = s1[0] === s0[0] ? 0 : (val - s0[0]) / (s1[0] - s0[0]);
+            // الاسم: يظهر اسم الأقرب لموضع السلايدر
+            const closerToNext = t >= 0.5 && stops[i+1];
+            return {
+                name: closerToNext ? s1[1] : s0[1],
+                bgPrimary:   interpolateHex(s0[2], s1[2], t),
+                bgSecondary: interpolateHex(s0[3], s1[3], t),
+                accent:      interpolateHex(s0[4], s1[4], t),
+                gradientPrimary: t < 0.5 ? s0[5] : s1[5],
+                gradientBg:      t < 0.5 ? s0[6] : s1[6],
+                hoverBg:     t < 0.5 ? s0[7] : s1[7],
+                textPrimary:   interpolateHex(s0[8], s1[8], t),
+                textSecondary: interpolateHex(s0[9], s1[9], t),
+                textMuted:     interpolateHex(s0[10],s1[10],t),
+                border:        t < 0.5 ? s0[11] : s1[11],
+            };
+        }
+
+        function applyThemeVars(v) {
+            const root = document.documentElement;
+            root.style.setProperty('--bg-primary',       v.bgPrimary);
+            root.style.setProperty('--bg-secondary',     v.bgSecondary);
+            root.style.setProperty('--accent',           v.accent);
+            root.style.setProperty('--gradient-primary', v.gradientPrimary);
+            root.style.setProperty('--gradient-bg',      v.gradientBg);
+            root.style.setProperty('--hover-bg',         v.hoverBg);
+            root.style.setProperty('--text-primary',     v.textPrimary);
+            root.style.setProperty('--text-secondary',   v.textSecondary);
+            root.style.setProperty('--text-muted',       v.textMuted);
+            root.style.setProperty('--border',           v.border);
+            root.style.setProperty('--bg-glass',         v.bgPrimary.replace('ff)','b8)') || 'rgba(255,248,242,0.72)');
+            root.style.setProperty('--bg-glass-strong',  v.bgPrimary.replace('ff)','e0)') || 'rgba(255,248,242,0.88)');
+        }
+
+        function resetThemeVars() {
+            const root = document.documentElement;
+            ['--bg-primary','--bg-secondary','--accent','--gradient-primary','--gradient-bg',
+             '--hover-bg','--text-primary','--text-secondary','--text-muted','--border',
+             '--bg-glass','--bg-glass-strong'].forEach(p => root.style.removeProperty(p));
+        }
+
+        const SLIDER_KEY = 'colorSliderVal';
+        const saved = localStorage.getItem(SLIDER_KEY);
+        if (saved !== null) slider.value = saved;
+        else slider.value = 87;
+
+        function onSliderChange() {
+            if (document.documentElement.getAttribute('data-theme') === 'dark') return;
+            const val = parseInt(slider.value);
+            const v = getBlendedVars(val);
+            label.textContent = v.name;
+            applyThemeVars(v);
+            localStorage.setItem(SLIDER_KEY, val);
+        }
+
+        // تطبيق عند بدء التشغيل إذا الوضع نهاري
+        if (document.documentElement.getAttribute('data-theme') !== 'dark') onSliderChange();
+
+        slider.addEventListener('input', onSliderChange);
+
+        // عند تبديل الوضع: إعادة تطبيق اللون النهاري أو إزالة المتغيرات
+        const origToggle = window.toggleTheme;
+        window.toggleTheme = function() {
+            origToggle();
+            setTimeout(() => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) { resetThemeVars(); }
+                else { onSliderChange(); }
+            }, 50);
+        };
+    })();
+
 </script>
 </body>
 </html>
