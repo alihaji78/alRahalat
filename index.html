@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>معرض قروب الرحلات</title>
+    <title>✨ معرض قروب الرحلات ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <style>
@@ -259,20 +259,54 @@
         .filter-search .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
         .filter-search .search-icon { width: 14px; height: 14px; right: 10px; }
  
-        /* ====== Sort Buttons ====== */
-        .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+        /* ====== شريط الأدوات العام (بحث + عرض) ====== */
+        .tool-bar {
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 10px 14px; margin-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+        .tool-bar.hidden-el { display: none !important; }
+
+        /* شريط البحث + زري العرض */
+        .tool-search { flex: 1; position: relative; min-width: 0; }
+        .tool-search .search-input { padding: 8px 34px 8px 12px; font-size: 13px; width: 100%; }
+        .tool-search .search-icon { width: 14px; height: 14px; right: 10px; }
+
+        .tool-view-toggle { display: flex; gap: 4px; flex-shrink: 0; }
+        .tool-view-toggle .btn-view {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 12px; height: auto; width: auto;
+            border-radius: 10px; font-family: 'Cairo', sans-serif;
+            font-size: 12px; font-weight: 700; white-space: nowrap;
+        }
+        .tool-view-label { display: inline; }
+
+        /* شريط الفرز المستقل */
+        .tool-sort-bar { justify-content: flex-start; flex-wrap: nowrap; gap: 8px; }
+        .tool-sort-label {
+            font-size: 12px; font-weight: 800; color: var(--text-muted);
+            flex-shrink: 0; white-space: nowrap;
+        }
+        .tool-sort-btns { display: flex; gap: 6px; flex: 1; min-width: 0; }
+        .tool-sort-btns .btn-sort-opt { flex: 1; justify-content: center; min-width: 0; }
+
+        /* sort-text: دائماً ظاهر لأن الفرز في شريطه الخاص */
+        .sort-text { display: inline; font-size: 11px; }
         .btn-sort-opt {
-            display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px;
-            border-radius: 8px; font-family: 'Cairo', sans-serif; font-size: 11px; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+            padding: 7px 12px; border-radius: 10px;
+            font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
             cursor: pointer; border: 1px solid var(--border); background: var(--bg-primary);
             color: var(--text-secondary); transition: all 0.2s ease; white-space: nowrap; user-select: none;
         }
         .btn-sort-opt:hover { background: var(--hover-bg); color: var(--text-primary); }
-        .btn-sort-opt.active { background: var(--gradient-primary); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(224,112,48,0.3); }
-        .btn-sort-opt svg { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
-        .sort-text { display: inline; }
- 
-        /* ====== View Toggle ====== */
+        .btn-sort-opt.active { background: var(--gradient-primary); color: white; border-color: transparent; box-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+        .btn-sort-opt svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+        /* View toggle مستقل */
         .view-toggle { display: flex; gap: 3px; flex-shrink: 0; }
         .btn-view {
             width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border);
@@ -282,6 +316,69 @@
         .btn-view:hover { color: var(--text-primary); background: var(--hover-bg); }
         .btn-view.active { background: var(--accent); color: var(--accent-text); border-color: transparent; }
         .btn-view svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ====== شريط التحديد (ممتد / متقلص) ====== */
+        .mem-actions-bar {
+            display: flex; align-items: stretch; gap: 8px;
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px;
+            padding: 8px; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .mem-actions-bar.hidden-el { display: none !important; }
+        .mem-actions-bar::-webkit-scrollbar { display: none; }
+
+        /* الأزرار الثلاثة تتمدد بالتساوي */
+        .ca-btn {
+            flex: 1; display: inline-flex; align-items: center; justify-content: center;
+            gap: 6px; padding: 10px 8px; font-size: 13px; font-weight: 700;
+            border-radius: 10px; cursor: pointer; transition: all 0.25s ease;
+            white-space: nowrap; min-width: 0;
+        }
+        .ca-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .ca-label { display: inline; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* حالة زر التنزيل ظاهر:
+           - الأزرار الثلاثة تتقلص لأيقونة فقط (flex:0 + padding مربع)
+           - زر التنزيل يأخذ المساحة المتبقية */
+        .mem-actions-bar.dl-visible .hide-when-dl {
+            flex: 0 0 auto !important;
+            padding: 10px !important;
+            gap: 0 !important;
+        }
+        .mem-actions-bar.dl-visible .hide-when-dl .ca-label { display: none !important; }
+        .mem-actions-bar.dl-visible #memDlSelBtn,
+        .mem-actions-bar.dl-visible #downloadSelectedBtn { flex: 1 !important; }
+
+        /* شارة العدد */
+        .dl-count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.28); border-radius: 20px;
+            padding: 1px 8px; font-size: 12px; font-weight: 800; min-width: 22px; margin-right: 2px;
+        }
+
+        /* شاشة صغيرة جداً: أيقونات فقط حتى بدون تنزيل */
+        @media (max-width: 340px) {
+            .ca-label { display: none !important; }
+            .ca-btn { padding: 10px !important; gap: 0 !important; }
+        }
+
+        /* ====== filter-bar قديم (للتوافق) ====== */
+        .filter-bar {
+            background: var(--bg-glass-strong); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border); border-radius: 16px; padding: 10px 14px;
+            margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-sm);
+        }
+        .filter-bar.hidden-el { display: none !important; }
+        .filter-search { flex: 1; position: relative; min-width: 0; }
+        .filter-search .search-input { padding: 8px 34px 8px 12px; font-size: 12px; }
+        .filter-search .search-icon { width: 14px; height: 14px; right: 10px; }
+        .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+
  
         /* ====== Section titles ====== */
         .section-title {
@@ -833,70 +930,6 @@
         .content-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; padding-bottom: 12px !important; }
         .content-header-top { display: flex; align-items: center; }
         .content-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-        /* filterBar & memFilterBar: single aligned row */
-        .filter-bar, #memFilterBar, #memFilterBarClone { display: flex; align-items: center; gap: 10px; flex-wrap: nowrap; }
-        .filter-bar .filter-search, #memFilterBar .filter-search, #memFilterBarClone .filter-search { flex: 1; min-width: 0; }
-        .filter-bar .filter-search .search-input, #memFilterBar .filter-search .search-input, #memFilterBarClone .filter-search .search-input { padding-top: 8px; padding-bottom: 8px; }
-        .sort-wrapper { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
-        .view-toggle  { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-
-        /* التسميات مخفية افتراضياً في الصف الكبير لأن البحث موجود معها */
-        .sort-text { display: none; font-size: 11px; }
-        .btn-sort-opt { padding: 6px 9px; }
-        .btn-sort-opt svg { width: 13px; height: 13px; }
-
-        @media (max-width: 520px) {
-            /* في الشاشة الصغيرة: البحث يصعد لصفه الأول، وأزرار الفرز تنزل للسطر الثاني
-               ولأنها في صفها الخاص تتسع لإظهار التسميات */
-            .filter-bar, #memFilterBar, #memFilterBarClone { flex-wrap: wrap; gap: 8px; }
-            .filter-bar .filter-search,
-            #memFilterBar .filter-search,
-            #memFilterBarClone .filter-search { min-width: 100%; order: -1; }
-            .sort-text { display: inline; }
-            .btn-sort-opt { padding: 6px 10px; }
-        }
-
-        @media (min-width: 521px) {
-            .filter-bar, #memFilterBar, #memFilterBarClone { flex-wrap: nowrap; }
-            /* في الشاشة الكبيرة البحث يضغط المساحة فنبقي الأيقونات فقط */
-            .sort-text { display: none; }
-        }
-
-        /* ====== أزرار التحديد (تحديد / الكل / إلغاء) ====== */
-        .ca-btn {
-            display: inline-flex; align-items: center; justify-content: center;
-            gap: 6px; padding: 9px 14px; font-size: 13px; font-weight: 700;
-            white-space: nowrap; flex-shrink: 0;
-        }
-        .ca-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
-
-        /* التسمية ظاهرة دائماً */
-        .ca-label { display: inline !important; white-space: nowrap; }
-
-        /* عند ظهور زر التنزيل → نخفي تسميات الأزرار الثلاثة فقط */
-        .mem-actions-bar.dl-visible .hide-when-dl .ca-label { display: none !important; }
-        .mem-actions-bar.dl-visible .hide-when-dl { padding: 9px !important; gap: 0 !important; }
-
-        /* الشريط: صف واحد مع تمرير أفقي */
-        .mem-actions-bar {
-            display: flex; flex-wrap: nowrap; align-items: center;
-            gap: 6px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-            padding: 10px 14px; margin-bottom: 12px;
-        }
-        .mem-actions-bar::-webkit-scrollbar { display: none; }
-
-        /* زر التنزيل: تسمية + شارة دائماً */
-        .dl-count-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.28); border-radius: 20px;
-            padding: 1px 8px; font-size: 12px; font-weight: 800; min-width: 22px; margin-right: 2px;
-        }
-
-        /* شاشات صغيرة جداً: أيقونة فقط لكل الأزرار ما عدا التنزيل */
-        @media (max-width: 360px) {
-            .hide-when-dl .ca-label { display: none !important; }
-            .hide-when-dl { padding: 9px !important; gap: 0 !important; }
-        }
 
 
         /* ====== Memories Filter Bar ====== */
@@ -1140,15 +1173,30 @@
                 </div>
             </div>
 
-            <!-- 2 ▸ شريط البحث والفرز والعرض -->
-            <div id="memFilterBar" class="filter-bar hidden-el">
-                <div class="filter-search">
+            <!-- 2 ▸ شريط البحث وأزرار العرض -->
+            <div id="memFilterBar" class="tool-bar hidden-el">
+                <div class="tool-search">
                     <input type="text" class="search-input" id="memImageFilter" placeholder="🔎 ابحث في الصور..." oninput="filterMemImages()">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
                 </div>
-                <div class="sort-wrapper">
+                <div class="tool-view-toggle">
+                    <button class="btn-view active" id="memViewGrid" onclick="setMemView('grid')" title="شبكي">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <span class="tool-view-label">شبكي</span>
+                    </button>
+                    <button class="btn-view" id="memViewList" onclick="setMemView('list')" title="قائمة">
+                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        <span class="tool-view-label">قائمة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2b ▸ شريط الفرز -->
+            <div id="memSortBar" class="tool-bar tool-sort-bar hidden-el">
+                <span class="tool-sort-label">🔀 فرز:</span>
+                <div class="tool-sort-btns">
                     <button class="btn-sort-opt active" data-memsort="newest" onclick="applyMemSort('newest')">
                         <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                         <span class="sort-text">الأحدث</span>
@@ -1159,19 +1207,11 @@
                     </button>
                     <button class="btn-sort-opt" data-memsort="name-asc" onclick="applyMemSort('name-asc')">
                         <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
-                        <span class="sort-text">أ→ي</span>
+                        <span class="sort-text">أ ← ي</span>
                     </button>
                     <button class="btn-sort-opt" data-memsort="name-desc" onclick="applyMemSort('name-desc')">
                         <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="9" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-                        <span class="sort-text">ي→أ</span>
-                    </button>
-                </div>
-                <div class="view-toggle">
-                    <button class="btn-view active" id="memViewGrid" onclick="setMemView('grid')" title="شبكي">
-                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    </button>
-                    <button class="btn-view" id="memViewList" onclick="setMemView('list')" title="قائمة">
-                        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        <span class="sort-text">ي ← أ</span>
                     </button>
                 </div>
             </div>
@@ -1222,15 +1262,30 @@
             </div>
         </div>
 
-        <!-- شريط البحث والفرز والعرض للمجلدات -->
-        <div id="filterBar" class="filter-bar hidden-el">
-            <div class="filter-search">
+        <!-- شريط البحث وأزرار العرض للمجلدات -->
+        <div id="filterBar" class="tool-bar hidden-el">
+            <div class="tool-search">
                 <input type="text" class="search-input" id="imageFilter" placeholder="🔎 ابحث عن صورة أو مجلد..." oninput="filterImages()">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                 </svg>
             </div>
-            <div class="sort-wrapper">
+            <div class="tool-view-toggle">
+                <button class="btn-view active" id="viewGrid" onclick="setView('grid')" title="شبكي">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    <span class="tool-view-label">شبكي</span>
+                </button>
+                <button class="btn-view" id="viewList" onclick="setView('list')" title="قائمة">
+                    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <span class="tool-view-label">قائمة</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- شريط الفرز للمجلدات -->
+        <div id="sortBar" class="tool-bar tool-sort-bar hidden-el">
+            <span class="tool-sort-label">🔀 فرز:</span>
+            <div class="tool-sort-btns">
                 <button class="btn-sort-opt active" data-sort="newest" onclick="applySort('newest')">
                     <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
                     <span class="sort-text">الأحدث</span>
@@ -1241,19 +1296,11 @@
                 </button>
                 <button class="btn-sort-opt" data-sort="name-asc" onclick="applySort('name-asc')">
                     <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="9" y2="18"/></svg>
-                    <span class="sort-text">أ→ي</span>
+                    <span class="sort-text">أ ← ي</span>
                 </button>
                 <button class="btn-sort-opt" data-sort="name-desc" onclick="applySort('name-desc')">
                     <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="9" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-                    <span class="sort-text">ي→أ</span>
-                </button>
-            </div>
-            <div class="view-toggle">
-                <button class="btn-view active" id="viewGrid" onclick="setView('grid')" title="شبكي">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                </button>
-                <button class="btn-view" id="viewList" onclick="setView('list')" title="قائمة">
-                    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <span class="sort-text">ي ← أ</span>
                 </button>
             </div>
         </div>
@@ -1278,21 +1325,24 @@
             </button>
         </div>
 
-        <div id="subFoldersSection" class="hidden-el">            <div class="section-title">🗂️ المجلدات الفرعية</div>
-            <div class="subfolders-toolbar">
-                <div class="search-box">
+        <div id="subFoldersSection" class="hidden-el">
+            <div class="section-title">🗂️ المجلدات الفرعية</div>
+            <div class="tool-bar" style="margin-bottom:12px;">
+                <div class="tool-search">
                     <input type="text" class="search-input" id="subFolderFilter" placeholder="🔎 ابحث في المجلدات الفرعية..." oninput="filterSubFolders()">
                     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
-                <div class="view-toggle">
+                <div class="tool-view-toggle">
                     <button class="btn-view active" id="subViewGrid" onclick="setSubFolderView('grid')" title="عرض شبكي للمجلدات">
                         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <span class="tool-view-label">شبكي</span>
                     </button>
                     <button class="btn-view" id="subViewList" onclick="setSubFolderView('list')" title="عرض قائمة للمجلدات">
                         <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                        <span class="tool-view-label">قائمة</span>
                     </button>
                 </div>
             </div>
@@ -1744,6 +1794,7 @@
         document.getElementById('breadcrumb').classList.remove('hidden-el');
         document.getElementById('contentHeader').classList.remove('hidden-el');
         document.getElementById('filterBar').classList.add('hidden-el');
+        document.getElementById('sortBar').classList.add('hidden-el');
         document.getElementById('folderActionsBar').classList.remove('hidden-el');
         document.getElementById('imagesSection').classList.add('hidden-el');
         document.getElementById('subFoldersSection').classList.remove('hidden-el');
@@ -1851,7 +1902,7 @@
         currentImages = []; currentSubFolders = []; filteredImages = [];
         selectionMode = false; selectedImages.clear();
         document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('active'));
-        ['breadcrumb','contentHeader','filterBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
+        ['breadcrumb','contentHeader','filterBar','sortBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
             const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
         });
         document.getElementById('defaultEmptyState').classList.remove('hidden-el');
@@ -1912,10 +1963,12 @@
         if (hasImg) {
             document.getElementById('imagesSection').classList.remove('hidden-el');
             document.getElementById('filterBar').classList.remove('hidden-el');
+            document.getElementById('sortBar').classList.remove('hidden-el');
             document.getElementById('folderActionsBar').classList.remove('hidden-el');
             renderImagesGrid();
         } else {
             document.getElementById('filterBar').classList.add('hidden-el');
+            document.getElementById('sortBar').classList.add('hidden-el');
             document.getElementById('folderActionsBar').classList.add('hidden-el');
             if (!hasSub) {
                 document.getElementById('imagesSection').classList.remove('hidden-el');
@@ -2296,30 +2349,37 @@
     // دالة مساعدة: إظهار شريط فلترة الذكريات وإخفاء filterBar
     function showMemFilterBar(images) {
         window._memOriginalTabImages = images || [];
-        const fb = document.getElementById('memFilterBar');
+        const fb   = document.getElementById('memFilterBar');
+        const sb   = document.getElementById('memSortBar');
         const slot = document.getElementById('memFilterBarInline');
         if (fb && slot) {
-            // نقل شريط الفلترة داخل المحتوى مباشرة تحت التبويبات
             slot.innerHTML = '';
+            // نسخة شريط البحث+العرض
             const clone = fb.cloneNode(true);
             clone.id = 'memFilterBarClone';
             clone.classList.remove('hidden-el');
             slot.appendChild(clone);
-            // ربط الأحداث على النسخة
             const inp = clone.querySelector('#memImageFilter');
             if (inp) { inp.id = 'memImageFilterActive'; inp.oninput = filterMemImages; inp.value = ''; }
-            clone.querySelectorAll('[data-memsort]').forEach(el => {
-                el.onclick = () => applyMemSort(el.dataset.memsort);
-                el.classList.toggle('active', el.dataset.memsort === 'newest');
-            });
             const gridBtn = clone.querySelector('#memViewGrid');
             const listBtn = clone.querySelector('#memViewList');
             if (gridBtn) gridBtn.onclick = () => setMemView('grid');
             if (listBtn) listBtn.onclick = () => setMemView('list');
-        } else if (fb) {
-            fb.classList.remove('hidden-el');
+            // نسخة شريط الفرز
+            if (sb) {
+                const sortClone = sb.cloneNode(true);
+                sortClone.id = 'memSortBarClone';
+                sortClone.classList.remove('hidden-el');
+                slot.appendChild(sortClone);
+                sortClone.querySelectorAll('[data-memsort]').forEach(el => {
+                    el.onclick = () => applyMemSort(el.dataset.memsort);
+                    el.classList.toggle('active', el.dataset.memsort === 'newest');
+                });
+            }
+        } else {
+            if (fb) fb.classList.remove('hidden-el');
+            if (sb) sb.classList.remove('hidden-el');
         }
-        // إعادة تعيين الفرز للافتراضي
         memCurrentSort = 'newest';
         document.querySelectorAll('[data-memsort]').forEach(el =>
             el.classList.toggle('active', el.dataset.memsort === 'newest'));
@@ -2329,7 +2389,9 @@
         const slot = document.getElementById('memFilterBarInline');
         if (slot) slot.innerHTML = '';
         const fb = document.getElementById('memFilterBar');
+        const sb = document.getElementById('memSortBar');
         if (fb) fb.classList.add('hidden-el');
+        if (sb) sb.classList.add('hidden-el');
         window._memOriginalTabImages = [];
     }
 
@@ -3115,7 +3177,7 @@
         if (subtitleBits.length === 0) subtitleBits.push('لقطات من الذكريات');
         document.getElementById('memoriesSubtitle').innerText = `📆 ${dayName}، ${formatCountEn(today.getDate())} ${ARABIC_MONTHS[today.getMonth()]} • ${subtitleBits.join(' • ')}`;
         // عناصر الذكريات الآن موجودة داخل defaultEmptyState — نخفي فقط شرائط المجلدات
-        ['breadcrumb','contentHeader','filterBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
+        ['breadcrumb','contentHeader','filterBar','sortBar','folderActionsBar','subFoldersSection','imagesSection'].forEach(id => {
             const el = document.getElementById(id); if (el) el.classList.add('hidden-el');
         });
         // إظهار شريط الذكريات
