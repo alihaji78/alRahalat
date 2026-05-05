@@ -179,6 +179,20 @@
 
         /* شجرة المجلدات الفرعية */
         .sidebar-sub-list { padding: 0; margin: 0; }
+        /* ====== زر طي/توسيع المجلد الرئيسي ====== */
+        .folder-collapse-btn {
+            background: none; border: none; cursor: pointer; padding: 4px;
+            border-radius: 6px; color: var(--text-muted); flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: background 0.15s, transform 0.25s ease;
+            margin-right: 2px;
+        }
+        .folder-collapse-btn:hover { background: var(--hover-bg); color: var(--text-primary); }
+        .folder-collapse-btn svg { width: 13px; height: 13px; transition: transform 0.25s ease; pointer-events: none; }
+        /* عند الطي: نقلب السهم */
+        .folder-item.collapsed .folder-collapse-btn svg { transform: rotate(-90deg); }
+        /* إخفاء القائمة الفرعية عند الطي */
+        .folder-item.collapsed + .sidebar-sub-list { display: none; }
         .sidebar-sub-item {
             display: flex; align-items: center; gap: 6px;
             padding: 6px 10px 6px 24px;
@@ -1421,7 +1435,11 @@
 </div>
  
 <script>
+    //###########[ استبدل هنا ]############
+    // مفتاح Google Drive API — أنشئ مفتاحاً جديداً من Google Cloud Console لكل نسخة
     const API_KEY        = 'AIzaSyCv3v7LHte7hTY82NmUmj9OJLxR0zFY0bU';
+    //###########[ استبدل هنا ]############
+    // معرّف المجلد الرئيسي في Google Drive — غيّره لكل نسخة (خذه من رابط المجلد)
     const ROOT_FOLDER_ID = '1r0VfqjSzznFHhqMYFhB5bPzCeW92YFHa';
  
     // ====== State ======
@@ -1447,6 +1465,8 @@
  
     const ARABIC_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const ARABIC_DAYS   = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+    //###########[ استبدل هنا ]############
+    // مفتاح حفظ المفضلة في localStorage — غيّره لكل نسخة لتجنب التداخل
     const FAVORITES_KEY = 'alrahalat_favorites_v1';
  
     function formatDate(dateStr) {
@@ -1469,6 +1489,8 @@
  
     // ====== Theme ======
     function initTheme() {
+        //###########[ استبدل هنا ]############
+        // مفتاح حفظ الوضع الليلي/النهاري — غيّره لكل نسخة لتجنب التداخل
         const saved = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', saved);
         updateThemeIcon(saved);
@@ -1477,6 +1499,8 @@
         const cur = document.documentElement.getAttribute('data-theme');
         const next = cur === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
+        //###########[ استبدل هنا ]############
+        // مفتاح حفظ الوضع الليلي/النهاري — يجب أن يطابق السطر أعلاه
         localStorage.setItem('theme', next);
         updateThemeIcon(next);
     }
@@ -1632,6 +1656,32 @@
     // ====== Sidebar — شجرة المجلدات الكاملة ======
     let sidebarTree = [];
 
+    //###########[ استبدل هنا ]############
+    // مفتاح حفظ حالة طي الشريط الجانبي في localStorage
+    // غيّر الاسم لكل نسخة من التطبيق لتجنب التداخل
+    const SIDEBAR_COLLAPSE_KEY = 'alrahalat_sidebar_collapse_v1';
+
+    // تحميل حالة الطي المحفوظة عند بدء التشغيل
+    let sidebarCollapseState = {};
+    try {
+        const _raw = localStorage.getItem(SIDEBAR_COLLAPSE_KEY);
+        if (_raw) sidebarCollapseState = JSON.parse(_raw);
+    } catch(_) { sidebarCollapseState = {}; }
+
+    // حفظ حالة الطي في localStorage
+    function saveSidebarCollapseState() {
+        try { localStorage.setItem(SIDEBAR_COLLAPSE_KEY, JSON.stringify(sidebarCollapseState)); } catch(_) {}
+    }
+
+    // طي أو توسيع مجلد رئيسي وحفظ الحالة
+    function toggleSidebarCollapse(nodeId) {
+        const item = document.getElementById(`folder-${nodeId}`);
+        if (!item) return;
+        const isNowCollapsed = item.classList.toggle('collapsed');
+        sidebarCollapseState[nodeId] = isNowCollapsed;
+        saveSidebarCollapseState();
+    }
+
     async function loadSidebarFolders() {
         const sidebarList = document.getElementById('sidebarList');
         sidebarList.innerHTML = '<div class="sidebar-loader">⏳ جاري تحميل المجلدات...</div>';
@@ -1716,13 +1766,22 @@
             item.id = `folder-${node.id}`;
             item.dataset.name = node.name.toLowerCase();
             item.style.cssText = `animation-delay:${i*30}ms;animation:fadeIn 0.4s ease backwards`;
-            item.onclick = () => openFolder(node.id, node.name, true);
+
+            // قراءة حالة الطي المحفوظة — مفتوح افتراضياً
+            const isCollapsed = sidebarCollapseState[node.id] === true;
+            if (isCollapsed) item.classList.add('collapsed');
+
             item.innerHTML = `
                 <span class="folder-item-icon">📁</span>
-                <div class="folder-item-content">
+                <div class="folder-item-content" style="flex:1;min-width:0;cursor:pointer" onclick="openFolder('${node.id}','${escapeHtml(node.name).replace(/'/g,"\\'")}',true)">
                     <div class="folder-item-name">${escapeHtml(node.name)}</div>
                     <span class="folder-item-count" id="tree-count-${node.id}">...</span>
-                </div>`;
+                </div>
+                <button class="folder-collapse-btn" title="طي / توسيع" onclick="event.stopPropagation();toggleSidebarCollapse('${node.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>`;
             sidebarList.appendChild(item);
             const subContainer = document.createElement('div');
             subContainer.className = 'sidebar-sub-list';
@@ -1735,9 +1794,18 @@
     function filterFolders() {
         const q = document.getElementById('folderSearch').value.toLowerCase().trim();
         if (q === '') {
+            // عند مسح البحث: أعد الـ collapsed لحالتها المحفوظة
             document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.remove('hidden-el'));
+            sidebarTree.forEach(node => {
+                const item = document.getElementById(`folder-${node.id}`);
+                if (!item) return;
+                if (sidebarCollapseState[node.id] === true) item.classList.add('collapsed');
+                else item.classList.remove('collapsed');
+            });
             return;
         }
+        // أثناء البحث: افتح كل المجلدات مؤقتاً لكي تظهر نتائج البحث
+        document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('collapsed'));
         // أخفِ الكل أولاً
         document.querySelectorAll('.folder-item, .sidebar-sub-item').forEach(el => el.classList.add('hidden-el'));
         // أظهر المطابق وأجداده
@@ -3010,6 +3078,8 @@
     window.addEventListener('resize', () => { if (window.innerWidth > 768) closeSidebar(); });
  
     // ====== Memories System ======
+    //###########[ استبدل هنا ]############
+    // مفتاح كاش الذكريات في localStorage — غيّره لكل نسخة لتجنب التداخل
     const MEMORIES_CACHE_KEY      = 'memories_cache_v2';
     const MEMORIES_CACHE_DURATION = 6 * 60 * 60 * 1000;
     const DAYS_WINDOW             = 14;
@@ -3769,6 +3839,8 @@
              '--bg-glass','--bg-glass-strong'].forEach(p => root.style.removeProperty(p));
         }
 
+        //###########[ استبدل هنا ]############
+        // مفتاح حفظ شريط الألوان — غيّره لكل نسخة لتجنب التداخل
         const SLIDER_KEY = 'colorSliderVal';
         const saved = localStorage.getItem(SLIDER_KEY);
         if (saved !== null) slider.value = saved;
