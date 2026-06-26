@@ -3927,18 +3927,21 @@
 
     // ====== Cache ======
     function cacheMemories(memories, allImages) {
-        // نحفظ الملخص اليومي فقط (بدون allImages — تُحفظ منفصلة في saveRawImagesCache)
-        // هذا يقلل الحجم لأن memories تحتوي فقط على الصور التي تطابق اليوم/الأسبوع/الشهر
         try {
+            // نخزّن الذكريات + مراجع مختصرة للصور الكاملة (id, name, createdTime, folderPath فقط)
+            const compactAll = allImages.map(img => ({
+                id: img.id, name: img.name,
+                createdTime: img.createdTime,
+                folderPath: img.folderPath || ''
+            }));
             localStorage.setItem(MEMORIES_CACHE_KEY, JSON.stringify({
                 timestamp: Date.now(),
+                // نحفظ التاريخ للتحقق من تغيّر اليوم (إعادة حساب الملخص يومياً)
                 date: new Date().toDateString(),
-                memories
-                // ملاحظة: allImages لا تُحفظ هنا — تُقرأ من IMAGES_RAW_CACHE_KEY عند الحاجة
+                memories,
+                allImages: compactAll
             }));
-        } catch(e) {
-            console.warn('cacheMemories: فشل الحفظ —', e?.message);
-        }
+        } catch {}
     }
 
     function getCachedMemories() {
@@ -3946,38 +3949,28 @@
             const raw = localStorage.getItem(MEMORIES_CACHE_KEY);
             if (!raw) return null;
             const c = JSON.parse(raw);
+            // إذا تغيّر اليوم: الملخص قديم (صور اليوم تختلف) → أعد الحساب
             if (c.date !== new Date().toDateString()) return null;
+            // إذا مرّت أكثر من 24 ساعة: أعد الجلب من Drive
             if (Date.now() - c.timestamp > MEMORIES_CACHE_DURATION) return null;
-            // نجلب allImages من كاش الصور الخام المنفصل
-            const rawImgs = getRawImagesCache();
-            if (!rawImgs) return null; // إذا انتهت صلاحية الصور الخام → أعد الجلب
-            return { memories: c.memories, allImages: rawImgs };
+            return { memories: c.memories, allImages: c.allImages || [] };
         } catch { return null; }
     }
 
-    // ===== كاش الصور الخام: يحفظ الحد الأدنى من بيانات كل صورة =====
-    // الحقول المحفوظة: id فقط + createdTime (مضغوط) + folderPath (مضغوط)
-    // name محذوف لأنه يستهلك مساحة كبيرة وغير ضروري لحساب الذكريات
+    // ===== كاش الصور الخام: يُبقي بيانات Drive لمدة 24 ساعة بغض النظر عن اليوم =====
+    // تعديل: مضاف لتجنب إعادة الاتصال بـ Drive عند تغيّر اليوم فقط
     function saveRawImagesCache(allImages) {
         try {
-            // ضغط البيانات: نحفظ الحد الأدنى لكل صورة
-            // id: ضروري للعرض والتنزيل
-            // t: createdTime مختصر (timestamp رقمي بدلاً من string كامل)
-            // f: folderPath مضغوط (اسم المجلد فقط بدون المسار الكامل)
-            // n: name مختصر (أول 40 حرف فقط — كافٍ للعرض)
-            const compact = allImages.map(img => ({
-                i: img.id,
-                t: img.createdTime ? new Date(img.createdTime).getTime() : 0,
-                f: (img.folderPath || '').slice(0, 60),
-                n: (img.name || '').slice(0, 40)
+            const compactAll = allImages.map(img => ({
+                id: img.id, name: img.name,
+                createdTime: img.createdTime,
+                folderPath: img.folderPath || ''
             }));
             localStorage.setItem(IMAGES_RAW_CACHE_KEY, JSON.stringify({
-                ts: Date.now(),
-                d:  compact
+                timestamp: Date.now(),
+                allImages: compactAll
             }));
-        } catch(e) {
-            console.warn('saveRawImagesCache: فشل الحفظ —', e?.message);
-        }
+        } catch {}
     }
 
     function getRawImagesCache() {
@@ -3985,14 +3978,9 @@
             const raw = localStorage.getItem(IMAGES_RAW_CACHE_KEY);
             if (!raw) return null;
             const c = JSON.parse(raw);
-            if (Date.now() - c.ts > MEMORIES_CACHE_DURATION) return null;
-            // إعادة تحويل البيانات المضغوطة للشكل الذي يتوقعه باقي الكود
-            return (c.d || []).map(img => ({
-                id:          img.i,
-                createdTime: img.t ? new Date(img.t).toISOString() : '',
-                folderPath:  img.f || '',
-                name:        img.n || ''
-            }));
+            // صالح لمدة 24 ساعة فقط
+            if (Date.now() - c.timestamp > MEMORIES_CACHE_DURATION) return null;
+            return c.allImages || null;
         } catch { return null; }
     }
  
